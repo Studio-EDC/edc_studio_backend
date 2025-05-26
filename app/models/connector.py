@@ -11,12 +11,16 @@ class PortConfig(BaseModel):
     public: int
     version: int
 
+class Endpoints(BaseModel):
+    management: str
+    protocol: Optional[str] = None
+
 class Connector(BaseModel):
     name: str
     description: Optional[str] = None
     type: Literal["provider", "consumer"]
     ports: Optional[PortConfig] = None
-    keystore_password: Optional[str] = Field(min_length=6)
+    keystore_password: Optional[str] = Field(default=None, min_length=6)
     state: Literal["running", "stopped"]
     mode: Literal["managed", "remote"]
-    endpoint_url: Optional[str]
+    endpoints_url: Optional[Endpoints] = None

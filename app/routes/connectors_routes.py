@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Body, HTTPException
 from app.models.connector import Connector
-from app.services.connectors_service import create_connector, start_edc_service, stop_edc_service, get_all_connectors
-from app.schemas.connector_read import ConnectorResponse
+from app.services.connectors_service import create_connector, delete_connector, start_edc_service, stop_edc_service, get_all_connectors, get_connector_by_id, update_connector
+from app.schemas.connector import ConnectorResponse, ConnectorUpdate
 
 router = APIRouter()
 
@@ -36,3 +36,26 @@ async def stop_edc(id: str):
 async def list_connectors():
     return await get_all_connectors()
 
+@router.get("/{id}", response_model=ConnectorResponse)
+async def get_connector(id: str):
+    try:
+        connector = await get_connector_by_id(id)
+        return ConnectorResponse(**connector)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Connector not found")
+    
+@router.put("/{id}", response_model=dict)
+async def update_connector_route(id: str, data: ConnectorUpdate = Body(...)):
+    try:
+        await update_connector(id, data.dict(exclude_unset=True))
+        return {"message": "Connector updated successfully"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    
+@router.delete("/{id}", response_model=dict)
+async def delete_connector_route(id: str):
+    try:
+        await delete_connector(id)
+        return {"message": "Connector deleted successfully"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))

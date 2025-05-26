@@ -4,6 +4,7 @@ from pathlib import Path
 from app.services.edc_launcher_service import _generate_files, _run_docker_compose, _run_docker_compose_down
 from bson import ObjectId
 import shutil
+from pymongo.results import DeleteResult
 
 async def create_connector(connector: Connector) -> str:
     db = get_db()
@@ -49,3 +50,30 @@ async def get_all_connectors() -> list[dict]:
         del c["_id"] 
         
     return connectors
+
+async def get_connector_by_id(id: str) -> dict:
+    db = get_db()
+    connector = await db["connectors"].find_one({"_id": ObjectId(id)})
+
+    if not connector:
+        raise ValueError("Connector not found")
+
+    connector["id"] = str(connector["_id"])
+    del connector["_id"]
+
+    return connector
+
+async def update_connector(id: str, update_data: dict):
+    db = get_db()
+    result = await db["connectors"].update_one(
+        {"_id": ObjectId(id)},
+        {"$set": update_data}
+    )
+    if result.matched_count == 0:
+        raise ValueError("Connector not found")
+    
+async def delete_connector(id: str):
+    db = get_db()
+    result: DeleteResult = await db["connectors"].delete_one({"_id": ObjectId(id)})
+    if result.deleted_count == 0:
+        raise ValueError("Connector not found")

@@ -3,3 +3,4 @@ motor
 pydantic
 uvicorn
 python-dotenv
+httpx

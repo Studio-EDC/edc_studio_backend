@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import connectors_routes  # Will contain the API routes
+from app.routes import assets_routes, connectors_routes  # Will contain the API routes
 from app.db.client import init_mongo
 
 app = FastAPI(
@@ -25,3 +25,4 @@ async def startup_db():
 
 # Register API routers
 app.include_router(connectors_routes.router, prefix="/connectors", tags=["Connectors"])
+app.include_router(assets_routes.router, prefix="/assets", tags=["Assets"])
