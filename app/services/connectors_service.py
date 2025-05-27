@@ -36,7 +36,6 @@ async def stop_edc_service(connector_id: str):
 
     try:
         _run_docker_compose_down(base_path)
-        shutil.rmtree(base_path)
         await db["connectors"].update_one({"_id": ObjectId(connector_id)}, {"$set": {"state": "stopped"}})
     except Exception as e:
         raise RuntimeError(f"Failed to stop connector: {e}")
@@ -74,6 +73,13 @@ async def update_connector(id: str, update_data: dict):
     
 async def delete_connector(id: str):
     db = get_db()
+    base_path = Path("runtime") / str(id)
+
+    if not base_path.exists():
+        raise ValueError("Runtime folder does not exist")
+    
+    shutil.rmtree(base_path)
+
     result: DeleteResult = await db["connectors"].delete_one({"_id": ObjectId(id)})
     if result.deleted_count == 0:
         raise ValueError("Connector not found")
