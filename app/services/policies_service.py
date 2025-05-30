@@ -41,9 +41,6 @@ async def register_policy_with_edc(policy: dict, connector: dict):
 
     async with httpx.AsyncClient() as client:
         response = await client.post(base_url, json=payload)
-        if response.is_error:
-            print("Status:", response.status_code)
-            print("Response text:", response.text)
         response.raise_for_status()
         return response.json()
     
