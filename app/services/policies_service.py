@@ -9,17 +9,15 @@ async def create_policy(data: Policy) -> str:
     db = get_db()
     edc_id = data.edc
 
-    # Check if EDC exists
     connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
     if not connector:
         raise HTTPException(status_code=404, detail="EDC not found")
 
-    policy_dict = data.dict()
+    policy_dict = data.model_dump(by_alias=True)
     policy_dict["edc"] = ObjectId(edc_id)
 
     result = await db["policies"].insert_one(policy_dict)
 
-    # Register policy in EDC
     try:
         await register_policy_with_edc(policy_dict, connector)
     except Exception as e:
@@ -37,26 +35,60 @@ async def register_policy_with_edc(policy: dict, connector: dict):
     else:
         raise ValueError("Invalid connector mode")
 
-    payload = {
-        "@context": {
-            "@vocab": "https://w3id.org/edc/v0.0.1/ns/",
-            "odrl": "http://www.w3.org/ns/odrl/2/"
-        },
-        "@id": policy["policy"].get("@id", "defaultPolicyId"),
-        "policy": policy["policy"]["policy"]
-    }
+    payload = convert_policy_to_edc_format(policy)
+
+    print(payload)
 
     async with httpx.AsyncClient() as client:
         response = await client.post(base_url, json=payload)
+        if response.is_error:
+            print("Status:", response.status_code)
+            print("Response text:", response.text)
         response.raise_for_status()
         return response.json()
+    
+def convert_policy_to_edc_format(policy: dict) -> dict:
+    return {
+        "@context": {
+            "@vocab": "https://w3id.org/edc/v0.0.1/ns/",
+        },
+        "@id": policy["policy_id"],
+        "policy": {
+            "@context": "http://www.w3.org/ns/odrl.jsonld",
+            "@type": policy["policy"]["type"],
+            "permission": _convert_rules(policy["policy"].get("permission", [])),
+            "prohibition": _convert_rules(policy["policy"].get("prohibition", [])),
+            "obligation": _convert_rules(policy["policy"].get("obligation", [])),
+        }
+    }
+
+
+def _convert_rules(rules: list) -> list:
+    result = []
+    for rule in rules:
+        converted = {
+            "action": rule["action"]
+        }
+        if "constraint" in rule and rule["constraint"]:
+            converted["constraint"] = [
+                {
+                    "leftOperand": c["leftOperand"],
+                    "operator": {"@id": c["operator"]["id"]},
+                    "rightOperand": c["rightOperand"]
+                }
+                for c in rule["constraint"]
+            ]
+        result.append(converted)
+    return result
 
 
 async def get_policies_by_edc_id(edc_id: str) -> list[dict]:
     db = get_db()
     policies = await db["policies"].find({"edc": ObjectId(edc_id)}).to_list(length=None)
+
     for p in policies:
         p["id"] = str(p["_id"])
         p["edc"] = str(p["edc"])
         del p["_id"]
+
     return policies
