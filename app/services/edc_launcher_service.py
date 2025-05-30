@@ -42,6 +42,13 @@ services:
     volumes:
       - ./resources/configuration:/app/configuration
       - ./resources/certs:/app/certs
+
+    networks:
+      - edc-network
+
+networks:
+  edc-network:
+    external: true
 """
 
 def _generate_files(connector: dict, base_path: Path):
@@ -92,3 +99,9 @@ def _run_docker_compose(path: Path):
 
 def _run_docker_compose_down(path: Path):
     subprocess.run(["docker", "compose", "down"], cwd=path)
+
+def _create_docker_network_if_not_exists(network_name: str):
+    result = subprocess.run(["docker", "network", "ls", "--format", "{{.Name}}"], capture_output=True, text=True)
+    networks = result.stdout.strip().splitlines()
+    if network_name not in networks:
+        subprocess.run(["docker", "network", "create", network_name], check=True)

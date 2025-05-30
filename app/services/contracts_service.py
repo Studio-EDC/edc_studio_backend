@@ -69,7 +69,8 @@ async def convert_contract_to_edc_format(contract: dict) -> dict:
         asset = await db["assets"].find_one({"_id": ObjectId(oid)})
         if asset and "asset_id" in asset:
             asset_selectors.append({
-                "operandLeft": "asset:prop:id",
+                "@type": "https://w3id.org/edc/v0.0.1/ns/Criterion",
+                "operandLeft": "id",
                 "operator": "=",
                 "operandRight": asset["asset_id"]
             })

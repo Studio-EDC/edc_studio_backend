@@ -1,7 +1,7 @@
 from app.models.connector import Connector
 from app.db.client import get_db
 from pathlib import Path
-from app.services.edc_launcher_service import _generate_files, _run_docker_compose, _run_docker_compose_down
+from app.services.edc_launcher_service import _create_docker_network_if_not_exists, _generate_files, _run_docker_compose, _run_docker_compose_down
 from bson import ObjectId
 import shutil
 from pymongo.results import DeleteResult
@@ -22,6 +22,7 @@ async def start_edc_service(connector_id: str):
 
     try:
         _generate_files(connector, base_path)
+        _create_docker_network_if_not_exists("edc-network")
         _run_docker_compose(base_path)
         await db["connectors"].update_one({"_id": ObjectId(connector_id)}, {"$set": {"state": "running"}})
     except Exception as e:

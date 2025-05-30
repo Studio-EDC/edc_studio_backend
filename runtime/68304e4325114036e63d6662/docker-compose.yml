@@ -16,3 +16,10 @@ services:
     volumes:
       - ./resources/configuration:/app/configuration
       - ./resources/certs:/app/certs
+
+    networks:
+      - edc-network
+
+networks:
+  edc-network:
+    external: true
