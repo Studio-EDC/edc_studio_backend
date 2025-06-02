@@ -14,3 +14,22 @@ class TransferResponse(BaseModel):
 class RequestCatalog(BaseModel):
     consumer: str
     provider: str
+
+class NegotitateContract(BaseModel):
+    consumer: str
+    provider: str
+    contract_offer_id: str
+    asset: str
+
+class ContractAgreement(BaseModel):
+    consumer: str
+    id_contract_negotiation: str
+
+class StartTransfer(BaseModel):
+    consumer: str
+    provider: str
+    contract_agreement_id: str
+
+class CheckTransfer(BaseModel):
+    consumer: str
+    transfer_process_id: str

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import assets_routes, connectors_routes, contracts_routes, policies_routes
+from app.routes import assets_routes, connectors_routes, contracts_routes, policies_routes, transfers_routes
 from app.db.client import init_mongo
 
 app = FastAPI(
@@ -28,3 +28,4 @@ app.include_router(connectors_routes.router, prefix="/connectors", tags=["Connec
 app.include_router(assets_routes.router, prefix="/assets", tags=["Assets"])
 app.include_router(policies_routes.router, prefix="/policies", tags=["Policies"])
 app.include_router(contracts_routes.router, prefix="/contracts", tags=["Contracts"])
+app.include_router(transfers_routes.router, prefix="/transfers", tags=["Transfers"])

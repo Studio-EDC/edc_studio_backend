@@ -5,8 +5,8 @@ from app.db.client import get_db
 from bson import ObjectId
 
 CONFIG_TEMPLATE = """
-edc.participant.id={name}
-edc.dsp.callback.address=http://localhost:{protocol}/protocol
+edc.participant.id={type}
+edc.dsp.callback.address=http://edc-{type}-{id}:{protocol}/protocol
 web.http.port={http}
 web.http.path=/api
 web.http.management.port={management}
@@ -21,7 +21,7 @@ web.http.control.port={control}
 web.http.control.path=/control
 web.http.version.port={version}
 web.http.version.path=/version
-edc.dataplane.api.public.baseurl=http://localhost:{public}/public
+edc.dataplane.api.public.baseurl=http://edc-{type}-{id}:{public}/public
 """
 
 DOCKER_COMPOSE_TEMPLATE = """
@@ -66,7 +66,7 @@ def _generate_files(connector: dict, base_path: Path):
 
     # Write config.properties
     config_file = config_path / "config.properties"
-    config_file.write_text(CONFIG_TEMPLATE.format(name=name, **ports))
+    config_file.write_text(CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports))
 
     # Generate real cert.pfx using keytool
     cert_path = certs_path / "cert.pfx"

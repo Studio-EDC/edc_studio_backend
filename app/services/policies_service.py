@@ -37,8 +37,6 @@ async def register_policy_with_edc(policy: dict, connector: dict):
 
     payload = convert_policy_to_edc_format(policy)
 
-    print(payload)
-
     async with httpx.AsyncClient() as client:
         response = await client.post(base_url, json=payload)
         response.raise_for_status()
