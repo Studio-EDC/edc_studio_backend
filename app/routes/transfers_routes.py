@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
+from app.models.transfer import Transfer
 from app.schemas.transfer import RequestCatalog, NegotitateContract, ContractAgreement, StartTransfer, CheckTransfer
-from app.services.transfers_service import catalog_request_service, negotiate_contract_service, get_contract_agreement_service, start_http_server_service, stop_http_server_service, start_transfer_service, check_transfer_service
+from app.services.transfers_service import catalog_request_service, negotiate_contract_service, get_contract_agreement_service, start_http_server_service, stop_http_server_service, start_transfer_service, check_transfer_service, create_transfer_service
 
 router = APIRouter()
 
@@ -73,3 +74,9 @@ async def check_transfer(data: CheckTransfer):
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to check transfer: {str(e)}")
+    
+
+@router.post("/", status_code=201)
+async def new_transfer(data: Transfer):
+    inserted_id = await create_transfer_service(data)
+    return {"id": inserted_id}

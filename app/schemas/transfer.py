@@ -10,6 +10,8 @@ class TransferResponse(BaseModel):
     has_policy_id: str
     negotiate_contract_id: str
     contract_agreement_id: str
+    transfer_process_id: str
+    transfer_flow: str
 
 class RequestCatalog(BaseModel):
     consumer: str

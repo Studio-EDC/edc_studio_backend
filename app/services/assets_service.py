@@ -79,6 +79,15 @@ async def get_asset_by_id(asset_id: str) -> dict:
     del asset["_id"]
     return asset
 
+async def get_asset_by_asset_id(asset_id: str) -> dict:
+    db = get_db()
+    asset = await db["assets"].find_one({"asset_id": asset_id})
+    if not asset:
+        raise ValueError("Asset not found")
+    asset["id"] = str(asset["_id"])
+    del asset["_id"]
+    return asset
+
 
 async def update_asset(asset_id: str, updated_data: dict) -> bool:
     db = get_db()

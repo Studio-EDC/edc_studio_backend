@@ -7,6 +7,7 @@ from app.services.assets_service import (
     get_assets_by_edc_id,
     update_asset,
     delete_asset,
+    get_asset_by_asset_id
 )
 
 router = APIRouter()
@@ -26,6 +27,15 @@ async def list_assets():
 @router.get("/by-edc/{edc_id}")
 async def list_assets_by_edc(edc_id: str):
     return await get_assets_by_edc_id(edc_id)
+
+
+@router.get("/by-asset-id/{id}")
+async def get_asset_by_asset_id(id: str):
+    try:
+        asset = await get_asset_by_asset_id(id)
+        return asset
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Asset not found")
 
 
 @router.get("/{id}")

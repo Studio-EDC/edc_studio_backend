@@ -1,8 +1,11 @@
+from fastapi import HTTPException
 import httpx
 from app.db.client import get_db
 from bson import ObjectId
 import subprocess
 from pathlib import Path
+
+from app.models.transfer import Transfer
 
 async def catalog_request_service(consumer_id: str, provider_id: str) -> dict:
     db = get_db()
@@ -231,3 +234,31 @@ async def check_transfer_curl(consumer: dict, transfer_process_id: str):
             print(f"Start transfer failed: {exc.response.status_code}")
             print(f"Response text: {exc.response.text}")
             raise
+
+async def create_transfer_service(data: Transfer) -> str:
+    db = get_db()
+    consumer_id = data.consumer
+    provider_id = data.provider
+    asset_id = data.asset
+
+    transfer_dict = data.model_dump(by_alias=True)
+
+    consumer = await db["connectors"].find_one({"_id": ObjectId(consumer_id)})
+    if not consumer:
+        raise HTTPException(status_code=404, detail="Consumer not found")
+    
+    provider = await db["connectors"].find_one({"_id": ObjectId(provider_id)})
+    if not provider:
+        raise HTTPException(status_code=404, detail="Provider not found")
+    
+    asset = await db["assets"].find_one({"_id": ObjectId(asset_id)})
+    if not asset:
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    transfer_dict["consumer"] = ObjectId(consumer_id)
+    transfer_dict["provider"] = ObjectId(provider_id)
+    transfer_dict["asset"] = ObjectId(asset_id)
+
+    result = await db["policies"].insert_one(transfer_dict)
+
+    return str(result.inserted_id)
