@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.models.transfer import Transfer
 from app.schemas.transfer import RequestCatalog, NegotitateContract, ContractAgreement, StartTransfer, CheckTransfer
-from app.services.transfers_service import catalog_request_service, negotiate_contract_service, get_contract_agreement_service, start_http_server_service, stop_http_server_service, start_transfer_service, check_transfer_service, create_transfer_service
+from app.services.transfers_service import catalog_request_service, check_transfer_data_pull_service, get_all_transfers_service, negotiate_contract_service, get_contract_agreement_service, start_http_server_service, start_transfer_service_pull, stop_http_server_service, start_transfer_service, check_transfer_service, create_transfer_service
 
 router = APIRouter()
 
@@ -80,3 +80,29 @@ async def check_transfer(data: CheckTransfer):
 async def new_transfer(data: Transfer):
     inserted_id = await create_transfer_service(data)
     return {"id": inserted_id}
+
+
+@router.get("/", status_code=200)
+async def get_all_transfers():
+    transfers = await get_all_transfers_service()
+    return transfers
+
+@router.post("/start_transfer_pull", status_code=200)
+async def start_transfer_pull(data: StartTransfer):
+    try:
+        response = await start_transfer_service_pull(data.consumer, data.provider, data.contract_agreement_id)
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to start transfer: {str(e)}")
+    
+@router.post("/check_data_pull", status_code=200)
+async def check_data_pull(data: CheckTransfer):
+    try:
+        response = await check_transfer_data_pull_service(data.consumer, data.transfer_process_id)
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to check data: {str(e)}")

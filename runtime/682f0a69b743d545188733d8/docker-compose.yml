@@ -1,7 +1,7 @@
 
 services:
   provider:
-    image: itziarmensaupc/connector:0.0.1
+    image: itziarmensaupc/connector:0.0.3
     platform: linux/amd64
     container_name: edc-provider-682f0a69b743d545188733d8
     ports:

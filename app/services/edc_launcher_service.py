@@ -21,13 +21,12 @@ web.http.control.port={control}
 web.http.control.path=/control
 web.http.version.port={version}
 web.http.version.path=/version
-edc.dataplane.api.public.baseurl=http://edc-{type}-{id}:{public}/public
 """
 
 DOCKER_COMPOSE_TEMPLATE = """
 services:
   {type}:
-    image: itziarmensaupc/connector:0.0.1
+    image: itziarmensaupc/connector:0.0.3
     platform: linux/amd64
     container_name: edc-{type}-{name}
     ports:
@@ -58,6 +57,10 @@ def _generate_files(connector: dict, base_path: Path):
     ctype = connector["type"]
     password = connector["keystore_password"]
 
+    proxy_public_line = ""
+    if ctype == "provider":
+        proxy_public_line = f"edc.dataplane.proxy.public.endpoint=http://edc-{ctype}-{id}:{ports['public']}/public\n"
+
     # Create folders
     config_path = base_path / "resources" / "configuration"
     certs_path = base_path / "resources" / "certs"
@@ -65,8 +68,8 @@ def _generate_files(connector: dict, base_path: Path):
     certs_path.mkdir(parents=True, exist_ok=True)
 
     # Write config.properties
-    config_file = config_path / "config.properties"
-    config_file.write_text(CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports))
+    config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports) + proxy_public_line
+    (config_path / "config.properties").write_text(config_content)
 
     # Generate real cert.pfx using keytool
     cert_path = certs_path / "cert.pfx"

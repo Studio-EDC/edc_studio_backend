@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Literal, Optional
 
 
 class Transfer(BaseModel):
@@ -10,4 +10,6 @@ class Transfer(BaseModel):
     negotiate_contract_id: str
     contract_agreement_id: str
     transfer_process_id: str
-    transfer_flow: str
+    transfer_flow: Literal["push", "pull"]
+    authorization: Optional[str] = None
+    endpoint: Optional[str] = None
