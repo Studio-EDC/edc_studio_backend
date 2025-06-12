@@ -11,14 +11,14 @@ class ConnectorResponse(BaseModel):
     state: Literal["running", "stopped"]
     mode: Literal["managed", "remote"]
     endpoints_url: Optional[Endpoints] = None
-    keystore_password: Optional[str] = Field(default=None, min_length=6)
+    api_key: Optional[str] = None
 
 class ConnectorUpdate(BaseModel):
     name: Optional[str]
     description: Optional[str]
     type: Optional[Literal["provider", "consumer"]]
     ports: Optional[PortConfig]
-    keystore_password: Optional[str] = Field(default=None, min_length=6)
+    api_key: Optional[str] = None
     state: Optional[Literal["running", "stopped"]]
     mode: Optional[Literal["managed", "unmanaged"]]
     endpoints_url: Optional[Endpoints] = None

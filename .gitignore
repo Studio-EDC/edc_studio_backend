@@ -1,2 +1,5 @@
 venv
 .env
+runtime/*
+!runtime/docker-compose.yml
+!runtime/init.sql

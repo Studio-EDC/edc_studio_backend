@@ -1,3 +1,5 @@
+import subprocess
+import traceback
 from app.models.connector import Connector
 from app.db.client import get_db
 from pathlib import Path
@@ -23,7 +25,8 @@ async def start_edc_service(connector_id: str):
     try:
         _generate_files(connector, base_path)
         _create_docker_network_if_not_exists("edc-network")
-        _run_docker_compose(base_path)
+        db_name = 'edc_' + connector['type'] + '_' + str(connector['_id'])
+        _run_docker_compose(base_path, db_name)
         await db["connectors"].update_one({"_id": ObjectId(connector_id)}, {"$set": {"state": "running"}})
     except Exception as e:
         raise RuntimeError(f"Failed to start connector: {e}")
@@ -45,10 +48,32 @@ async def get_all_connectors() -> list[dict]:
     db = get_db()
     connectors = await db["connectors"].find().to_list(length=None)
 
+    try:
+        docker_ps_output = subprocess.check_output(
+            ["docker", "ps", "--format", "{{.Names}}"], 
+            text=True
+        )
+        active_containers = set(docker_ps_output.strip().splitlines())
+    except Exception as e:
+        print("⚠️  Docker is not available or not running:")
+        traceback.print_exc()
+        active_containers = set()  # Considerar todos como apagados
+
     for c in connectors:
+        if c['mode'] == 'managed':
+            container_name = f"edc-{c['type']}-{c['_id']}"
+
+            if container_name not in active_containers:
+                c['state'] = 'stopped'
+            else:
+                c['state'] = 'running'
+
+            # Actualiza en la BBDD
+            await update_connector(c['_id'], {"state": c['state']})
+
         c["id"] = str(c["_id"]) 
-        del c["_id"] 
-        
+        del c["_id"]
+
     return connectors
 
 async def get_connector_by_id(id: str) -> dict:

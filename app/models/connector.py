@@ -20,7 +20,7 @@ class Connector(BaseModel):
     description: Optional[str] = None
     type: Literal["provider", "consumer"]
     ports: Optional[PortConfig] = None
-    keystore_password: Optional[str] = Field(default=None, min_length=6)
+    api_key: Optional[str] = None
     state: Literal["running", "stopped"]
     mode: Literal["managed", "remote"]
     endpoints_url: Optional[Endpoints] = None

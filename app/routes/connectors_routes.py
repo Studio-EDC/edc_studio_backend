@@ -26,7 +26,7 @@ async def start_edc(id: str):
 async def stop_edc(id: str):
     try:
         await stop_edc_service(id)
-        return {"message": "Connector stopped and runtime deleted"}
+        return {"message": "Connector stopped"}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:

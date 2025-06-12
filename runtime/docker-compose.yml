@@ -1,0 +1,40 @@
+
+version: '3.8'
+
+services:
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: edc-vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    command: server -dev
+
+    networks:
+      - edc-network
+
+  postgres:
+    image: postgres:15
+    container_name: edc-postgres
+    environment:
+      POSTGRES_DB: edc
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - edc-network
+
+volumes:
+  postgres_data:
+
+networks:
+  edc-network:
+    external: true
