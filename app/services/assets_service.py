@@ -9,7 +9,6 @@ async def create_asset(data: Asset) -> str:
     db = get_db()
     edc_id = data.edc
 
-    # Check if EDC exists
     edc = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
     if not edc:
         raise HTTPException(status_code=404, detail="EDC not found")
@@ -17,15 +16,11 @@ async def create_asset(data: Asset) -> str:
     asset_dict = data.dict()
     asset_dict["edc"] = ObjectId(edc_id)
 
-    result = await db["assets"].insert_one(asset_dict)
-
-    # Register asset in EDC
     try:
-        await register_asset_with_edc(asset_dict, edc)
+        return await register_asset_with_edc(asset_dict, edc)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to register asset in EDC: {str(e)}")
 
-    return str(result.inserted_id)
 
 
 async def register_asset_with_edc(asset: dict, connector: dict):
@@ -36,6 +31,10 @@ async def register_asset_with_edc(asset: dict, connector: dict):
         base_url = f"{connector['endpoints_url']['management'].rstrip('/')}/management/v3/assets"
     else:
         raise ValueError("Invalid connector mode")
+    
+    api_key = connector["api_key"]
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Connector API key not configured")
 
     payload = {
         "@context": {
@@ -54,8 +53,12 @@ async def register_asset_with_edc(asset: dict, connector: dict):
         }
     }
 
+    headers = {
+        "x-api-key": api_key
+    }
+
     async with httpx.AsyncClient() as client:
-        response = await client.post(base_url, json=payload)
+        response = await client.post(base_url, json=payload, headers=headers)
         response.raise_for_status()
         return response.json()
 
@@ -79,38 +82,211 @@ async def get_asset_by_id(asset_id: str) -> dict:
     del asset["_id"]
     return asset
 
-async def get_asset_by_asset_id_service(asset_id: str) -> dict:
+async def get_asset_by_asset_id_service(edc_id: str, asset_id: str) -> Asset:
     db = get_db()
-    asset = await db["assets"].find_one({"asset_id": asset_id})
-    if not asset:
-        raise ValueError("Asset not found")
-    asset["id"] = str(asset["_id"])
-    asset["edc"] = str(asset["edc"])
-    del asset["_id"]
-    return asset
+
+    try:
+        connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
+        if not connector:
+            raise HTTPException(status_code=404, detail="EDC not found")
+        
+        if connector["mode"] == "managed":
+            management_port = connector["ports"]["management"]
+            base_url = f"http://localhost:{management_port}/management/v3/assets/{asset_id}"
+        elif connector["mode"] == "remote":
+            base_url = f"{connector['endpoints_url']['management'].rstrip('/')}/management/v3/assets/{asset_id}"
+        else:
+            raise ValueError("Invalid connector mode")
+
+        api_key = connector["api_key"]
+        if not api_key:
+            raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+        headers = {
+            "x-api-key": api_key
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get(base_url, headers=headers)
+            response.raise_for_status()
+            item = response.json()
+
+        asset = Asset(
+            asset_id=item.get("@id"),
+            name=item.get("properties", {}).get("name"),
+            content_type=item.get("properties", {}).get("contenttype"),
+            data_address_name=item.get("dataAddress", {}).get("name"),
+            data_address_type=item.get("dataAddress", {}).get("type"),
+            data_address_proxy=item.get("dataAddress", {}).get("proxyPath") == "true",
+            base_url=item.get("dataAddress", {}).get("baseUrl"),
+            edc=edc_id
+        )
+        
+        return asset
+
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=f"HTTP error from EDC: {e.response.text}")
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Connection error to EDC: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-async def update_asset(asset_id: str, updated_data: dict) -> bool:
+async def update_asset(asset: Asset, edc_id: str) -> bool:
     db = get_db()
-    result = await db["assets"].update_one(
-        {"_id": ObjectId(asset_id)}, {"$set": updated_data}
-    )
-    return result.modified_count > 0
+
+    try:
+        connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
+        if connector["mode"] == "managed":
+            management_port = connector["ports"]["management"]
+            base_url = f"http://localhost:{management_port}/management/v3/assets"
+        elif connector["mode"] == "remote":
+            base_url = f"{connector['endpoints_url']['management'].rstrip('/')}/management/v3/assets"
+        else:
+            raise ValueError("Invalid connector mode")
+        
+        api_key = connector["api_key"]
+        if not api_key:
+            raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+        payload = {
+            "@context": {
+                "@vocab": "https://w3id.org/edc/v0.0.1/ns/",
+                "edc": "https://w3id.org/edc/v0.0.1/ns/",
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "@id": asset.asset_id,
+            "@type": "Asset",
+            "properties": {
+                "name": asset.name,
+                "contenttype": asset.content_type
+            },
+            "dataAddress": {
+                "@type": "DataAddress",
+                "type": asset.data_address_type,
+                "name": asset.data_address_name,
+                "baseUrl": asset.base_url,
+                "proxyPath": str(asset.data_address_proxy).lower()
+            }
+        }
+
+        headers = {
+            "x-api-key": api_key
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.put(base_url, json=payload, headers=headers)
+            if response.status_code == 204:
+                return True
+            else:
+                return False
+    
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=f"HTTP error from EDC: {e.response.text}")
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Connection error to EDC: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-async def delete_asset(asset_id: str) -> bool:
+async def delete_asset(asset_id: str, edc_id: str) -> bool:
     db = get_db()
-    result = await db["assets"].delete_one({"_id": ObjectId(asset_id)})
-    return result.deleted_count > 0
+
+    try:
+        connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
+        if connector["mode"] == "managed":
+            management_port = connector["ports"]["management"]
+            base_url = f"http://localhost:{management_port}/management/v3/assets/{asset_id}"
+        elif connector["mode"] == "remote":
+            base_url = f"{connector['endpoints_url']['management'].rstrip('/')}/management/v3/assets/{asset_id}"
+        else:
+            raise ValueError("Invalid connector mode")
+        
+        api_key = connector["api_key"]
+        if not api_key:
+            raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+        headers = {
+            "x-api-key": api_key
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.delete(base_url, headers=headers)
+            if response.status_code == 204:
+                return True
+            else:
+                return False
+    
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=f"HTTP error from EDC: {e.response.text}")
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Connection error to EDC: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
-async def get_assets_by_edc_id(edc_id: str) -> list[dict]:
+async def get_assets_by_edc_id(edc_id: str) -> list[Asset]:
     db = get_db()
-    assets = await db["assets"].find({"edc": ObjectId(edc_id)}).to_list(length=None)
 
-    for asset in assets:
-        asset["id"] = str(asset["_id"])
-        asset["edc"] = str(asset["edc"])
-        del asset["_id"]
+    try:
+        connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
+        if not connector:
+            raise HTTPException(status_code=404, detail="EDC not found")
+        
+        if connector["mode"] == "managed":
+            management_port = connector["ports"]["management"]
+            base_url = f"http://localhost:{management_port}/management/v3/assets/request"
+        elif connector["mode"] == "remote":
+            base_url = f"{connector['endpoints_url']['management'].rstrip('/')}/management/v3/assets/request"
+        else:
+            raise ValueError("Invalid connector mode")
 
-    return assets
+        api_key = connector["api_key"]
+        if not api_key:
+            raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+        payload = {
+            "@context": {
+                "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+            },
+            "@type": "QuerySpec"
+        }
+
+        headers = {
+            "x-api-key": api_key
+        }
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(base_url, json=payload, headers=headers)
+            response.raise_for_status()
+            data = response.json()
+
+        # Convertir la lista de dicts en lista de Asset
+        assets = []
+        for item in data:
+            try:
+                asset = Asset(
+                    asset_id=item.get("@id"),
+                    name=item.get("properties", {}).get("name"),
+                    content_type=item.get("properties", {}).get("contenttype"),
+                    data_address_name=item.get("dataAddress", {}).get("name"),
+                    data_address_type=item.get("dataAddress", {}).get("type"),
+                    data_address_proxy=item.get("dataAddress", {}).get("proxyPath") == "true",
+                    base_url=item.get("dataAddress", {}).get("baseUrl"),
+                    edc=edc_id
+                )
+                assets.append(asset)
+            except Exception as e:
+                print(f"Error parsing asset {item.get('@id')}: {e}")
+                # Puedes decidir si quieres saltar este asset o lanzar una excepción
+                raise HTTPException(status_code=500, detail=f"Error parsing asset: {e}")
+        
+        return assets
+
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=f"HTTP error from EDC: {e.response.text}")
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Connection error to EDC: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+

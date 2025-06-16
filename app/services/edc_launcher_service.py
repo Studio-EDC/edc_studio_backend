@@ -28,12 +28,12 @@ web.http.version.port={version}
 web.http.version.path=/version
 
 # --- Vault (HashiCorp Dev) ---
-edc.vault.hashicorp.url=http://localhost:8200
+edc.vault.hashicorp.url=http://edc-vault:8200
 edc.vault.hashicorp.token=root
 edc.vault.hashicorp.secrets.path=secret/data/
 
 # --- Datasource: default (used by SqlAssetIndex and SqlDataPlaneStore) ---
-edc.datasource.default.url=jdbc:postgresql://edc-postgres:5432/edc-{type}-{id}
+edc.datasource.default.url=jdbc:postgresql://edc-postgres:5432/edc_{type}_{id}
 edc.datasource.default.user=postgres
 edc.datasource.default.password=admin
 edc.datasource.default.driver=org.postgresql.Driver
@@ -163,47 +163,66 @@ def _generate_files(connector: dict, base_path: Path):
   if not file_sql.exists():
     file_sql.write_text(DOCKER_COMPOSE_TEMPLATE_SQL)
 
+def _wait_for_postgres(host="localhost", port=5432, user="postgres", password="admin", timeout=30):
+    """Espera a que PostgreSQL esté disponible hasta un timeout."""
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        try:
+            conn = psycopg2.connect(dbname="postgres", user=user, password=password, host=host, port=port)
+            conn.close()
+            return True
+        except Exception:
+            time.sleep(1)
+    raise TimeoutError("PostgreSQL no está disponible tras esperar 30 segundos.")
+
 def _run_docker_compose(path: Path, db_name: str):
-  runtime_path = Path("runtime")
+    runtime_path = Path("runtime")
 
-  if not runtime_path.exists():
-      raise ValueError("SQL path not found")
+    if not runtime_path.exists():
+        raise ValueError("El directorio 'runtime' no existe.")
 
-  # 1. Arrancar PostgreSQL
-  try: 
-    subprocess.run(["docker", "compose", "up", "-d"], cwd=runtime_path)
-    conn = psycopg2.connect(dbname="postgres", user="postgres", password="admin", host="localhost")
-    conn.close()
-  except Exception as e:
-    print(e)
+    # 1. Arrancar PostgreSQL
+    print("Arrancando contenedor de PostgreSQL...")
+    subprocess.run(["docker", "compose", "up", "-d"], cwd=runtime_path, check=True)
 
-  # 3. Crear la base de datos
-  try:
-    conn = psycopg2.connect(dbname="postgres", user="postgres", password="admin", host="localhost")
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    cur = conn.cursor()
-    cur.execute("SELECT 1 FROM pg_database WHERE datname = %s", (db_name,))
-    exists = cur.fetchone()
-    if not exists:
-      cur.execute(sql.SQL("CREATE DATABASE {}").format(
-        sql.Identifier(db_name)
-      ))
-      print(f"Base de datos '{db_name}' creada.")
-    else:
-      print(f"La base de datos '{db_name}' ya existe. No se crea de nuevo.")
-  except Exception as e:
-    print(e)
+    # 2. Esperar a que PostgreSQL esté disponible
+    print("Esperando a que PostgreSQL esté disponible...")
+    _wait_for_postgres()
 
-  # 4. Ejecutar init.sql en la nueva base de datos
-  init_sql_path = Path("runtime") / "init.sql"
-  with psycopg2.connect(dbname=db_name, user="postgres", password="admin", host="localhost") as conn:
-      with conn.cursor() as cur:
-          with open(init_sql_path, "r") as f:
-              cur.execute(f.read())
-              print("Script init.sql ejecutado correctamente.")
+    # 3. Crear la base de datos si no existe
+    try:
+        with psycopg2.connect(dbname="postgres", user="postgres", password="admin", host="localhost") as conn:
+            conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1 FROM pg_database WHERE datname = %s", (db_name,))
+                exists = cur.fetchone()
+                if not exists:
+                    cur.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(db_name)))
+                    print(f"Base de datos '{db_name}' creada.")
+                else:
+                    print(f"La base de datos '{db_name}' ya existe. No se crea de nuevo.")
+    except Exception as e:
+        print(f"Error creando la base de datos: {e}")
+        raise
 
-  # 5. Arrancar el resto del sistema
-  subprocess.run(["docker", "compose", "up", "-d"], cwd=path)
+    # 4. Ejecutar init.sql
+    init_sql_path = runtime_path / "init.sql"
+    if not init_sql_path.exists():
+        raise FileNotFoundError(f"No se encontró el archivo {init_sql_path}")
+    try:
+        with psycopg2.connect(dbname=db_name, user="postgres", password="admin", host="localhost") as conn:
+            with conn.cursor() as cur:
+                with open(init_sql_path, "r") as f:
+                    cur.execute(f.read())
+                    print("Script init.sql ejecutado correctamente.")
+    except Exception as e:
+        print(f"Error ejecutando init.sql: {e}")
+        raise
+
+    # 5. Arrancar el resto del sistema
+    print("Arrancando el resto del sistema...")
+    subprocess.run(["docker", "compose", "up", "-d"], cwd=path, check=True)
+    print("Sistema arrancado correctamente.")
 
 def _run_docker_compose_down(path: Path):
   subprocess.run(["docker", "compose", "down"], cwd=path)
