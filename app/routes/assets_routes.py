@@ -17,7 +17,6 @@ router = APIRouter()
 @router.post("/", status_code=201)
 async def create_asset_route(data: Asset):
     inserted_id = await create_asset(data)
-    print(inserted_id)
     return inserted_id['@id']
 
 

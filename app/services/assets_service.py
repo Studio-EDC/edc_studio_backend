@@ -5,7 +5,7 @@ from app.models.asset import Asset
 import httpx
 
 
-async def create_asset(data: Asset) -> str:
+async def create_asset(data: Asset) -> dict:
     db = get_db()
     edc_id = data.edc
 
