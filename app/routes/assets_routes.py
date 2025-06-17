@@ -37,25 +37,18 @@ async def get_asset_by_asset_id(edc_id: str, asset_id: str):
 
 @router.get("/{id}")
 async def get_asset(id: str):
-    try:
-        asset = await get_asset_by_id(id)
-        return asset
-    except ValueError:
-        raise HTTPException(status_code=404, detail="Asset not found")
+    asset = await get_asset_by_id(id)
+    return asset
 
 
 @router.put("/{edc_id}")
 async def update_asset_route(asset: Asset, edc_id: str):
-    success = await update_asset(asset, edc_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Asset not found or not updated")
+    await update_asset(asset, edc_id)
     return {"message": "Asset updated successfully"}
 
 
 @router.delete("/{asset_id}/{edc_id}")
 async def delete_asset_route(asset_id: str, edc_id: str):
-    success = await delete_asset(asset_id, edc_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Asset not found or not deleted")
+    await delete_asset(asset_id, edc_id)
     return {"message": "Asset deleted successfully"}
 

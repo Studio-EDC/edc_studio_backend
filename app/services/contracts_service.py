@@ -43,7 +43,6 @@ async def register_contract_with_edc(contract: dict, connector: dict):
 
     async with httpx.AsyncClient() as client:
         response = await client.post(base_url, json=payload, headers=headers)
-        print(response)
         response.raise_for_status()
         return response.json()
 

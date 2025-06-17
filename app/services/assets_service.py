@@ -277,8 +277,6 @@ async def get_assets_by_edc_id(edc_id: str) -> list[Asset]:
                 )
                 assets.append(asset)
             except Exception as e:
-                print(f"Error parsing asset {item.get('@id')}: {e}")
-                # Puedes decidir si quieres saltar este asset o lanzar una excepción
                 raise HTTPException(status_code=500, detail=f"Error parsing asset: {e}")
         
         return assets

@@ -39,15 +39,24 @@ async def catalog_request_curl(consumer: dict, provider: dict):
         "protocol": "dataspace-protocol-http"
     }
 
+    api_key = consumer["api_key"]
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+    headers = {
+        "x-api-key": api_key
+    }
+
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(management_url, json=payload)
+            response = await client.post(management_url, json=payload, headers=headers)
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as exc:
-            print(f"Catalog request failed: {exc.response.status_code}")
-            print(f"Response text: {exc.response.text}")
-            raise
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"EDC error: {exc.response.text}"
+            )
 
 async def negotiate_contract_service(consumer_id: str, provider_id: str, contract_offer_id: str, asset: str) -> dict:
     db = get_db()
@@ -88,15 +97,24 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
         }
     }
 
+    api_key = consumer["api_key"]
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+    headers = {
+        "x-api-key": api_key
+    }
+
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(management_url, json=payload)
+            response = await client.post(management_url, json=payload, headers=headers)
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as exc:
-            print(f"Catalog request failed: {exc.response.status_code}")
-            print(f"Response text: {exc.response.text}")
-            raise
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"EDC error: {exc.response.text}"
+            )
 
 async def get_contract_agreement_service(consumer_id: str, id_contract_negotiation: str) -> dict:
     db = get_db()
@@ -117,15 +135,24 @@ async def get_contract_agreement_curl(consumer: dict, id_contract_negotiation: s
     else:
         raise ValueError("Invalid connector mode")
 
+    api_key = consumer["api_key"]
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+    headers = {
+        "x-api-key": api_key
+    }
+
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.get(management_url)
+            response = await client.get(management_url, headers=headers)
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as exc:
-            print(f"Catalog request failed: {exc.response.status_code}")
-            print(f"Response text: {exc.response.text}")
-            raise
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"EDC error: {exc.response.text}"
+            )
 
 def start_http_server_service():
     project_root = Path(__file__).resolve().parent.parent
@@ -196,15 +223,24 @@ async def start_transfer_curl(consumer: dict, provider: dict, contract_agreement
         }
     }
 
+    api_key = consumer["api_key"]
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+    headers = {
+        "x-api-key": api_key
+    }
+
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(management_url, json=payload)
+            response = await client.post(management_url, json=payload, headers=headers)
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as exc:
-            print(f"Start transfer failed: {exc.response.status_code}")
-            print(f"Response text: {exc.response.text}")
-            raise
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"EDC error: {exc.response.text}"
+            )
 
 async def check_transfer_service(consumer_id: str, transfer_process_id: str) -> dict:
     db = get_db()
@@ -225,15 +261,24 @@ async def check_transfer_curl(consumer: dict, transfer_process_id: str):
     else:
         raise ValueError("Invalid connector mode")
 
+    api_key = consumer["api_key"]
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+    headers = {
+        "x-api-key": api_key
+    }
+
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.get(management_url)
+            response = await client.get(management_url, headers=headers)
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as exc:
-            print(f"Start transfer failed: {exc.response.status_code}")
-            print(f"Response text: {exc.response.text}")
-            raise
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"EDC error: {exc.response.text}"
+            )
 
 async def create_transfer_service(data: Transfer) -> str:
     db = get_db()
@@ -245,15 +290,10 @@ async def create_transfer_service(data: Transfer) -> str:
     provider = await db["connectors"].find_one({"_id": ObjectId(data.provider)})
     if not provider:
         raise HTTPException(status_code=404, detail="Provider not found")
-    
-    asset = await db["assets"].find_one({"_id": ObjectId(data.asset)})
-    if not asset:
-        raise HTTPException(status_code=404, detail="Asset not found")
 
     transfer_dict = data.model_dump(by_alias=True)
     transfer_dict["consumer"] = consumer["_id"]
     transfer_dict["provider"] = provider["_id"]
-    transfer_dict["asset"] = asset["_id"]
 
     result = await db["transfers"].insert_one(transfer_dict)
     return str(result.inserted_id)
@@ -329,15 +369,24 @@ async def start_transfer_curl_pull(consumer: dict, provider: dict, contract_agre
         "transferType": "HttpData-PULL"
     }
 
+    api_key = consumer["api_key"]
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+    headers = {
+        "x-api-key": api_key
+    }
+
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(management_url, json=payload)
+            response = await client.post(management_url, json=payload, headers=headers)
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as exc:
-            print(f"Start transfer failed: {exc.response.status_code}")
-            print(f"Response text: {exc.response.text}")
-            raise
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"EDC error: {exc.response.text}"
+            )
 
 async def check_transfer_data_pull_service(consumer_id: str, transfer_process_id: str) -> dict:
     db = get_db()
@@ -358,12 +407,21 @@ async def check_transfer_data_curl_pull(consumer: dict, transfer_process_id: str
     else:
         raise ValueError("Invalid connector mode")
 
+    api_key = consumer["api_key"]
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Connector API key not configured")
+
+    headers = {
+        "x-api-key": api_key
+    }
+
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.get(management_url)
+            response = await client.get(management_url, headers=headers)
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as exc:
-            print(f"Start transfer failed: {exc.response.status_code}")
-            print(f"Response text: {exc.response.text}")
-            raise
+            raise HTTPException(
+                status_code=exc.response.status_code,
+                detail=f"EDC error: {exc.response.text}"
+            )

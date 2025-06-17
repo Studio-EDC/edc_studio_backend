@@ -57,7 +57,7 @@ async def get_all_connectors() -> list[dict]:
     except Exception as e:
         print("⚠️  Docker is not available or not running:")
         traceback.print_exc()
-        active_containers = set()  # Considerar todos como apagados
+        active_containers = set()
 
     for c in connectors:
         if c['mode'] == 'managed':

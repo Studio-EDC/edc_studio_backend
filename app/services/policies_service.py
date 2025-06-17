@@ -149,7 +149,6 @@ async def get_policies_by_edc_id(edc_id: str) -> list[dict]:
             try:
                 policy_data = item.get("policy", {})
                 
-                
                 policies.append(Policy(
                     edc=edc_id,
                     policy_id=item.get("@id"),
@@ -164,8 +163,7 @@ async def get_policies_by_edc_id(edc_id: str) -> list[dict]:
                 ))
 
             except Exception as e:
-                print(f"Error processing policy {item.get('@id')}: {e}")
-                continue
+                raise HTTPException(status_code=500, detail=f"Error parsing asset: {e}")
         
         return policies
 
