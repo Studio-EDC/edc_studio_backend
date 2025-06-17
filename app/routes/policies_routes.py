@@ -21,7 +21,5 @@ async def get_policy_by_policy_id(edc_id: str, policy_id: str):
 
 @router.delete("/{policy_id}/{edc_id}")
 async def delete_asset_route(policy_id: str, edc_id: str):
-    success = await delete_policy(policy_id, edc_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Asset not found or not deleted")
+    await delete_policy(policy_id, edc_id)
     return {"message": "Asset deleted successfully"}

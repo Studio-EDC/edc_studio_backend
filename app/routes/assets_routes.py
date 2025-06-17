@@ -3,8 +3,6 @@ from fastapi import APIRouter, HTTPException
 from app.models.asset import Asset
 from app.services.assets_service import (
     create_asset,
-    get_all_assets,
-    get_asset_by_id,
     get_assets_by_edc_id,
     update_asset,
     delete_asset,
@@ -20,11 +18,6 @@ async def create_asset_route(data: Asset):
     return inserted_id['@id']
 
 
-@router.get("/")
-async def list_assets():
-    return await get_all_assets()
-
-
 @router.get("/by-edc/{edc_id}", response_model=List[Asset])
 async def list_assets_by_edc(edc_id: str):
     return await get_assets_by_edc_id(edc_id)
@@ -33,12 +26,6 @@ async def list_assets_by_edc(edc_id: str):
 @router.get("/by-asset-id/{edc_id}/{asset_id}", response_model=Asset)
 async def get_asset_by_asset_id(edc_id: str, asset_id: str):
     return await get_asset_by_asset_id_service(edc_id, asset_id)
-
-
-@router.get("/{id}")
-async def get_asset(id: str):
-    asset = await get_asset_by_id(id)
-    return asset
 
 
 @router.put("/{edc_id}")
