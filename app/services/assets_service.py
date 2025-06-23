@@ -19,8 +19,12 @@ async def create_asset(data: Asset) -> dict:
 
     try:
         return await register_asset_with_edc(asset_dict, edc)
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=f"HTTP error from EDC: {e.response.text}")
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"Connection error to EDC: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to register asset in EDC: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 async def register_asset_with_edc(asset: dict, connector: dict):

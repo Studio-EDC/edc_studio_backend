@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header, Response
+from fastapi.responses import JSONResponse
 from app.models.transfer import Transfer
 from app.schemas.transfer import RequestCatalog, NegotitateContract, ContractAgreement, StartTransfer, CheckTransfer
 from app.services.transfers_service import catalog_request_service, check_transfer_data_pull_service, get_all_transfers_service, negotiate_contract_service, get_contract_agreement_service, start_http_server_service, start_transfer_service_pull, stop_http_server_service, start_transfer_service, check_transfer_service, create_transfer_service
+import requests
 
 router = APIRouter()
 
@@ -106,3 +108,27 @@ async def check_data_pull(data: CheckTransfer):
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to check data: {str(e)}")
+    
+
+@router.get("/proxy_http_logger")
+def proxy_http_logger():
+    response = requests.get("http://localhost:4000/data")
+    data = response.json()
+    return JSONResponse(content=data)
+
+@router.get("/proxy_pull")
+def proxy_pull(
+    uri: str,
+    authorization: str = Header(...)
+):
+    headers = {
+        "Authorization": authorization
+    }
+
+    r = requests.get(uri, headers=headers)
+
+    if r.status_code != 200:
+        raise HTTPException(status_code=r.status_code, detail=f"Error from pull endpoint: {r.text}")
+
+    content_type = r.headers.get("Content-Type", "application/octet-stream")
+    return Response(content=r.content, media_type=content_type)
