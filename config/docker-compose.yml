@@ -3,7 +3,7 @@
 services:
   vault:
     image: hashicorp/vault:1.15
-    container_name: edc-vault
+    container_name: edc_vault
     ports:
       - "8200:8200"
     environment:
@@ -18,7 +18,7 @@ services:
 
   postgres:
     image: postgres:15
-    container_name: edc-postgres
+    container_name: edc_postgres
     environment:
       POSTGRES_DB: edc
       POSTGRES_USER: postgres

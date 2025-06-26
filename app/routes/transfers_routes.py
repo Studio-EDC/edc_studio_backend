@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, HTTPException, Header, Response
 from fastapi.responses import JSONResponse
 from app.models.transfer import Transfer
@@ -112,7 +113,10 @@ async def check_data_pull(data: CheckTransfer):
 
 @router.get("/proxy_http_logger")
 def proxy_http_logger():
-    response = requests.get("http://localhost:4000/data")
+    if os.getenv("TYPE", "localhost") == 'localhost':
+        response = requests.get("http://localhost:4000/data")
+    else:
+        response = requests.get("http://http-logger:4000/data")
     data = response.json()
     return JSONResponse(content=data)
 

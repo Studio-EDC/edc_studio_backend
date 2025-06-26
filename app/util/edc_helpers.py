@@ -1,10 +1,12 @@
+import os
 from fastapi import HTTPException
 
 
 def get_base_url(connector: dict, path: str) -> str:
     if connector["mode"] == "managed":
         management_port = connector["ports"]["management"]
-        return f"http://localhost:{management_port}{path}"
+        if os.getenv("TYPE", "localhost") == 'localhost': return f"http://localhost:{management_port}{path}"
+        else: return f"http://edc-{connector['type']}-{str(connector['_id'])}:{management_port}{path}"
     elif connector["mode"] == "remote":
         return f"{connector['endpoints_url']['management'].rstrip('/')}{path}"
     else:

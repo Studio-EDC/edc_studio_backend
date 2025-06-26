@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 
 from app.models.transfer import Transfer
+from app.util.edc_helpers import get_base_url
 
 async def catalog_request_service(consumer_id: str, provider_id: str) -> dict:
     db = get_db()
@@ -21,9 +22,8 @@ async def catalog_request_service(consumer_id: str, provider_id: str) -> dict:
 
 async def catalog_request_curl(consumer: dict, provider: dict):
     if consumer["mode"] == "managed":
-        management_port = consumer["ports"]["management"]
         protocol_port = provider["ports"]["protocol"]
-        management_url = f"http://localhost:{management_port}/management/v3/catalog/request"
+        management_url = get_base_url(consumer, f"/management/v3/catalog/request")
         protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/catalog/request"
@@ -73,7 +73,7 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
     if consumer["mode"] == "managed":
         management_port = consumer["ports"]["management"]
         protocol_port = provider["ports"]["protocol"]
-        management_url = f"http://localhost:{management_port}/management/v3/contractnegotiations"
+        management_url = get_base_url(consumer, f"/management/v3/contractnegotiations")
         protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/contractnegotiations"
@@ -128,8 +128,7 @@ async def get_contract_agreement_service(consumer_id: str, id_contract_negotiati
 
 async def get_contract_agreement_curl(consumer: dict, id_contract_negotiation: str):
     if consumer["mode"] == "managed":
-        management_port = consumer["ports"]["management"]
-        management_url = f"http://localhost:{management_port}/management/v3/contractnegotiations/{id_contract_negotiation}"
+        management_url = get_base_url(consumer, f"/management/v3/contractnegotiations/{id_contract_negotiation}")
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/contractnegotiations/{id_contract_negotiation}"
     else:
@@ -199,7 +198,7 @@ async def start_transfer_curl(consumer: dict, provider: dict, contract_agreement
     if consumer["mode"] == "managed":
         management_port = consumer["ports"]["management"]
         protocol_port = provider["ports"]["protocol"]
-        management_url = f"http://localhost:{management_port}/management/v3/transferprocesses"
+        management_url = get_base_url(consumer, f"/management/v3/transferprocesses")
         protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/transferprocesses"
@@ -254,8 +253,7 @@ async def check_transfer_service(consumer_id: str, transfer_process_id: str) -> 
 
 async def check_transfer_curl(consumer: dict, transfer_process_id: str):
     if consumer["mode"] == "managed":
-        management_port = consumer["ports"]["management"]
-        management_url = f"http://localhost:{management_port}/management/v3/transferprocesses/{transfer_process_id}"
+        management_url = get_base_url(consumer, f"/management/v3/transferprocesses/{transfer_process_id}")
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/transferprocesses/{transfer_process_id}"
     else:
@@ -347,9 +345,8 @@ async def start_transfer_service_pull(consumer_id: str, provider_id: str, contra
 
 async def start_transfer_curl_pull(consumer: dict, provider: dict, contract_agreement_id: str):
     if consumer["mode"] == "managed":
-        management_port = consumer["ports"]["management"]
         protocol_port = provider["ports"]["protocol"]
-        management_url = f"http://localhost:{management_port}/management/v3/transferprocesses"
+        management_url = get_base_url(consumer, f"/management/v3/transferprocesses")
         protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/transferprocesses"
@@ -400,8 +397,7 @@ async def check_transfer_data_pull_service(consumer_id: str, transfer_process_id
 
 async def check_transfer_data_curl_pull(consumer: dict, transfer_process_id: str):
     if consumer["mode"] == "managed":
-        management_port = consumer["ports"]["management"]
-        management_url = f"http://localhost:{management_port}/management/v3/edrs/{transfer_process_id}/dataaddress"
+        management_url = get_base_url(consumer, f"/management/v3/edrs/{transfer_process_id}/dataaddress")
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/edrs/{transfer_process_id}/dataaddress"
     else:

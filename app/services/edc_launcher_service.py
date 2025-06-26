@@ -2,11 +2,10 @@ import os
 import subprocess
 from pathlib import Path
 import time
-from app.db.client import get_db
-from bson import ObjectId
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2 import sql
+import sqlparse
 
 CONFIG_TEMPLATE = """
 edc.hostname=localhost
@@ -33,7 +32,7 @@ edc.vault.hashicorp.token=root
 edc.vault.hashicorp.secrets.path=secret/data/
 
 # --- Datasource: default (used by SqlAssetIndex and SqlDataPlaneStore) ---
-edc.datasource.default.url=jdbc:postgresql://edc-postgres:5432/edc_{type}_{id}
+edc.datasource.default.url=jdbc:postgresql://edc_postgres:5432/edc_{type}_{id}
 edc.datasource.default.user=postgres
 edc.datasource.default.password=admin
 edc.datasource.default.driver=org.postgresql.Driver
@@ -57,52 +56,10 @@ services:
       - "{control}:{control}"
       - "{version}:{version}"
     volumes:
-      - ./resources/configuration:/app/configuration
+      - {runtime_path}/{name}/resources/configuration:/app/configuration
 
     networks:
       - edc-network
-
-networks:
-  edc-network:
-    external: true
-"""
-
-DOCKER_COMPOSE_TEMPLATE_SQL = """
-version: '3.8'
-
-services:
-  vault:
-    image: hashicorp/vault:1.15
-    container_name: edc-vault
-    ports:
-      - "8200:8200"
-    environment:
-      VAULT_DEV_ROOT_TOKEN_ID: root
-      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
-    cap_add:
-      - IPC_LOCK
-    command: server -dev
-
-    networks:
-      - edc-network
-
-  postgres:
-    image: postgres:15
-    container_name: edc-postgres
-    environment:
-      POSTGRES_DB: edc
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-    networks:
-      - edc-network
-
-volumes:
-  postgres_data:
 
 networks:
   edc-network:
@@ -153,17 +110,10 @@ def _generate_files(connector: dict, base_path: Path):
   # Write docker-compose.yml
   compose_file = base_path / "docker-compose.yml"
   compose_file.write_text(DOCKER_COMPOSE_TEMPLATE.format(
-      type=ctype, name=id, **ports
+      type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime")
   ))
 
-  # Write docker-compose.yml sql and vault
-  file_sql = Path("runtime") / "docker-compose.yml"
-  file_sql.parent.mkdir(parents=True, exist_ok=True)
-
-  if not file_sql.exists():
-    file_sql.write_text(DOCKER_COMPOSE_TEMPLATE_SQL)
-
-def _wait_for_postgres(host="localhost", port=5432, user="postgres", password="admin", timeout=30):
+def _wait_for_postgres(host=os.getenv("POSTGRES_HOST", "localhost"), port=os.getenv("POSTGRES_PORT", 5432), user=os.getenv("POSTGRES_USER", "postgres"), password=os.getenv("POSTGRES_PASS", "admin"), timeout=30):
     """Espera a que PostgreSQL esté disponible hasta un timeout."""
     start_time = time.time()
     while time.time() - start_time < timeout:
@@ -177,13 +127,14 @@ def _wait_for_postgres(host="localhost", port=5432, user="postgres", password="a
 
 def _run_docker_compose(path: Path, db_name: str):
     runtime_path = Path("runtime")
+    config_path = Path("config")
 
     if not runtime_path.exists():
         raise ValueError("El directorio 'runtime' no existe.")
 
     # 1. Arrancar PostgreSQL
     print("Arrancando contenedor de PostgreSQL...")
-    subprocess.run(["docker", "compose", "up", "-d"], cwd=runtime_path, check=True)
+    subprocess.run(["docker", "compose", "up", "-d"], cwd=config_path, check=True)
 
     # 2. Esperar a que PostgreSQL esté disponible
     print("Esperando a que PostgreSQL esté disponible...")
@@ -191,30 +142,46 @@ def _run_docker_compose(path: Path, db_name: str):
 
     # 3. Crear la base de datos si no existe
     try:
-        with psycopg2.connect(dbname="postgres", user="postgres", password="admin", host="localhost") as conn:
-            conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-            with conn.cursor() as cur:
-                cur.execute("SELECT 1 FROM pg_database WHERE datname = %s", (db_name,))
-                exists = cur.fetchone()
-                if not exists:
-                    cur.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(db_name)))
-                    print(f"Base de datos '{db_name}' creada.")
-                else:
-                    print(f"La base de datos '{db_name}' ya existe. No se crea de nuevo.")
+        conn = psycopg2.connect(dbname="postgres", user=os.getenv("POSTGRES_USER", "postgres"), password=os.getenv("POSTGRES_PASS", "admin"), host=os.getenv("POSTGRES_HOST", "localhost"))
+        conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = conn.cursor()
+        cur.execute("SELECT 1 FROM pg_database WHERE datname = %s", (db_name,))
+        exists = cur.fetchone()
+        if not exists:
+            cur.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(db_name)))
+            print(f"Base de datos '{db_name}' creada.")
+        else:
+            print(f"La base de datos '{db_name}' ya existe. No se crea de nuevo.")
     except Exception as e:
         print(f"Error creando la base de datos: {e}")
         raise
 
     # 4. Ejecutar init.sql
-    init_sql_path = runtime_path / "init.sql"
+    init_sql_path = config_path / "init.sql"
+    print(init_sql_path)
     if not init_sql_path.exists():
         raise FileNotFoundError(f"No se encontró el archivo {init_sql_path}")
     try:
-        with psycopg2.connect(dbname=db_name, user="postgres", password="admin", host="localhost") as conn:
-            with conn.cursor() as cur:
-                with open(init_sql_path, "r") as f:
-                    cur.execute(f.read())
-                    print("Script init.sql ejecutado correctamente.")
+        conn = psycopg2.connect(dbname=db_name, user=os.getenv("POSTGRES_USER", "postgres"), password=os.getenv("POSTGRES_PASS", "admin"), host=os.getenv("POSTGRES_HOST", "localhost"))
+        cur = conn.cursor()
+        with open(init_sql_path, "r") as f:
+            script = f.read()
+        
+        statements = sqlparse.split(script)
+
+        for statement in statements:
+            cleaned = statement.strip()
+            if cleaned:
+                try:
+                    cur.execute(cleaned)
+                except Exception as e:
+                    print(f"⚠️  Error ejecutando: {e}")
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Script init.sql ejecutado correctamente.")
+
     except Exception as e:
         print(f"Error ejecutando init.sql: {e}")
         raise
