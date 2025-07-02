@@ -1,13 +1,16 @@
 FROM python:3.11-slim
 
-# Instala docker y docker compose plugin
+# Instala dependencias necesarias, incluyendo OpenJDK 17
 RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     ca-certificates \
     lsb-release \
     apt-transport-https \
-    docker.io
+    docker.io \
+    openjdk-17-jdk \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
 # Crear carpeta para el plugin y descargar docker compose
 RUN mkdir -p /usr/local/lib/docker/cli-plugins && \
@@ -16,7 +19,7 @@ RUN mkdir -p /usr/local/lib/docker/cli-plugins && \
     chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 
 # Verifica que esté bien instalado
-RUN docker compose version
+RUN docker compose version && keytool -help
 
 WORKDIR /app
 
