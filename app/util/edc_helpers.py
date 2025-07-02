@@ -1,8 +1,11 @@
 import os
+from dotenv import load_dotenv
 from fastapi import HTTPException
 
 
 def get_base_url(connector: dict, path: str) -> str:
+    load_dotenv()
+    
     if connector["mode"] == "managed":
         management_port = connector["ports"]["management"]
         if os.getenv("TYPE", "localhost") == 'localhost': return f"http://localhost:{management_port}{path}"

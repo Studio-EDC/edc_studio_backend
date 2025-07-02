@@ -1,11 +1,15 @@
 import os
+import secrets
 import subprocess
 from pathlib import Path
 import time
+from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2 import sql
 import sqlparse
+
+keystore_password = secrets.token_urlsafe(16)
 
 CONFIG_TEMPLATE = """
 edc.hostname=localhost
@@ -26,10 +30,6 @@ web.http.control.path=/control
 web.http.version.port={version}
 web.http.version.path=/version
 
-# --- Vault (HashiCorp Dev) ---
-edc.vault.hashicorp.url=http://edc-vault:8200
-edc.vault.hashicorp.token=root
-edc.vault.hashicorp.secrets.path=secret/data/
 
 # --- Datasource: default (used by SqlAssetIndex and SqlDataPlaneStore) ---
 edc.datasource.default.url=jdbc:postgresql://edc_postgres:5432/edc_{type}_{id}
@@ -45,7 +45,7 @@ web.http.management.auth.key={secret}
 DOCKER_COMPOSE_TEMPLATE = """
 services:
   {type}:
-    image: itziarmensaupc/connector:0.0.4
+    image: itziarmensaupc/connector:0.0.6
     platform: linux/amd64
     container_name: edc-{type}-{name}
     ports:
@@ -57,6 +57,10 @@ services:
       - "{version}:{version}"
     volumes:
       - {runtime_path}/{name}/resources/configuration:/app/configuration
+      - {runtime_path}/{name}/resources/certs:/app/certs
+
+    environment:
+      - EDC_KEYSTORE_PASSWORD={keystore_password}
 
     networks:
       - edc-network
@@ -79,38 +83,40 @@ def _generate_files(connector: dict, base_path: Path):
 
   # Create folders
   config_path = base_path / "resources" / "configuration"
-  # certs_path = base_path / "resources" / "certs"
+  certs_path = base_path / "resources" / "certs"
   config_path.mkdir(parents=True, exist_ok=True)
-  # certs_path.mkdir(parents=True, exist_ok=True)
+  certs_path.mkdir(parents=True, exist_ok=True)
 
   # Write config.properties
   config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports, secret=secret) + proxy_public_line
   (config_path / "config.properties").write_text(config_content)
 
   # Generate real cert.pfx using keytool
-  # cert_path = certs_path / "cert.pfx"
-  """ if cert_path.exists():
+  cert_path = certs_path / "cert.pfx"
+  if cert_path.exists():
       cert_path.unlink()
   try:
-      result = subprocess.run([
+      subprocess.run([
           "keytool", "-genkeypair",
           "-alias", "private-key",
           "-keyalg", "RSA",
           "-keysize", "2048",
           "-keystore", str(cert_path),
           "-storetype", "PKCS12",
-          "-storepass", password,
-          "-keypass", password,
+          "-storepass", keystore_password,
+          "-keypass", keystore_password,
           "-dname", f"CN={id}"
       ], capture_output=True, text=True, check=True)
   except subprocess.CalledProcessError as e:
-      raise RuntimeError(f"keytool failed:\nSTDOUT:\n{e.stdout}\nSTDERR:\n{e.stderr}") """
+      raise RuntimeError(f"keytool failed:\nSTDOUT:\n{e.stdout}\nSTDERR:\n{e.stderr}")
 
 
+  load_dotenv()
+  
   # Write docker-compose.yml
   compose_file = base_path / "docker-compose.yml"
   compose_file.write_text(DOCKER_COMPOSE_TEMPLATE.format(
-      type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime")
+      type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password
   ))
 
 def _wait_for_postgres(host=os.getenv("POSTGRES_HOST", "localhost"), port=os.getenv("POSTGRES_PORT", 5432), user=os.getenv("POSTGRES_USER", "postgres"), password=os.getenv("POSTGRES_PASS", "admin"), timeout=30):
@@ -126,6 +132,9 @@ def _wait_for_postgres(host=os.getenv("POSTGRES_HOST", "localhost"), port=os.get
     raise TimeoutError("PostgreSQL no está disponible tras esperar 30 segundos.")
 
 def _run_docker_compose(path: Path, db_name: str):
+
+    load_dotenv()
+
     runtime_path = Path("runtime")
     config_path = Path("config")
 
@@ -158,7 +167,6 @@ def _run_docker_compose(path: Path, db_name: str):
 
     # 4. Ejecutar init.sql
     init_sql_path = config_path / "init.sql"
-    print(init_sql_path)
     if not init_sql_path.exists():
         raise FileNotFoundError(f"No se encontró el archivo {init_sql_path}")
     try:

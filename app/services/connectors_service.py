@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import subprocess
 import traceback
 from app.models.connector import Connector
@@ -10,9 +11,35 @@ from pymongo.results import DeleteResult
 
 async def create_connector(connector: Connector) -> str:
     db = get_db()
+    await check_ports_unique(connector, db)
     connector_dict = connector.dict()
     result = await db["connectors"].insert_one(connector_dict)
     return str(result.inserted_id)
+
+async def check_ports_unique(connector: Connector, db):
+
+    if connector.ports is None:
+        return
+    
+    ports_to_check = [
+        connector.ports.http,
+        connector.ports.management,
+        connector.ports.protocol,
+        connector.ports.control,
+        connector.ports.public,
+        connector.ports.version,
+    ]
+    
+    query = {
+        "$or": [
+            {f"ports.{field}": port}
+            for field, port in zip(["http", "management", "protocol", "control", "public", "version"], ports_to_check)
+        ]
+    }
+
+    existing = await db["connectors"].find_one(query)
+    if existing:
+        raise HTTPException(status_code=400, detail="One or more ports are already in use.")
 
 async def start_edc_service(connector_id: str):
     db = get_db()

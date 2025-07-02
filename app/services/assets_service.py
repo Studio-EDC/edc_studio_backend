@@ -188,6 +188,7 @@ async def get_assets_by_edc_id(edc_id: str) -> list[Asset]:
         raise HTTPException(status_code=404, detail="EDC not found")
 
     base_url = get_base_url(connector, "/management/v3/assets/request")
+    print(base_url)
     api_key = get_api_key(connector)
 
     payload = {

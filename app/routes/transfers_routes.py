@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Header, Response
 from fastapi.responses import JSONResponse
 from app.models.transfer import Transfer
@@ -106,13 +107,12 @@ async def check_data_pull(data: CheckTransfer):
         response = await check_transfer_data_pull_service(data.consumer, data.transfer_process_id)
         return response
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to check data: {str(e)}")
-    
+        raise HTTPException(status_code=404, detail=str(e))    
 
 @router.get("/proxy_http_logger")
 def proxy_http_logger():
+    load_dotenv()
+    
     if os.getenv("TYPE", "localhost") == 'localhost':
         response = requests.get("http://localhost:4000/data")
     else:

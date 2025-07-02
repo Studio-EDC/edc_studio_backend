@@ -402,7 +402,7 @@ async def check_transfer_data_curl_pull(consumer: dict, transfer_process_id: str
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/edrs/{transfer_process_id}/dataaddress"
     else:
         raise ValueError("Invalid connector mode")
-
+    
     api_key = consumer["api_key"]
     if not api_key:
         raise HTTPException(status_code=500, detail="Connector API key not configured")
