@@ -6,7 +6,8 @@ from app.db.client import init_mongo
 app = FastAPI(
     title="EDC Connector Manager",
     description="API to manage Eclipse Data Connectors (EDC)",
-    version="0.1.0"
+    version="0.1.3",
+    root_path="/api"
 )
 
 # CORS middleware: allow cross-origin requests (adjust for production)
