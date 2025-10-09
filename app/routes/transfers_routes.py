@@ -80,13 +80,13 @@ async def check_transfer(data: CheckTransfer):
         raise HTTPException(status_code=500, detail=f"Failed to check transfer: {str(e)}")
     
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def new_transfer(data: Transfer):
     inserted_id = await create_transfer_service(data)
     return {"id": inserted_id}
 
 
-@router.get("/", status_code=200)
+@router.get("", status_code=200)
 async def get_all_transfers():
     transfers = await get_all_transfers_service()
     return transfers

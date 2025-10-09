@@ -5,7 +5,7 @@ from app.services.policies_service import create_policy, delete_policy, get_poli
 router = APIRouter()
 
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def create_policy_route(data: Policy):
     inserted_id = await create_policy(data)
     return inserted_id['@id']

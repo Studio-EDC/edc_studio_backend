@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from fastapi import HTTPException
 import subprocess
 import traceback
@@ -51,7 +53,9 @@ async def start_edc_service(connector_id: str):
 
     try:
         _generate_files(connector, base_path)
-        _create_docker_network_if_not_exists("edc-network")
+        load_dotenv()
+        network_name = os.getenv("NETWORK_NAME", "edc-network")
+        _create_docker_network_if_not_exists(network_name)
         db_name = 'edc_' + connector['type'] + '_' + str(connector['_id'])
         _run_docker_compose(base_path, db_name)
         await db["connectors"].update_one({"_id": ObjectId(connector_id)}, {"$set": {"state": "running"}})

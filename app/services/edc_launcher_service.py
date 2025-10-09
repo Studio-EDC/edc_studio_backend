@@ -32,7 +32,7 @@ web.http.version.path=/version
 
 
 # --- Datasource: default (used by SqlAssetIndex and SqlDataPlaneStore) ---
-edc.datasource.default.url=jdbc:postgresql://edc_postgres:5432/edc_{type}_{id}
+edc.datasource.default.url=jdbc:postgresql://edc_postgres:{port_postgress}/edc_{type}_{id}
 edc.datasource.default.user=postgres
 edc.datasource.default.password=admin
 edc.datasource.default.driver=org.postgresql.Driver
@@ -63,10 +63,10 @@ services:
       - EDC_KEYSTORE_PASSWORD={keystore_password}
 
     networks:
-      - edc-network
+      - {network_name}
 
 networks:
-  edc-network:
+  {network_name}:
     external: true
 """
 
@@ -87,8 +87,11 @@ def _generate_files(connector: dict, base_path: Path):
   config_path.mkdir(parents=True, exist_ok=True)
   certs_path.mkdir(parents=True, exist_ok=True)
 
+  load_dotenv()
+  port_postgress=os.getenv("POSTGRES_PORT", 5432)
+
   # Write config.properties
-  config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports, secret=secret) + proxy_public_line
+  config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports, secret=secret, port_postgress=port_postgress) + proxy_public_line
   (config_path / "config.properties").write_text(config_content)
 
   # Generate real cert.pfx using keytool
@@ -116,10 +119,17 @@ def _generate_files(connector: dict, base_path: Path):
   # Write docker-compose.yml
   compose_file = base_path / "docker-compose.yml"
   compose_file.write_text(DOCKER_COMPOSE_TEMPLATE.format(
-      type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password
+      type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password,
+      network_name=os.getenv("NETWORK_NAME", "edc-network")
   ))
 
-def _wait_for_postgres(host=os.getenv("POSTGRES_HOST", "localhost"), port=os.getenv("POSTGRES_PORT", 5432), user=os.getenv("POSTGRES_USER", "postgres"), password=os.getenv("POSTGRES_PASS", "admin"), timeout=30):
+def _wait_for_postgres():
+    load_dotenv()
+    host=os.getenv("POSTGRES_HOST", "localhost")
+    port=os.getenv("POSTGRES_PORT", 5432)
+    user=os.getenv("POSTGRES_USER", "postgres")
+    password=os.getenv("POSTGRES_PASS", "admin")
+    timeout=30
     """Espera a que PostgreSQL esté disponible hasta un timeout."""
     start_time = time.time()
     while time.time() - start_time < timeout:
@@ -141,9 +151,22 @@ def _run_docker_compose(path: Path, db_name: str):
     if not runtime_path.exists():
         raise ValueError("El directorio 'runtime' no existe.")
 
-    # 1. Arrancar PostgreSQL
-    print("Arrancando contenedor de PostgreSQL...")
-    subprocess.run(["docker", "compose", "up", "-d"], cwd=config_path, check=True)
+    """ # 1. Arrancar PostgreSQL
+
+    port_postgres = os.getenv("POSTGRES_PORT", "5432")
+    network_name = os.getenv("NETWORK_NAME", "edc-network")
+
+    compose_file = os.path.join(config_path, "docker-compose.yml")
+    with open(compose_file, "r") as f:
+        compose = yaml.safe_load(f)
+    compose["services"]["postgres"]["networks"] = [network_name]
+    compose["networks"] = {network_name: {"external": True}}
+
+    print(f"Arrancando contenedor de PostgreSQL en el puerto {port_postgres}...")
+    env = os.environ.copy()
+    env["POSTGRES_PORT"] = str(port_postgres)
+
+    subprocess.run(["docker", "compose", "up", "-d"], cwd=config_path, check=True, env=env) """
 
     # 2. Esperar a que PostgreSQL esté disponible
     print("Esperando a que PostgreSQL esté disponible...")

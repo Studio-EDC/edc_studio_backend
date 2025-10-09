@@ -12,7 +12,7 @@ from app.services.assets_service import (
 router = APIRouter()
 
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def create_asset_route(data: Asset):
     inserted_id = await create_asset(data)
     return inserted_id['@id']
