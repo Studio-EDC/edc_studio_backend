@@ -24,3 +24,4 @@ class Connector(BaseModel):
     state: Literal["running", "stopped"]
     mode: Literal["managed", "remote"]
     endpoints_url: Optional[Endpoints] = None
+    domain: Optional[str] = None

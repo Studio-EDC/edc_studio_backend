@@ -61,6 +61,8 @@ services:
 
     environment:
       - EDC_KEYSTORE_PASSWORD={keystore_password}
+      - VIRTUAL_HOST={virtual_host}
+      - VIRTUAL_PORT={virtual_port}
 
     networks:
       - {network_name}
@@ -76,6 +78,7 @@ def _generate_files(connector: dict, base_path: Path):
   id = connector["_id"]
   ctype = connector["type"]
   secret = connector["api_key"]
+  virtual_host = connector["domain"]
 
   proxy_public_line = ""
   if ctype == "provider":
@@ -119,7 +122,8 @@ def _generate_files(connector: dict, base_path: Path):
   # Write docker-compose.yml
   compose_file = base_path / "docker-compose.yml"
   compose_file.write_text(DOCKER_COMPOSE_TEMPLATE.format(
-      type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password,
+      type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password, 
+      virtual_host=virtual_host, virtual_port=ports['http'],
       network_name=os.getenv("NETWORK_NAME", "edc-network")
   ))
 
