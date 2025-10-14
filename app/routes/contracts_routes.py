@@ -5,7 +5,7 @@ from app.services.contracts_service import create_contract, delete_contract, get
 router = APIRouter()
 
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def create_contract_route(data: Contract):
     inserted_id = await create_contract(data)
     return inserted_id['@id']

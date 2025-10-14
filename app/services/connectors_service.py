@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from fastapi import HTTPException
 import subprocess
 import traceback
@@ -8,6 +10,7 @@ from app.services.edc_launcher_service import _create_docker_network_if_not_exis
 from bson import ObjectId
 import shutil
 from pymongo.results import DeleteResult
+import socket
 
 async def create_connector(connector: Connector) -> str:
     db = get_db()
@@ -40,6 +43,18 @@ async def check_ports_unique(connector: Connector, db):
     existing = await db["connectors"].find_one(query)
     if existing:
         raise HTTPException(status_code=400, detail="One or more ports are already in use.")
+    
+    for port in ports_to_check:
+        if port is None:
+            continue
+        if is_port_in_use(port):
+            raise HTTPException(status_code=400, detail=f"Port {port} is already in use on this machine.")
+        
+def is_port_in_use(port: int) -> bool:
+    """Check if a given port is currently being used by any process."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        result = s.connect_ex(('127.0.0.1', port))
+        return result == 0
 
 async def start_edc_service(connector_id: str):
     db = get_db()
@@ -51,7 +66,9 @@ async def start_edc_service(connector_id: str):
 
     try:
         _generate_files(connector, base_path)
-        _create_docker_network_if_not_exists("edc-network")
+        load_dotenv()
+        network_name = os.getenv("NETWORK_NAME", "edc-network")
+        _create_docker_network_if_not_exists(network_name)
         db_name = 'edc_' + connector['type'] + '_' + str(connector['_id'])
         _run_docker_compose(base_path, db_name)
         await db["connectors"].update_one({"_id": ObjectId(connector_id)}, {"$set": {"state": "running"}})

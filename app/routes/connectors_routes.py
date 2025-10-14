@@ -5,7 +5,7 @@ from app.schemas.connector import ConnectorResponse, ConnectorUpdate
 
 router = APIRouter()
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def create_connector_route(data: Connector):
     inserted_id = await create_connector(data)
     if not inserted_id:
@@ -32,7 +32,7 @@ async def stop_edc(id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to stop connector: {e}")
 
-@router.get("/", response_model=list[ConnectorResponse])
+@router.get("", response_model=list[ConnectorResponse])
 async def list_connectors():
     return await get_all_connectors()
 

@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from fastapi import HTTPException
 import httpx
 from app.db.client import get_db
@@ -175,8 +177,10 @@ def start_http_server_service():
         pass
 
     subprocess.run(["docker", "build", "-t", "http-request-logger", str(dockerfile_path)], check=True)
+    load_dotenv()
+    network_name = os.getenv("NETWORK_NAME", "edc-network")
     subprocess.run([
-        "docker", "run", "-d", "--name", "http-logger", "--network", "edc-network", "-p", "4000:4000", "http-request-logger"
+        "docker", "run", "-d", "--name", "http-logger", "--network", network_name, "-p", "4000:4000", "http-request-logger"
     ], check=True)
     print("Contenedor 'http-logger' creado y ejecutado.")
 
