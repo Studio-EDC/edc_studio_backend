@@ -1,3 +1,23 @@
+"""
+Policies Service.
+
+This module provides functionality to manage policy definitions within
+the EDC (Eclipse Dataspace Connector) ecosystem. It includes operations
+for creating, retrieving, and deleting policies via the connector's
+Management API.
+
+These policies define permissions, prohibitions, and obligations
+according to the ODRL (Open Digital Rights Language) model and are
+essential to enforce access control rules for assets exchanged between
+EDC participants.
+
+Handled responsibilities:
+    - Policy creation and registration in EDC
+    - Conversion between internal models and EDC-compatible JSON-LD
+    - Policy retrieval by connector or policy ID
+    - Policy deletion from EDC Management API
+"""
+
 from fastapi import HTTPException
 from app.models.policy import Constraint, Operator, Policy, PolicyDefinition, Rule
 from app.db.client import get_db
@@ -7,6 +27,20 @@ import httpx
 
 
 async def create_policy(data: Policy) -> str:
+    """
+    Creates and registers a policy definition in a specific EDC connector.
+
+    Args:
+        data (Policy): Policy data model containing permissions, prohibitions,
+                       and obligations following the ODRL schema.
+
+    Raises:
+        HTTPException: If the connector is not found or EDC registration fails.
+
+    Returns:
+        str: JSON response from the EDC API confirming the created policy.
+    """
+
     db = get_db()
     edc_id = data.edc
 
@@ -24,6 +58,21 @@ async def create_policy(data: Policy) -> str:
 
 
 async def register_policy_with_edc(policy: dict, connector: dict):
+    """
+    Registers a new policy in the EDC Management API.
+
+    Args:
+        policy (dict): Dictionary containing the policy data to register.
+        connector (dict): EDC connector document containing configuration
+                          and API endpoint details.
+
+    Raises:
+        httpx.HTTPStatusError: If the EDC Management API returns an error.
+
+    Returns:
+        dict: JSON response from the EDC confirming registration.
+    """
+
     base_url = get_base_url(connector, "/management/v3/policydefinitions")
     api_key = get_api_key(connector)
 
@@ -37,6 +86,16 @@ async def register_policy_with_edc(policy: dict, connector: dict):
 
 
 def convert_policy_to_edc_format(policy: dict) -> dict:
+    """
+    Converts an internal Policy model into EDC-compatible JSON-LD format.
+
+    Args:
+        policy (dict): Internal policy representation.
+
+    Returns:
+        dict: Policy formatted according to EDC Management API schema.
+    """
+
     return {
         "@context": {"@vocab": "https://w3id.org/edc/v0.0.1/ns/"},
         "@id": policy["policy_id"],
@@ -51,6 +110,16 @@ def convert_policy_to_edc_format(policy: dict) -> dict:
 
 
 def _convert_rules(rules: list) -> list:
+    """
+    Converts a list of internal rule objects into EDC ODRL-compliant rules.
+
+    Args:
+        rules (list): List of permission, prohibition, or obligation rules.
+
+    Returns:
+        list: EDC-compatible rule dictionaries.
+    """
+
     result = []
     for rule in rules:
         converted = {"action": rule["action"]}
@@ -67,6 +136,16 @@ def _convert_rules(rules: list) -> list:
 
 
 def normalize_odrl_list(value):
+    """
+    Ensures that an ODRL property is always returned as a list.
+
+    Args:
+        value (Any): Raw ODRL property (dict, list, or None).
+
+    Returns:
+        list: A normalized list of elements or an empty list.
+    """
+
     if isinstance(value, list):
         return value
     if isinstance(value, dict):
@@ -75,6 +154,16 @@ def normalize_odrl_list(value):
 
 
 def convert_rules_get(rule_list):
+    """
+    Converts a list of ODRL rules from EDC API format to internal Rule models.
+
+    Args:
+        rule_list (list): ODRL-formatted rule list from EDC API.
+
+    Returns:
+        list[Rule]: List of internal Rule objects.
+    """
+
     result = []
     for r in rule_list:
         constraints = None
@@ -95,6 +184,19 @@ def convert_rules_get(rule_list):
 
 
 async def get_policies_by_edc_id(edc_id: str) -> list[Policy]:
+    """
+    Retrieves all policy definitions from a given EDC connector.
+
+    Args:
+        edc_id (str): ID of the connector from which to retrieve policies.
+
+    Raises:
+        HTTPException: If the connector does not exist or communication fails.
+
+    Returns:
+        list[Policy]: List of Policy objects retrieved from the EDC.
+    """
+
     db = get_db()
 
     connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
@@ -143,6 +245,20 @@ async def get_policies_by_edc_id(edc_id: str) -> list[Policy]:
 
 
 async def get_policy_by_policy_id_service(edc_id: str, policy_id: str) -> Policy:
+    """
+    Retrieves a single policy definition by its ID from an EDC connector.
+
+    Args:
+        edc_id (str): EDC connector ID.
+        policy_id (str): Unique policy identifier.
+
+    Raises:
+        HTTPException: If the connector or policy cannot be found.
+
+    Returns:
+        Policy: The corresponding Policy model.
+    """
+
     db = get_db()
 
     connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
@@ -183,6 +299,20 @@ async def get_policy_by_policy_id_service(edc_id: str, policy_id: str) -> Policy
 
 
 async def delete_policy(policy_id: str, edc_id: str) -> bool:
+    """
+    Deletes a policy definition from a specific EDC connector.
+
+    Args:
+        policy_id (str): Policy identifier to remove.
+        edc_id (str): Connector ID.
+
+    Raises:
+        HTTPException: If the connector does not exist or deletion fails.
+
+    Returns:
+        bool: True if deletion succeeded, False otherwise.
+    """
+    
     db = get_db()
 
     connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})

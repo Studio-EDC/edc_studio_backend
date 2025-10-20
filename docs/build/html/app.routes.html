@@ -1,0 +1,1082 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.routes package &mdash; EDC Studio Backend  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="app.schemas package" href="app.schemas.html" />
+    <link rel="prev" title="app.models package" href="app.models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EDC Studio Backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="app.html">app package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="app.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app.db.html">app.db package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.db.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.db.html#module-app.db.client">app.db.client module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.db.html#module-app.db">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html">app.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.asset">app.models.asset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.connector">app.models.connector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.contract">app.models.contract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.policy">app.models.policy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.transfer">app.models.transfer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">app.routes package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes.assets_routes">app.routes.assets_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes.connectors_routes">app.routes.connectors_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes.contracts_routes">app.routes.contracts_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes.policies_routes">app.routes.policies_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes.transfers_routes">app.routes.transfers_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html">app.schemas package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas.connector">app.schemas.connector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas.transfer">app.schemas.transfer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html">app.services package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.assets_service">app.services.assets_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.connectors_service">app.services.connectors_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.contracts_service">app.services.contracts_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.edc_launcher_service">app.services.edc_launcher_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.policies_service">app.services.policies_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.transfers_service">app.services.transfers_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.util.html">app.util package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#module-app.util.edc_helpers">app.util.edc_helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#module-app.util">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#module-app.main">app.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.html#app.main.startup_db"><code class="docutils literal notranslate"><span class="pre">startup_db()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#module-app">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EDC Studio Backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="app.html">app package</a></li>
+      <li class="breadcrumb-item active">app.routes package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/app.routes.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="app-routes-package">
+<h1>app.routes package<a class="headerlink" href="#app-routes-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-app.routes.assets_routes">
+<span id="app-routes-assets-routes-module"></span><h2>app.routes.assets_routes module<a class="headerlink" href="#module-app.routes.assets_routes" title="Link to this heading"></a></h2>
+<p>Asset routes.</p>
+<p>This module defines the API endpoints related to asset management within
+the EDC Studio Backend. Assets represent data resources that can be
+published, transferred, or managed through EDC connectors.</p>
+<p>Each route provides an asynchronous operation to create, retrieve,
+update, or delete assets, interacting with the corresponding
+service layer (<cite>app.services.assets_service</cite>).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.assets_routes.create_asset_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.assets_routes.</span></span><span class="sig-name descname"><span class="pre">create_asset_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.assets_routes.create_asset_route" title="Link to this definition"></a></dt>
+<dd><p>Create a new asset in a specific EDC connector.</p>
+<p>This endpoint registers a new asset in the database and associates
+it with the specified EDC connector. The asset definition includes
+metadata such as name, type, and data address configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.models.html#app.models.asset.Asset" title="app.models.asset.Asset"><em>Asset</em></a>) – The asset data to create.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The identifier (<cite>&#64;id</cite>) of the newly created asset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">POST</span> <span class="o">/</span><span class="n">assets</span>
+<span class="go">{</span>
+<span class="go">    &quot;asset_id&quot;: &quot;asset-001&quot;,</span>
+<span class="go">    &quot;name&quot;: &quot;Weather Dataset&quot;,</span>
+<span class="go">    &quot;content_type&quot;: &quot;application/json&quot;,</span>
+<span class="go">    &quot;data_address_name&quot;: &quot;weather-data&quot;,</span>
+<span class="go">    &quot;data_address_type&quot;: &quot;HttpData&quot;,</span>
+<span class="go">    &quot;data_address_proxy&quot;: false,</span>
+<span class="go">    &quot;base_url&quot;: &quot;https://data.server.com/weather&quot;,</span>
+<span class="go">    &quot;edc&quot;: &quot;edc-provider-01&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.assets_routes.list_assets_by_edc">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.assets_routes.</span></span><span class="sig-name descname"><span class="pre">list_assets_by_edc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.assets_routes.list_assets_by_edc" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all assets associated with a specific EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of assets registered under the given connector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="app.models.html#app.models.asset.Asset" title="app.models.asset.Asset">Asset</a>]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">assets</span><span class="o">/</span><span class="n">by</span><span class="o">-</span><span class="n">edc</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.assets_routes.get_asset_by_asset_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.assets_routes.</span></span><span class="sig-name descname"><span class="pre">get_asset_by_asset_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.assets_routes.get_asset_by_asset_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a specific asset by its ID within a given EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p></li>
+<li><p><strong>asset_id</strong> (<em>str</em>) – Unique identifier of the asset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The asset matching the given EDC and asset ID.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="app.models.html#app.models.asset.Asset" title="app.models.asset.Asset">Asset</a></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">assets</span><span class="o">/</span><span class="n">by</span><span class="o">-</span><span class="n">asset</span><span class="o">-</span><span class="nb">id</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="n">asset</span><span class="o">-</span><span class="mi">001</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.assets_routes.update_asset_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.assets_routes.</span></span><span class="sig-name descname"><span class="pre">update_asset_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.assets_routes.update_asset_route" title="Link to this definition"></a></dt>
+<dd><p>Update an existing asset within a given EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>asset</strong> (<a class="reference internal" href="app.models.html#app.models.asset.Asset" title="app.models.asset.Asset"><em>Asset</em></a>) – The updated asset data.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message indicating successful update.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PUT</span> <span class="o">/</span><span class="n">assets</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+<span class="go">{</span>
+<span class="go">    &quot;asset_id&quot;: &quot;asset-001&quot;,</span>
+<span class="go">    &quot;name&quot;: &quot;Updated Weather Dataset&quot;,</span>
+<span class="go">    ...</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.assets_routes.delete_asset_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.assets_routes.</span></span><span class="sig-name descname"><span class="pre">delete_asset_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.assets_routes.delete_asset_route" title="Link to this definition"></a></dt>
+<dd><p>Delete an asset from a specific EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>asset_id</strong> (<em>str</em>) – Identifier of the asset to delete.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message indicating successful deletion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DELETE</span> <span class="o">/</span><span class="n">assets</span><span class="o">/</span><span class="n">asset</span><span class="o">-</span><span class="mi">001</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-app.routes.connectors_routes">
+<span id="app-routes-connectors-routes-module"></span><h2>app.routes.connectors_routes module<a class="headerlink" href="#module-app.routes.connectors_routes" title="Link to this heading"></a></h2>
+<p>Connector routes.</p>
+<p>This module defines the API endpoints used to manage EDC connectors within
+the EDC Studio Backend. Each connector can act as a provider or consumer
+and supports lifecycle operations such as creation, startup, stop,
+update, and deletion.</p>
+<p>All routes interact with the connector service layer
+(<cite>app.services.connectors_service</cite>) and use Pydantic models for validation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.connectors_routes.create_connector_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.connectors_routes.</span></span><span class="sig-name descname"><span class="pre">create_connector_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.connectors_routes.create_connector_route" title="Link to this definition"></a></dt>
+<dd><p>Create a new EDC connector.</p>
+<p>Registers a new connector in the database. The connector can later be
+started or stopped through its lifecycle endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.models.html#app.models.connector.Connector" title="app.models.connector.Connector"><em>Connector</em></a>) – The connector data to be created.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The identifier of the newly created connector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector cannot be created due to a server error.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">POST</span> <span class="o">/</span><span class="n">connectors</span>
+<span class="go">{</span>
+<span class="go">    &quot;name&quot;: &quot;EDC Provider 01&quot;,</span>
+<span class="go">    &quot;type&quot;: &quot;provider&quot;,</span>
+<span class="go">    &quot;state&quot;: &quot;stopped&quot;,</span>
+<span class="go">    &quot;mode&quot;: &quot;managed&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.connectors_routes.start_edc">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.connectors_routes.</span></span><span class="sig-name descname"><span class="pre">start_edc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.connectors_routes.start_edc" title="Link to this definition"></a></dt>
+<dd><p>Start an EDC connector.</p>
+<p>Launches the connector process (Docker or local instance) and sets its
+state to <cite>running</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Identifier of the connector to start.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message indicating successful start.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – <ul class="simple">
+<li><p>404: If the connector does not exist.
+    - 500: If startup fails unexpectedly.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">POST</span> <span class="o">/</span><span class="n">connectors</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="n">start</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.connectors_routes.stop_edc">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.connectors_routes.</span></span><span class="sig-name descname"><span class="pre">stop_edc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.connectors_routes.stop_edc" title="Link to this definition"></a></dt>
+<dd><p>Stop a running EDC connector.</p>
+<p>Gracefully stops a managed connector process and updates its state
+to <cite>stopped</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Identifier of the connector to stop.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message indicating successful stop.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – <ul class="simple">
+<li><p>404: If the connector does not exist.
+    - 500: If the stop operation fails.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">POST</span> <span class="o">/</span><span class="n">connectors</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="n">stop</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.connectors_routes.list_connectors">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.connectors_routes.</span></span><span class="sig-name descname"><span class="pre">list_connectors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.connectors_routes.list_connectors" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all registered connectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of all connectors stored in the system.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse" title="app.schemas.connector.ConnectorResponse">ConnectorResponse</a>]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">connectors</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.connectors_routes.get_connector">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.connectors_routes.</span></span><span class="sig-name descname"><span class="pre">get_connector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.connectors_routes.get_connector" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a specific connector by its identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Identifier of the connector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The connector matching the given ID.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse" title="app.schemas.connector.ConnectorResponse">ConnectorResponse</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – 404 if the connector is not found.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">connectors</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.connectors_routes.update_connector_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.connectors_routes.</span></span><span class="sig-name descname"><span class="pre">update_connector_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Body(PydanticUndefined)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.connectors_routes.update_connector_route" title="Link to this definition"></a></dt>
+<dd><p>Update a connector’s configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>str</em>) – Identifier of the connector to update.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate" title="app.schemas.connector.ConnectorUpdate"><em>ConnectorUpdate</em></a>) – Fields to be modified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message indicating successful update.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – 404 if the connector does not exist.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PUT</span> <span class="o">/</span><span class="n">connectors</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+<span class="go">{</span>
+<span class="go">    &quot;description&quot;: &quot;Updated provider connector&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.connectors_routes.delete_connector_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.connectors_routes.</span></span><span class="sig-name descname"><span class="pre">delete_connector_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.connectors_routes.delete_connector_route" title="Link to this definition"></a></dt>
+<dd><p>Delete a connector from the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Identifier of the connector to delete.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message indicating successful deletion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – 404 if the connector does not exist.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DELETE</span> <span class="o">/</span><span class="n">connectors</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-app.routes.contracts_routes">
+<span id="app-routes-contracts-routes-module"></span><h2>app.routes.contracts_routes module<a class="headerlink" href="#module-app.routes.contracts_routes" title="Link to this heading"></a></h2>
+<p>Contract routes.</p>
+<p>This module defines the API endpoints for managing contract definitions
+within the EDC Studio Backend. A contract links assets with their
+corresponding access and usage policies, enabling regulated data
+exchange between provider and consumer connectors.</p>
+<p>All endpoints in this module interact with the service layer
+(<cite>app.services.contracts_service</cite>) to perform database operations.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.contracts_routes.create_contract_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.contracts_routes.</span></span><span class="sig-name descname"><span class="pre">create_contract_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.contracts_routes.create_contract_route" title="Link to this definition"></a></dt>
+<dd><p>Create a new contract definition for a specific EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.models.html#app.models.contract.Contract" title="app.models.contract.Contract"><em>Contract</em></a>) – The contract data to be created, including
+asset selection and policy references.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The identifier (<cite>&#64;id</cite>) of the newly created contract.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">POST</span> <span class="o">/</span><span class="n">contracts</span>
+<span class="go">{</span>
+<span class="go">    &quot;edc&quot;: &quot;edc-provider-01&quot;,</span>
+<span class="go">    &quot;contract_id&quot;: &quot;contract-001&quot;,</span>
+<span class="go">    &quot;accessPolicyId&quot;: &quot;policy-access-01&quot;,</span>
+<span class="go">    &quot;contractPolicyId&quot;: &quot;policy-contract-01&quot;,</span>
+<span class="go">    &quot;assetsSelector&quot;: [&quot;asset-001&quot;]</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.contracts_routes.list_contracts_by_edc">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.contracts_routes.</span></span><span class="sig-name descname"><span class="pre">list_contracts_by_edc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.contracts_routes.list_contracts_by_edc" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all contracts associated with a specific EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of contract definitions belonging to the connector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="app.models.html#app.models.contract.Contract" title="app.models.contract.Contract">Contract</a>]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">contracts</span><span class="o">/</span><span class="n">by</span><span class="o">-</span><span class="n">edc</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.contracts_routes.get_contract_by_contract_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.contracts_routes.</span></span><span class="sig-name descname"><span class="pre">get_contract_by_contract_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.contracts_routes.get_contract_by_contract_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a specific contract by its identifier and associated EDC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p></li>
+<li><p><strong>contract_id</strong> (<em>str</em>) – Identifier of the contract definition.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The contract definition that matches the provided identifiers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="app.models.html#app.models.contract.Contract" title="app.models.contract.Contract">Contract</a></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">contracts</span><span class="o">/</span><span class="n">by</span><span class="o">-</span><span class="n">contract</span><span class="o">-</span><span class="nb">id</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="n">contract</span><span class="o">-</span><span class="mi">001</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.contracts_routes.update_contract_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.contracts_routes.</span></span><span class="sig-name descname"><span class="pre">update_contract_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.contracts_routes.update_contract_route" title="Link to this definition"></a></dt>
+<dd><p>Update an existing contract definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contract</strong> (<a class="reference internal" href="app.models.html#app.models.contract.Contract" title="app.models.contract.Contract"><em>Contract</em></a>) – The updated contract data.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector associated with the contract.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message indicating successful update.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – 404 if the contract does not exist or cannot be updated.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PUT</span> <span class="o">/</span><span class="n">contracts</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+<span class="go">{</span>
+<span class="go">    &quot;contract_id&quot;: &quot;contract-001&quot;,</span>
+<span class="go">    &quot;accessPolicyId&quot;: &quot;policy-access-02&quot;,</span>
+<span class="go">    &quot;contractPolicyId&quot;: &quot;policy-contract-02&quot;,</span>
+<span class="go">    &quot;assetsSelector&quot;: [&quot;asset-002&quot;]</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.contracts_routes.delete_contract_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.contracts_routes.</span></span><span class="sig-name descname"><span class="pre">delete_contract_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.contracts_routes.delete_contract_route" title="Link to this definition"></a></dt>
+<dd><p>Delete a contract definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contract_id</strong> (<em>str</em>) – Identifier of the contract to delete.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector associated with the contract.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message indicating successful deletion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – 404 if the contract does not exist or cannot be deleted.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DELETE</span> <span class="o">/</span><span class="n">contracts</span><span class="o">/</span><span class="n">contract</span><span class="o">-</span><span class="mi">001</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-app.routes.policies_routes">
+<span id="app-routes-policies-routes-module"></span><h2>app.routes.policies_routes module<a class="headerlink" href="#module-app.routes.policies_routes" title="Link to this heading"></a></h2>
+<p>Policy routes.</p>
+<p>This module defines the API endpoints for managing policies in the
+EDC Studio Backend. Policies are based on the ODRL (Open Digital Rights
+Language) specification and describe permissions, prohibitions, and
+obligations for data usage between connectors.</p>
+<p>All endpoints in this module interact with the service layer
+(<cite>app.services.policies_service</cite>) to perform CRUD operations on
+EDC policy definitions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.policies_routes.create_policy_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.policies_routes.</span></span><span class="sig-name descname"><span class="pre">create_policy_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.policies_routes.create_policy_route" title="Link to this definition"></a></dt>
+<dd><p>Create a new policy definition for a given EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.models.html#app.models.policy.Policy" title="app.models.policy.Policy"><em>Policy</em></a>) – The policy data to create, including permissions,
+prohibitions, obligations, and context.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The identifier (<cite>&#64;id</cite>) of the newly created policy.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">POST</span> <span class="o">/</span><span class="n">policies</span>
+<span class="go">{</span>
+<span class="go">    &quot;edc&quot;: &quot;edc-provider-01&quot;,</span>
+<span class="go">    &quot;policy_id&quot;: &quot;policy-001&quot;,</span>
+<span class="go">    &quot;policy&quot;: {</span>
+<span class="go">        &quot;permission&quot;: [</span>
+<span class="go">            {&quot;action&quot;: &quot;USE&quot;}</span>
+<span class="go">        ],</span>
+<span class="go">        &quot;context&quot;: &quot;http://www.w3.org/ns/odrl.jsonld&quot;,</span>
+<span class="go">        &quot;type&quot;: &quot;Set&quot;</span>
+<span class="go">    }</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.policies_routes.list_policies_by_edc">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.policies_routes.</span></span><span class="sig-name descname"><span class="pre">list_policies_by_edc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.policies_routes.list_policies_by_edc" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all policies associated with a specific EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of policy definitions registered under the given connector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="app.models.html#app.models.policy.Policy" title="app.models.policy.Policy">Policy</a>]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">policies</span><span class="o">/</span><span class="n">by</span><span class="o">-</span><span class="n">edc</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.policies_routes.get_policy_by_policy_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.policies_routes.</span></span><span class="sig-name descname"><span class="pre">get_policy_by_policy_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.policies_routes.get_policy_by_policy_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a specific policy by its identifier within a given EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p></li>
+<li><p><strong>policy_id</strong> (<em>str</em>) – Identifier of the policy definition.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The policy that matches the given EDC and policy ID.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="app.models.html#app.models.policy.Policy" title="app.models.policy.Policy">Policy</a></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">policies</span><span class="o">/</span><span class="n">by</span><span class="o">-</span><span class="n">policy</span><span class="o">-</span><span class="nb">id</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span><span class="o">/</span><span class="n">policy</span><span class="o">-</span><span class="mi">001</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.policies_routes.delete_asset_route">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.policies_routes.</span></span><span class="sig-name descname"><span class="pre">delete_asset_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.policies_routes.delete_asset_route" title="Link to this definition"></a></dt>
+<dd><p>Delete a policy definition associated with a specific EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>policy_id</strong> (<em>str</em>) – Identifier of the policy to delete.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message indicating successful deletion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – 404 if the policy does not exist or cannot be deleted.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DELETE</span> <span class="o">/</span><span class="n">policies</span><span class="o">/</span><span class="n">policy</span><span class="o">-</span><span class="mi">001</span><span class="o">/</span><span class="n">edc</span><span class="o">-</span><span class="n">provider</span><span class="o">-</span><span class="mi">01</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-app.routes.transfers_routes">
+<span id="app-routes-transfers-routes-module"></span><h2>app.routes.transfers_routes module<a class="headerlink" href="#module-app.routes.transfers_routes" title="Link to this heading"></a></h2>
+<p>Transfer routes.</p>
+<p>This module defines the API endpoints responsible for managing
+data transfers between EDC connectors in the EDC Studio Backend.
+Transfers can follow both push and pull models, with full
+support for contract negotiation, catalog retrieval, and
+data flow monitoring.</p>
+<p>All endpoints interact with the EDC connectors via the service layer
+(<cite>app.services.transfers_service</cite>) and facilitate end-to-end
+data exchange orchestration.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.catalog_request">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">catalog_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.catalog_request" title="Link to this definition"></a></dt>
+<dd><p>Request the data catalog from a provider connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.schemas.html#app.schemas.transfer.RequestCatalog" title="app.schemas.transfer.RequestCatalog"><em>RequestCatalog</em></a>) – Contains consumer and provider identifiers.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The catalog data returned by the provider connector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – <ul class="simple">
+<li><p>404: If the provider connector is not found.
+    - 500: If the catalog request fails.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">POST</span> <span class="o">/</span><span class="n">transfers</span><span class="o">/</span><span class="n">catalog_request</span>
+<span class="go">{</span>
+<span class="go">    &quot;consumer&quot;: &quot;edc-consumer-01&quot;,</span>
+<span class="go">    &quot;provider&quot;: &quot;edc-provider-01&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.negotiate_contract">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">negotiate_contract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.negotiate_contract" title="Link to this definition"></a></dt>
+<dd><p>Negotiate a data-sharing contract between consumer and provider connectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.schemas.html#app.schemas.transfer.NegotitateContract" title="app.schemas.transfer.NegotitateContract"><em>NegotitateContract</em></a>) – Contains consumer, provider, contract offer ID,
+and associated asset.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contract negotiation response from the EDC provider.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – <ul class="simple">
+<li><p>404: If the connectors or contract offer are not found.
+    - 500: If negotiation fails.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">POST</span> <span class="o">/</span><span class="n">transfers</span><span class="o">/</span><span class="n">negotiate_contract</span>
+<span class="go">{</span>
+<span class="go">    &quot;consumer&quot;: &quot;edc-consumer-01&quot;,</span>
+<span class="go">    &quot;provider&quot;: &quot;edc-provider-01&quot;,</span>
+<span class="go">    &quot;contract_offer_id&quot;: &quot;offer-123&quot;,</span>
+<span class="go">    &quot;asset&quot;: &quot;asset-001&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.contract_agreement">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">contract_agreement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.contract_agreement" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the contract agreement details for a specific negotiation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.schemas.html#app.schemas.transfer.ContractAgreement" title="app.schemas.transfer.ContractAgreement"><em>ContractAgreement</em></a>) – Contains consumer ID and contract negotiation ID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contract agreement details.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – <ul class="simple">
+<li><p>404: If the contract negotiation ID is invalid.
+    - 500: If fetching the agreement fails.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">POST</span> <span class="o">/</span><span class="n">transfers</span><span class="o">/</span><span class="n">contract_agreement</span>
+<span class="go">{</span>
+<span class="go">    &quot;consumer&quot;: &quot;edc-consumer-01&quot;,</span>
+<span class="go">    &quot;id_contract_negotiation&quot;: &quot;negotiation-001&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.start_http_server">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">start_http_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.start_http_server" title="Link to this definition"></a></dt>
+<dd><p>Start a local HTTP server to log incoming data requests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Confirmation message upon successful start.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>HTTPException</strong> – 500 if the server cannot be started.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.stop_http_server">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">stop_http_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.stop_http_server" title="Link to this definition"></a></dt>
+<dd><p>Stop the HTTP server used for logging data transfer requests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Confirmation message upon successful stop.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>HTTPException</strong> – 500 if stopping the server fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.start_transfer">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">start_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.start_transfer" title="Link to this definition"></a></dt>
+<dd><p>Start a data transfer in push mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.schemas.html#app.schemas.transfer.StartTransfer" title="app.schemas.transfer.StartTransfer"><em>StartTransfer</em></a>) – Contains consumer, provider, and contract agreement ID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transfer process details.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – <ul class="simple">
+<li><p>404: If connectors or contracts are invalid.
+    - 500: If transfer start fails.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.check_transfer">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">check_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.check_transfer" title="Link to this definition"></a></dt>
+<dd><p>Check the status of an ongoing transfer process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.schemas.html#app.schemas.transfer.CheckTransfer" title="app.schemas.transfer.CheckTransfer"><em>CheckTransfer</em></a>) – Contains consumer and transfer process ID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transfer process state details.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – <ul class="simple">
+<li><p>404: If the transfer ID is invalid.
+    - 500: If status retrieval fails.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.new_transfer">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">new_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.new_transfer" title="Link to this definition"></a></dt>
+<dd><p>Register a completed transfer in the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.models.html#app.models.transfer.Transfer" title="app.models.transfer.Transfer"><em>Transfer</em></a>) – Transfer metadata including consumer, provider,
+asset, and process IDs.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ID of the newly created transfer record.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.get_all_transfers">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">get_all_transfers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.get_all_transfers" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all registered transfers from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of all completed transfers.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="app.models.html#app.models.transfer.Transfer" title="app.models.transfer.Transfer">Transfer</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.start_transfer_pull">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">start_transfer_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.start_transfer_pull" title="Link to this definition"></a></dt>
+<dd><p>Start a data transfer in pull mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.schemas.html#app.schemas.transfer.StartTransfer" title="app.schemas.transfer.StartTransfer"><em>StartTransfer</em></a>) – Contains consumer, provider, and contract agreement ID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transfer process details for pull operation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – <ul class="simple">
+<li><p>404: If connectors or contracts are invalid.
+    - 500: If transfer start fails.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.check_data_pull">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">check_data_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.check_data_pull" title="Link to this definition"></a></dt>
+<dd><p>Check the data availability for pull-based transfers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.schemas.html#app.schemas.transfer.CheckTransfer" title="app.schemas.transfer.CheckTransfer"><em>CheckTransfer</em></a>) – Contains consumer and transfer process ID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pull data status from the provider.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.proxy_http_logger">
+<span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">proxy_http_logger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.proxy_http_logger" title="Link to this definition"></a></dt>
+<dd><p>Proxy endpoint to retrieve logs from the HTTP logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Logged HTTP requests captured during data transfer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSONResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.transfers_routes.proxy_pull">
+<span class="sig-prename descclassname"><span class="pre">app.routes.transfers_routes.</span></span><span class="sig-name descname"><span class="pre">proxy_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authorization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Header(PydanticUndefined)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.routes.transfers_routes.proxy_pull" title="Link to this definition"></a></dt>
+<dd><p>Proxy endpoint for pull transfers.</p>
+<p>Fetches data directly from the provider using the provided URI
+and authorization header.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uri</strong> (<em>str</em>) – Data URI to pull from the provider.</p></li>
+<li><p><strong>authorization</strong> (<em>str</em>) – Authorization token header.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Raw content fetched from the provider.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the provider returns an error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.routes">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.routes" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="app.models.html" class="btn btn-neutral float-left" title="app.models package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app.schemas.html" class="btn btn-neutral float-right" title="app.schemas package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Itziar Mensa Minguito.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

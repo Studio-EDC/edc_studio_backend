@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.db package &mdash; EDC Studio Backend  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="app.models package" href="app.models.html" />
+    <link rel="prev" title="app package" href="app.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EDC Studio Backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="app.html">app package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="app.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">app.db package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.db.client">app.db.client module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.db">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html">app.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.asset">app.models.asset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.connector">app.models.connector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.contract">app.models.contract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.policy">app.models.policy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.transfer">app.models.transfer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html">app.routes package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.assets_routes">app.routes.assets_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.connectors_routes">app.routes.connectors_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.contracts_routes">app.routes.contracts_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.policies_routes">app.routes.policies_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.transfers_routes">app.routes.transfers_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html">app.schemas package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas.connector">app.schemas.connector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas.transfer">app.schemas.transfer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html">app.services package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.assets_service">app.services.assets_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.connectors_service">app.services.connectors_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.contracts_service">app.services.contracts_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.edc_launcher_service">app.services.edc_launcher_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.policies_service">app.services.policies_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.transfers_service">app.services.transfers_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.util.html">app.util package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#module-app.util.edc_helpers">app.util.edc_helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#module-app.util">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#module-app.main">app.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.html#app.main.startup_db"><code class="docutils literal notranslate"><span class="pre">startup_db()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#module-app">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EDC Studio Backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="app.html">app package</a></li>
+      <li class="breadcrumb-item active">app.db package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/app.db.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="app-db-package">
+<h1>app.db package<a class="headerlink" href="#app-db-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-app.db.client">
+<span id="app-db-client-module"></span><h2>app.db.client module<a class="headerlink" href="#module-app.db.client" title="Link to this heading"></a></h2>
+<p>MongoDB client initialization and access utilities.</p>
+<p>This module configures and manages the asynchronous MongoDB client
+used across the EDC Studio Backend. It connects to the database using
+Motor (the async MongoDB driver for Python) and exposes a global client
+and database instance for use in other modules.</p>
+<dl>
+<dt>Environment variables:</dt><dd><ul class="simple">
+<li><p>MONGODB_URI: Full MongoDB connection string (default: mongodb://localhost:27017)</p></li>
+<li><p>MONGODB_DB:  Database name (default: edc_backend)</p></li>
+</ul>
+</dd>
+<dt>Usage example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">app.db.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_mongo</span><span class="p">,</span> <span class="n">get_db</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">await</span> <span class="n">init_mongo</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">list_collection_names</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.client.init_mongo">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.db.client.</span></span><span class="sig-name descname"><span class="pre">init_mongo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.db.client.init_mongo" title="Link to this definition"></a></dt>
+<dd><p>Initialize the global MongoDB client and database connection.</p>
+<p>This function connects to the MongoDB server using the connection string
+defined in the environment variables. It should be called once during
+application startup (e.g., in <cite>main.py</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – If the connection to MongoDB fails.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">await</span> <span class="n">init_mongo</span><span class="p">()</span>
+<span class="go">✅ Connected to MongoDB at mongodb://localhost:27017, using database &#39;edc_backend&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.db.client.get_db">
+<span class="sig-prename descclassname"><span class="pre">app.db.client.</span></span><span class="sig-name descname"><span class="pre">get_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.db.client.get_db" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the initialized MongoDB database instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The connected MongoDB database instance.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>AsyncIOMotorDatabase</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the database has not been initialized yet</p></li>
+<li><p><strong>(</strong><strong>i.e.</strong><strong>, </strong><strong>init_mongo</strong><strong>(</strong><strong>) </strong><strong>has not been called</strong><strong>)</strong><strong>.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">list_collection_names</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-app.db">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.db" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="app.html" class="btn btn-neutral float-left" title="app package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app.models.html" class="btn btn-neutral float-right" title="app.models package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Itziar Mensa Minguito.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -7,3 +7,7 @@ httpx
 psycopg2-binary
 requests
 sqlparse
+sphinx 
+sphinx-autodoc-typehints 
+sphinx-rtd-theme 
+myst-parser

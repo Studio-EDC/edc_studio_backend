@@ -1,0 +1,1402 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.services package &mdash; EDC Studio Backend  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="app.util package" href="app.util.html" />
+    <link rel="prev" title="app.schemas package" href="app.schemas.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EDC Studio Backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="app.html">app package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="app.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app.db.html">app.db package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.db.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.db.html#module-app.db.client">app.db.client module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.db.html#module-app.db">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html">app.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.asset">app.models.asset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.connector">app.models.connector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.contract">app.models.contract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.policy">app.models.policy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.transfer">app.models.transfer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html">app.routes package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.assets_routes">app.routes.assets_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.connectors_routes">app.routes.connectors_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.contracts_routes">app.routes.contracts_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.policies_routes">app.routes.policies_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.transfers_routes">app.routes.transfers_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html">app.schemas package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas.connector">app.schemas.connector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas.transfer">app.schemas.transfer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">app.services package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.services.assets_service">app.services.assets_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.services.connectors_service">app.services.connectors_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.services.contracts_service">app.services.contracts_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.services.edc_launcher_service">app.services.edc_launcher_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.services.policies_service">app.services.policies_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.services.transfers_service">app.services.transfers_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.services">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.util.html">app.util package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#module-app.util.edc_helpers">app.util.edc_helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#module-app.util">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#module-app.main">app.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.html#app.main.startup_db"><code class="docutils literal notranslate"><span class="pre">startup_db()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#module-app">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EDC Studio Backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="app.html">app package</a></li>
+      <li class="breadcrumb-item active">app.services package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/app.services.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="app-services-package">
+<h1>app.services package<a class="headerlink" href="#app-services-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-app.services.assets_service">
+<span id="app-services-assets-service-module"></span><h2>app.services.assets_service module<a class="headerlink" href="#module-app.services.assets_service" title="Link to this heading"></a></h2>
+<p>Assets service.</p>
+<p>This module defines the core business logic for managing <cite>Asset</cite> entities
+within the EDC Studio Backend. It handles database operations, API requests
+to the EDC management endpoints, and validation of connector references.</p>
+<p>Each function encapsulates a specific responsibility, such as creating,
+updating, deleting, or retrieving assets, both from the internal MongoDB
+database and from the EDC connectors via HTTP requests.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.assets_service.create_asset">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.assets_service.</span></span><span class="sig-name descname"><span class="pre">create_asset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.assets_service.create_asset" title="Link to this definition"></a></dt>
+<dd><p>Creates a new asset and registers it with the corresponding EDC connector.</p>
+<p>The function validates the existence of the connector in the database,
+transforms the asset data into the required EDC format, and calls the
+EDC management API to register the asset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.models.html#app.models.asset.Asset" title="app.models.asset.Asset"><em>Asset</em></a>) – Asset information to be created and registered.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response from the EDC connector containing the asset ID.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the EDC connector is not found or the HTTP request fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.assets_service.register_asset_with_edc">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.assets_service.</span></span><span class="sig-name descname"><span class="pre">register_asset_with_edc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.assets_service.register_asset_with_edc" title="Link to this definition"></a></dt>
+<dd><p>Registers a new asset directly with the EDC management API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>asset</strong> (<em>dict</em>) – Asset data in dictionary format.</p></li>
+<li><p><strong>connector</strong> (<em>dict</em>) – Connector configuration retrieved from the database.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response from the EDC management API.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.assets_service.get_asset_by_asset_id_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.assets_service.</span></span><span class="sig-name descname"><span class="pre">get_asset_by_asset_id_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.assets_service.get_asset_by_asset_id_service" title="Link to this definition"></a></dt>
+<dd><p>Retrieves an asset by its ID directly from the EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edc_id</strong> (<em>str</em>) – ID of the EDC connector.</p></li>
+<li><p><strong>asset_id</strong> (<em>str</em>) – Asset identifier within the EDC system.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Asset object retrieved from the EDC.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="app.models.html#app.models.asset.Asset" title="app.models.asset.Asset">Asset</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector is not found or the EDC request fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.assets_service.update_asset">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.assets_service.</span></span><span class="sig-name descname"><span class="pre">update_asset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.assets_service.update_asset" title="Link to this definition"></a></dt>
+<dd><p>Updates an existing asset in the EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>asset</strong> (<a class="reference internal" href="app.models.html#app.models.asset.Asset" title="app.models.asset.Asset"><em>Asset</em></a>) – Updated asset data.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – ID of the EDC connector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the update succeeded.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector is not found or the HTTP request fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.assets_service.delete_asset">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.assets_service.</span></span><span class="sig-name descname"><span class="pre">delete_asset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asset_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.assets_service.delete_asset" title="Link to this definition"></a></dt>
+<dd><p>Deletes an asset from the EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>asset_id</strong> (<em>str</em>) – Identifier of the asset to delete.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – Identifier of the EDC connector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the asset was successfully deleted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector is not found or the HTTP request fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.assets_service.get_assets_by_edc_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.assets_service.</span></span><span class="sig-name descname"><span class="pre">get_assets_by_edc_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.assets_service.get_assets_by_edc_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieves all assets registered in a specific EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>edc_id</strong> (<em>str</em>) – ID of the EDC connector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of <cite>Asset</cite> objects registered in the EDC.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<a class="reference internal" href="app.models.html#app.models.asset.Asset" title="app.models.asset.Asset">Asset</a>]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector is not found or the HTTP request fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.services.connectors_service">
+<span id="app-services-connectors-service-module"></span><h2>app.services.connectors_service module<a class="headerlink" href="#module-app.services.connectors_service" title="Link to this heading"></a></h2>
+<p>Connectors service.</p>
+<p>This module implements the business logic for managing EDC connectors within
+the EDC Studio Backend. It handles database interactions, Docker lifecycle
+management, and port validation for locally managed EDC instances.</p>
+<p>The service supports creating, starting, stopping, updating, and deleting
+connectors, as well as verifying their operational state and uniqueness of ports.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.connectors_service.create_connector">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.connectors_service.</span></span><span class="sig-name descname"><span class="pre">create_connector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.connectors_service.create_connector" title="Link to this definition"></a></dt>
+<dd><p>Creates a new connector and stores it in the MongoDB database.</p>
+<p>The function first validates that the connector’s ports are unique and
+not already in use. If validation passes, the connector is inserted into
+the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>connector</strong> (<a class="reference internal" href="app.models.html#app.models.connector.Connector" title="app.models.connector.Connector"><em>Connector</em></a>) – Connector configuration data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The inserted connector’s MongoDB ID as a string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If one or more ports are already in use.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.connectors_service.check_ports_unique">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.connectors_service.</span></span><span class="sig-name descname"><span class="pre">check_ports_unique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.connectors_service.check_ports_unique" title="Link to this definition"></a></dt>
+<dd><p>Validates that the ports used by a connector are unique.</p>
+<p>Ensures no other connector in the database or process in the system
+is already using any of the specified ports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>connector</strong> (<a class="reference internal" href="app.models.html#app.models.connector.Connector" title="app.models.connector.Connector"><em>Connector</em></a>) – Connector to validate.</p></li>
+<li><p><strong>db</strong> – Database client instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If any port is already assigned or in use.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.connectors_service.is_port_in_use">
+<span class="sig-prename descclassname"><span class="pre">app.services.connectors_service.</span></span><span class="sig-name descname"><span class="pre">is_port_in_use</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.connectors_service.is_port_in_use" title="Link to this definition"></a></dt>
+<dd><p>Checks whether a given port is already in use on the host machine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>port</strong> (<em>int</em>) – The port number to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the port is in use, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.connectors_service.start_edc_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.connectors_service.</span></span><span class="sig-name descname"><span class="pre">start_edc_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connector_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.connectors_service.start_edc_service" title="Link to this definition"></a></dt>
+<dd><p>Starts a managed EDC connector by generating its runtime configuration
+and launching the associated Docker containers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>connector_id</strong> (<em>str</em>) – The MongoDB ID of the connector to start.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the connector does not exist.</p></li>
+<li><p><strong>RuntimeError</strong> – If the Docker launch process fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.connectors_service.stop_edc_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.connectors_service.</span></span><span class="sig-name descname"><span class="pre">stop_edc_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connector_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.connectors_service.stop_edc_service" title="Link to this definition"></a></dt>
+<dd><p>Stops a running managed EDC connector and updates its state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>connector_id</strong> (<em>str</em>) – The MongoDB ID of the connector to stop.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the runtime directory does not exist.</p></li>
+<li><p><strong>RuntimeError</strong> – If stopping the connector fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.connectors_service.get_all_connectors">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.connectors_service.</span></span><span class="sig-name descname"><span class="pre">get_all_connectors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.services.connectors_service.get_all_connectors" title="Link to this definition"></a></dt>
+<dd><p>Retrieves all connectors from the database and checks their runtime state.</p>
+<p>For managed connectors, it inspects Docker to determine if the containers
+are running and updates the connector state in the database accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of connector objects with updated runtime states.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.connectors_service.get_connector_by_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.connectors_service.</span></span><span class="sig-name descname"><span class="pre">get_connector_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.connectors_service.get_connector_by_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a connector by its MongoDB ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Connector ID as a string.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Connector data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the connector is not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.connectors_service.update_connector">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.connectors_service.</span></span><span class="sig-name descname"><span class="pre">update_connector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.connectors_service.update_connector" title="Link to this definition"></a></dt>
+<dd><p>Updates an existing connector with new data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>str</em>) – The MongoDB ID of the connector.</p></li>
+<li><p><strong>update_data</strong> (<em>dict</em>) – Dictionary containing the fields to update.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the connector does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.connectors_service.delete_connector">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.connectors_service.</span></span><span class="sig-name descname"><span class="pre">delete_connector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.connectors_service.delete_connector" title="Link to this definition"></a></dt>
+<dd><p>Deletes a connector and its associated runtime folder.</p>
+<p>The runtime directory under <cite>runtime/{connector_id}</cite> is removed from disk
+before the database record is deleted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – The MongoDB ID of the connector.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the runtime folder or connector record does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.services.contracts_service">
+<span id="app-services-contracts-service-module"></span><h2>app.services.contracts_service module<a class="headerlink" href="#module-app.services.contracts_service" title="Link to this heading"></a></h2>
+<p>Contracts service.</p>
+<p>This module implements the business logic for managing contract definitions
+within the EDC Studio Backend. It handles the interaction between the API,
+the MongoDB database, and the EDC Management API for creating, reading,
+updating, and deleting contract definitions.</p>
+<p>Contracts link assets with access and usage policies to define the conditions
+under which data can be exchanged between EDC connectors.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.contracts_service.create_contract">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.contracts_service.</span></span><span class="sig-name descname"><span class="pre">create_contract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.contracts_service.create_contract" title="Link to this definition"></a></dt>
+<dd><p>Creates a new contract definition in the EDC system.</p>
+<p>The function retrieves the connector configuration from the database and
+registers the new contract definition via the EDC Management API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.models.html#app.models.contract.Contract" title="app.models.contract.Contract"><em>Contract</em></a>) – Contract definition data to be created.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response from the EDC Management API.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector is not found or registration fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.contracts_service._register_contract_with_edc">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.contracts_service.</span></span><span class="sig-name descname"><span class="pre">_register_contract_with_edc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.contracts_service._register_contract_with_edc" title="Link to this definition"></a></dt>
+<dd><p>Registers a contract definition in the EDC Management API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contract</strong> (<em>dict</em>) – Contract data to register.</p></li>
+<li><p><strong>connector</strong> (<em>dict</em>) – Connector configuration data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response from the EDC Management API.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the EDC returns an error response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.contracts_service._convert_contract_to_edc_format">
+<span class="sig-prename descclassname"><span class="pre">app.services.contracts_service.</span></span><span class="sig-name descname"><span class="pre">_convert_contract_to_edc_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.contracts_service._convert_contract_to_edc_format" title="Link to this definition"></a></dt>
+<dd><p>Converts a contract from the internal format to the EDC API format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contract</strong> (<em>dict</em>) – Internal contract representation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Contract formatted according to the EDC Management API specification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.contracts_service.get_contracts_by_edc_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.contracts_service.</span></span><span class="sig-name descname"><span class="pre">get_contracts_by_edc_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.contracts_service.get_contracts_by_edc_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieves all contract definitions from a given EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>edc_id</strong> (<em>str</em>) – MongoDB ID of the connector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of contract definitions available in the connector.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<a class="reference internal" href="app.models.html#app.models.contract.Contract" title="app.models.contract.Contract">Contract</a>]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector is not found or communication fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.contracts_service.get_contract_by_contract_id_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.contracts_service.</span></span><span class="sig-name descname"><span class="pre">get_contract_by_contract_id_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.contracts_service.get_contract_by_contract_id_service" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a single contract definition by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edc_id</strong> (<em>str</em>) – Connector MongoDB ID.</p></li>
+<li><p><strong>contract_id</strong> (<em>str</em>) – Contract definition ID in the EDC system.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed contract object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="app.models.html#app.models.contract.Contract" title="app.models.contract.Contract">Contract</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector or contract cannot be found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.contracts_service.update_contract">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.contracts_service.</span></span><span class="sig-name descname"><span class="pre">update_contract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.contracts_service.update_contract" title="Link to this definition"></a></dt>
+<dd><p>Updates an existing contract definition in the EDC system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contract</strong> (<a class="reference internal" href="app.models.html#app.models.contract.Contract" title="app.models.contract.Contract"><em>Contract</em></a>) – Contract data to update.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – MongoDB ID of the connector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the update succeeded, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.contracts_service.delete_contract">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.contracts_service.</span></span><span class="sig-name descname"><span class="pre">delete_contract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.contracts_service.delete_contract" title="Link to this definition"></a></dt>
+<dd><p>Deletes a contract definition from the EDC system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contract_id</strong> (<em>str</em>) – Contract ID to delete.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – MongoDB ID of the connector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if deletion succeeded, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.contracts_service._get_connector">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.contracts_service.</span></span><span class="sig-name descname"><span class="pre">_get_connector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.contracts_service._get_connector" title="Link to this definition"></a></dt>
+<dd><p>Retrieves connector configuration from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>edc_id</strong> (<em>str</em>) – MongoDB ID of the connector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Connector document.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.contracts_service._parse_contract_item">
+<span class="sig-prename descclassname"><span class="pre">app.services.contracts_service.</span></span><span class="sig-name descname"><span class="pre">_parse_contract_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.contracts_service._parse_contract_item" title="Link to this definition"></a></dt>
+<dd><p>Parses a raw contract JSON object into a <cite>Contract</cite> model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> (<em>dict</em>) – Raw contract data returned by the EDC.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – ID of the connector associated with the contract.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed contract model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="app.models.html#app.models.contract.Contract" title="app.models.contract.Contract">Contract</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.services.edc_launcher_service">
+<span id="app-services-edc-launcher-service-module"></span><h2>app.services.edc_launcher_service module<a class="headerlink" href="#module-app.services.edc_launcher_service" title="Link to this heading"></a></h2>
+<p>EDC Launcher service.</p>
+<p>This module manages the local lifecycle of EDC connectors by generating
+runtime configuration files, certificates, and Docker Compose setups.</p>
+<dl class="simple">
+<dt>It handles:</dt><dd><ul class="simple">
+<li><p>File and certificate generation</p></li>
+<li><p>PostgreSQL database initialization</p></li>
+<li><p>Docker Compose orchestration</p></li>
+<li><p>Docker network creation</p></li>
+</ul>
+</dd>
+</dl>
+<p>These utilities are used when launching managed connectors through
+the EDC Studio Backend.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="app.services.edc_launcher_service.keystore_password">
+<span class="sig-prename descclassname"><span class="pre">app.services.edc_launcher_service.</span></span><span class="sig-name descname"><span class="pre">keystore_password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'yttxB9SgZBi4RSDrJrlqAw'</span></em><a class="headerlink" href="#app.services.edc_launcher_service.keystore_password" title="Link to this definition"></a></dt>
+<dd><p>Randomly generated keystore password for EDC connector certificates.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.edc_launcher_service._generate_files">
+<span class="sig-prename descclassname"><span class="pre">app.services.edc_launcher_service.</span></span><span class="sig-name descname"><span class="pre">_generate_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.edc_launcher_service._generate_files" title="Link to this definition"></a></dt>
+<dd><p>Generates configuration files, certificates, and Docker Compose setup
+for a given EDC connector.</p>
+<dl class="simple">
+<dt>This function creates:</dt><dd><ul class="simple">
+<li><p><cite>config.properties</cite> for EDC runtime configuration</p></li>
+<li><p>PKCS#12 certificate keystore (<cite>cert.pfx</cite>)</p></li>
+<li><p><cite>docker-compose.yml</cite> for launching the connector</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>connector</strong> (<em>dict</em>) – MongoDB connector document.</p></li>
+<li><p><strong>base_path</strong> (<em>Path</em>) – Base directory where runtime files are stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If keytool fails to generate the certificate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.edc_launcher_service._wait_for_postgres">
+<span class="sig-prename descclassname"><span class="pre">app.services.edc_launcher_service.</span></span><span class="sig-name descname"><span class="pre">_wait_for_postgres</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.services.edc_launcher_service._wait_for_postgres" title="Link to this definition"></a></dt>
+<dd><p>Waits until the PostgreSQL service becomes available.</p>
+<p>The function attempts to connect to PostgreSQL periodically until a timeout
+of 30 seconds is reached.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>TimeoutError</strong> – If PostgreSQL is not available within 30 seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.edc_launcher_service._run_docker_compose">
+<span class="sig-prename descclassname"><span class="pre">app.services.edc_launcher_service.</span></span><span class="sig-name descname"><span class="pre">_run_docker_compose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.edc_launcher_service._run_docker_compose" title="Link to this definition"></a></dt>
+<dd><p>Initializes PostgreSQL, prepares the database schema, and starts Docker Compose.</p>
+<dl class="simple">
+<dt>This function:</dt><dd><ol class="arabic simple">
+<li><p>Waits for PostgreSQL availability.</p></li>
+<li><p>Creates a database for the connector if it does not exist.</p></li>
+<li><p>Executes the initialization SQL script.</p></li>
+<li><p>Launches the Docker Compose stack for the connector.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>Path</em>) – Path to the connector’s runtime directory.</p></li>
+<li><p><strong>db_name</strong> (<em>str</em>) – Name of the database to create.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the runtime folder does not exist.</p></li>
+<li><p><strong>FileNotFoundError</strong> – If <cite>init.sql</cite> is missing.</p></li>
+<li><p><strong>Exception</strong> – If database creation or Docker startup fails.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.edc_launcher_service._run_docker_compose_down">
+<span class="sig-prename descclassname"><span class="pre">app.services.edc_launcher_service.</span></span><span class="sig-name descname"><span class="pre">_run_docker_compose_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.edc_launcher_service._run_docker_compose_down" title="Link to this definition"></a></dt>
+<dd><p>Stops and removes Docker Compose services for a connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>Path</em>) – Path to the connector’s runtime directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.edc_launcher_service._create_docker_network_if_not_exists">
+<span class="sig-prename descclassname"><span class="pre">app.services.edc_launcher_service.</span></span><span class="sig-name descname"><span class="pre">_create_docker_network_if_not_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.edc_launcher_service._create_docker_network_if_not_exists" title="Link to this definition"></a></dt>
+<dd><p>Ensures that a given Docker network exists, creating it if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>network_name</strong> (<em>str</em>) – Name of the Docker network to validate or create.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.services.policies_service">
+<span id="app-services-policies-service-module"></span><h2>app.services.policies_service module<a class="headerlink" href="#module-app.services.policies_service" title="Link to this heading"></a></h2>
+<p>Policies Service.</p>
+<p>This module provides functionality to manage policy definitions within
+the EDC (Eclipse Dataspace Connector) ecosystem. It includes operations
+for creating, retrieving, and deleting policies via the connector’s
+Management API.</p>
+<p>These policies define permissions, prohibitions, and obligations
+according to the ODRL (Open Digital Rights Language) model and are
+essential to enforce access control rules for assets exchanged between
+EDC participants.</p>
+<dl class="simple">
+<dt>Handled responsibilities:</dt><dd><ul class="simple">
+<li><p>Policy creation and registration in EDC</p></li>
+<li><p>Conversion between internal models and EDC-compatible JSON-LD</p></li>
+<li><p>Policy retrieval by connector or policy ID</p></li>
+<li><p>Policy deletion from EDC Management API</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.policies_service.create_policy">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.policies_service.</span></span><span class="sig-name descname"><span class="pre">create_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.policies_service.create_policy" title="Link to this definition"></a></dt>
+<dd><p>Creates and registers a policy definition in a specific EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.models.html#app.models.policy.Policy" title="app.models.policy.Policy"><em>Policy</em></a>) – Policy data model containing permissions, prohibitions,
+and obligations following the ODRL schema.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector is not found or EDC registration fails.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response from the EDC API confirming the created policy.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.policies_service.register_policy_with_edc">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.policies_service.</span></span><span class="sig-name descname"><span class="pre">register_policy_with_edc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.policies_service.register_policy_with_edc" title="Link to this definition"></a></dt>
+<dd><p>Registers a new policy in the EDC Management API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>policy</strong> (<em>dict</em>) – Dictionary containing the policy data to register.</p></li>
+<li><p><strong>connector</strong> (<em>dict</em>) – EDC connector document containing configuration
+and API endpoint details.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>httpx.HTTPStatusError</strong> – If the EDC Management API returns an error.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response from the EDC confirming registration.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.policies_service.convert_policy_to_edc_format">
+<span class="sig-prename descclassname"><span class="pre">app.services.policies_service.</span></span><span class="sig-name descname"><span class="pre">convert_policy_to_edc_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.policies_service.convert_policy_to_edc_format" title="Link to this definition"></a></dt>
+<dd><p>Converts an internal Policy model into EDC-compatible JSON-LD format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>policy</strong> (<em>dict</em>) – Internal policy representation.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Policy formatted according to EDC Management API schema.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.policies_service._convert_rules">
+<span class="sig-prename descclassname"><span class="pre">app.services.policies_service.</span></span><span class="sig-name descname"><span class="pre">_convert_rules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rules</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.policies_service._convert_rules" title="Link to this definition"></a></dt>
+<dd><p>Converts a list of internal rule objects into EDC ODRL-compliant rules.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rules</strong> (<em>list</em>) – List of permission, prohibition, or obligation rules.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>EDC-compatible rule dictionaries.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.policies_service.normalize_odrl_list">
+<span class="sig-prename descclassname"><span class="pre">app.services.policies_service.</span></span><span class="sig-name descname"><span class="pre">normalize_odrl_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.policies_service.normalize_odrl_list" title="Link to this definition"></a></dt>
+<dd><p>Ensures that an ODRL property is always returned as a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>Any</em>) – Raw ODRL property (dict, list, or None).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A normalized list of elements or an empty list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.policies_service.convert_rules_get">
+<span class="sig-prename descclassname"><span class="pre">app.services.policies_service.</span></span><span class="sig-name descname"><span class="pre">convert_rules_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rule_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.policies_service.convert_rules_get" title="Link to this definition"></a></dt>
+<dd><p>Converts a list of ODRL rules from EDC API format to internal Rule models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rule_list</strong> (<em>list</em>) – ODRL-formatted rule list from EDC API.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of internal Rule objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<a class="reference internal" href="app.models.html#app.models.policy.Rule" title="app.models.policy.Rule">Rule</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.policies_service.get_policies_by_edc_id">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.policies_service.</span></span><span class="sig-name descname"><span class="pre">get_policies_by_edc_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.policies_service.get_policies_by_edc_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieves all policy definitions from a given EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>edc_id</strong> (<em>str</em>) – ID of the connector from which to retrieve policies.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector does not exist or communication fails.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of Policy objects retrieved from the EDC.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="app.models.html#app.models.policy.Policy" title="app.models.policy.Policy">Policy</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.policies_service.get_policy_by_policy_id_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.policies_service.</span></span><span class="sig-name descname"><span class="pre">get_policy_by_policy_id_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.policies_service.get_policy_by_policy_id_service" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a single policy definition by its ID from an EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edc_id</strong> (<em>str</em>) – EDC connector ID.</p></li>
+<li><p><strong>policy_id</strong> (<em>str</em>) – Unique policy identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector or policy cannot be found.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The corresponding Policy model.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="app.models.html#app.models.policy.Policy" title="app.models.policy.Policy">Policy</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.policies_service.delete_policy">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.policies_service.</span></span><span class="sig-name descname"><span class="pre">delete_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.policies_service.delete_policy" title="Link to this definition"></a></dt>
+<dd><p>Deletes a policy definition from a specific EDC connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>policy_id</strong> (<em>str</em>) – Policy identifier to remove.</p></li>
+<li><p><strong>edc_id</strong> (<em>str</em>) – Connector ID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If the connector does not exist or deletion fails.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if deletion succeeded, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.services.transfers_service">
+<span id="app-services-transfers-service-module"></span><h2>app.services.transfers_service module<a class="headerlink" href="#module-app.services.transfers_service" title="Link to this heading"></a></h2>
+<p>Transfers Service.</p>
+<p>This module handles the complete data exchange lifecycle between EDC
+connectors, including catalog retrieval, contract negotiation,
+agreement validation, and data transfer initiation (PUSH or PULL).</p>
+<p>It acts as the orchestration layer for data transactions in the EDC Studio
+Backend, communicating with the connectors’ Management and Protocol APIs.</p>
+<dl class="simple">
+<dt>Main responsibilities:</dt><dd><ul class="simple">
+<li><p>Requesting and parsing asset catalogs between connectors.</p></li>
+<li><p>Negotiating and validating contract agreements.</p></li>
+<li><p>Starting, monitoring, and managing data transfers.</p></li>
+<li><p>Managing local transfer metadata and HTTP logger containers.</p></li>
+</ul>
+</dd>
+</dl>
+<p>All operations follow the EDC protocol specifications and use the
+dataspace-protocol-http communication channel.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.catalog_request_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">catalog_request_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.catalog_request_service" title="Link to this definition"></a></dt>
+<dd><p>Requests the asset catalog from a provider connector through an EDC consumer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer_id</strong> (<em>str</em>) – MongoDB ID of the consumer connector.</p></li>
+<li><p><strong>provider_id</strong> (<em>str</em>) – MongoDB ID of the provider connector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If either connector is not found.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Catalog response from the provider connector.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.catalog_request_curl">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">catalog_request_curl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.catalog_request_curl" title="Link to this definition"></a></dt>
+<dd><p>Sends an HTTP request to retrieve the catalog of available assets from a provider.</p>
+<p>Depending on the consumer’s mode (managed or remote), it builds the proper
+management and protocol URLs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer</strong> (<em>dict</em>) – Consumer connector document.</p></li>
+<li><p><strong>provider</strong> (<em>dict</em>) – Provider connector document.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If API key is missing or EDC communication fails.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response containing the provider’s catalog.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.negotiate_contract_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">negotiate_contract_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_offer_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.negotiate_contract_service" title="Link to this definition"></a></dt>
+<dd><p>Starts a contract negotiation between a consumer and provider connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer_id</strong> (<em>str</em>) – Consumer connector ID.</p></li>
+<li><p><strong>provider_id</strong> (<em>str</em>) – Provider connector ID.</p></li>
+<li><p><strong>contract_offer_id</strong> (<em>str</em>) – Contract offer identifier.</p></li>
+<li><p><strong>asset</strong> (<em>str</em>) – Asset identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If connectors are not found.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>EDC negotiation response.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.negotiate_contract_curl">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">negotiate_contract_curl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_offer_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.negotiate_contract_curl" title="Link to this definition"></a></dt>
+<dd><p>Performs an HTTP request to the EDC Management API to initiate contract negotiation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer</strong> (<em>dict</em>) – Consumer connector data.</p></li>
+<li><p><strong>provider</strong> (<em>dict</em>) – Provider connector data.</p></li>
+<li><p><strong>contract_offer_id</strong> (<em>str</em>) – Contract offer identifier.</p></li>
+<li><p><strong>asset</strong> (<em>str</em>) – Asset identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response from the EDC Management API.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.get_contract_agreement_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">get_contract_agreement_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_contract_negotiation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.get_contract_agreement_service" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a contract agreement based on a negotiation ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer_id</strong> (<em>str</em>) – Consumer connector ID.</p></li>
+<li><p><strong>id_contract_negotiation</strong> (<em>str</em>) – Contract negotiation ID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Agreement details from EDC.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.get_contract_agreement_curl">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">get_contract_agreement_curl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_contract_negotiation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.get_contract_agreement_curl" title="Link to this definition"></a></dt>
+<dd><p>Performs a GET request to the EDC API to retrieve contract agreement details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer</strong> (<em>dict</em>) – Consumer connector data.</p></li>
+<li><p><strong>id_contract_negotiation</strong> (<em>str</em>) – Contract negotiation ID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Agreement data from EDC.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.start_http_server_service">
+<span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">start_http_server_service</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.start_http_server_service" title="Link to this definition"></a></dt>
+<dd><p>Starts or restarts the HTTP logger Docker container used to receive
+data transfer callbacks.</p>
+<p>The container is built from <cite>util/http-request-logger</cite> and automatically
+joins the configured EDC Docker network.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.stop_http_server_service">
+<span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">stop_http_server_service</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.stop_http_server_service" title="Link to this definition"></a></dt>
+<dd><p>Stops and removes the HTTP logger Docker container if running.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.start_transfer_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">start_transfer_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_agreement_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.start_transfer_service" title="Link to this definition"></a></dt>
+<dd><p>Initiates a PUSH data transfer from provider to consumer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer_id</strong> (<em>str</em>) – Consumer connector ID.</p></li>
+<li><p><strong>provider_id</strong> (<em>str</em>) – Provider connector ID.</p></li>
+<li><p><strong>contract_agreement_id</strong> (<em>str</em>) – Agreement ID that authorizes transfer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response from EDC transfer API.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.start_transfer_curl">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">start_transfer_curl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_agreement_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.start_transfer_curl" title="Link to this definition"></a></dt>
+<dd><p>Executes the HTTP POST to the EDC API to start a PUSH transfer process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer</strong> (<em>dict</em>) – Consumer connector data.</p></li>
+<li><p><strong>provider</strong> (<em>dict</em>) – Provider connector data.</p></li>
+<li><p><strong>contract_agreement_id</strong> (<em>str</em>) – Contract agreement ID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transfer initiation response.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.check_transfer_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">check_transfer_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_process_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.check_transfer_service" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the current status of a transfer process from the consumer connector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer_id</strong> (<em>str</em>) – MongoDB ID of the consumer connector.</p></li>
+<li><p><strong>transfer_process_id</strong> (<em>str</em>) – Identifier of the transfer process in EDC.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the consumer connector is not found.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Transfer process details including current state and type.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.check_transfer_curl">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">check_transfer_curl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_process_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.check_transfer_curl" title="Link to this definition"></a></dt>
+<dd><p>Sends an HTTP GET request to the EDC Management API to obtain the
+state of a given transfer process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer</strong> (<em>dict</em>) – Consumer connector configuration document.</p></li>
+<li><p><strong>transfer_process_id</strong> (<em>str</em>) – Transfer process identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If EDC communication fails.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON response describing the current transfer state.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.create_transfer_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">create_transfer_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.create_transfer_service" title="Link to this definition"></a></dt>
+<dd><p>Registers a new transfer in the local MongoDB collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="app.models.html#app.models.transfer.Transfer" title="app.models.transfer.Transfer"><em>Transfer</em></a>) – Transfer object containing consumer, provider,
+and metadata details.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – If consumer or provider connector is not found.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MongoDB ID of the created transfer document.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.get_all_transfers_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">get_all_transfers_service</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.get_all_transfers_service" title="Link to this definition"></a></dt>
+<dd><p>Retrieves all transfers stored in the local database.</p>
+<p>This function also populates each transfer with its corresponding
+consumer, provider, and asset documents, replacing ObjectIds with
+full document data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of all transfer documents with populated fields.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.convert_objectids">
+<span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">convert_objectids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.convert_objectids" title="Link to this definition"></a></dt>
+<dd><p>Converts MongoDB ObjectId fields into string identifiers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>doc</strong> (<em>dict</em>) – MongoDB document with potential ObjectId values.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Document with ObjectIds replaced by their string representation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.start_transfer_service_pull">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">start_transfer_service_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_agreement_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.start_transfer_service_pull" title="Link to this definition"></a></dt>
+<dd><p>Initiates a PULL data transfer from provider to consumer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer_id</strong> (<em>str</em>) – Consumer connector ID.</p></li>
+<li><p><strong>provider_id</strong> (<em>str</em>) – Provider connector ID.</p></li>
+<li><p><strong>contract_agreement_id</strong> (<em>str</em>) – Agreement authorizing data transfer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If connectors are not found.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Transfer process response from the EDC Management API.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.start_transfer_curl_pull">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">start_transfer_curl_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract_agreement_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.start_transfer_curl_pull" title="Link to this definition"></a></dt>
+<dd><p>Executes a PULL data transfer request via the EDC Management API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer</strong> (<em>dict</em>) – Consumer connector configuration.</p></li>
+<li><p><strong>provider</strong> (<em>dict</em>) – Provider connector configuration.</p></li>
+<li><p><strong>contract_agreement_id</strong> (<em>str</em>) – Valid contract agreement ID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response from the EDC API confirming transfer initiation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.check_transfer_data_pull_service">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">check_transfer_data_pull_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_process_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.check_transfer_data_pull_service" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the endpoint (data address) of a PULL transfer once created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer_id</strong> (<em>str</em>) – Consumer connector ID.</p></li>
+<li><p><strong>transfer_process_id</strong> (<em>str</em>) – EDC transfer process ID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the consumer connector is not found.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Data address response from the EDC Management API.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.services.transfers_service.check_transfer_data_curl_pull">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.transfers_service.</span></span><span class="sig-name descname"><span class="pre">check_transfer_data_curl_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transfer_process_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.transfers_service.check_transfer_data_curl_pull" title="Link to this definition"></a></dt>
+<dd><p>Sends a GET request to fetch the data address (EDR) for a PULL transfer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer</strong> (<em>dict</em>) – Consumer connector configuration.</p></li>
+<li><p><strong>transfer_process_id</strong> (<em>str</em>) – Transfer process ID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON data address from EDC if available.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.services">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.services" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="app.schemas.html" class="btn btn-neutral float-left" title="app.schemas package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app.util.html" class="btn btn-neutral float-right" title="app.util package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Itziar Mensa Minguito.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

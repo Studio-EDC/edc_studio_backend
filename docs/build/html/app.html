@@ -1,0 +1,577 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app package &mdash; EDC Studio Backend  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="app.db package" href="app.db.html" />
+    <link rel="prev" title="EDC Studio Backend Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EDC Studio Backend
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">app package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.db.html">app.db package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.db.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.db.html#module-app.db.client">app.db.client module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.db.html#module-app.db">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html">app.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.asset">app.models.asset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.connector">app.models.connector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.contract">app.models.contract module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.policy">app.models.policy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models.transfer">app.models.transfer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#module-app.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html">app.routes package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.assets_routes">app.routes.assets_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.connectors_routes">app.routes.connectors_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.contracts_routes">app.routes.contracts_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.policies_routes">app.routes.policies_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes.transfers_routes">app.routes.transfers_routes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.routes.html#module-app.routes">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html">app.schemas package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas.connector">app.schemas.connector module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas.transfer">app.schemas.transfer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#module-app.schemas">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html">app.services package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.assets_service">app.services.assets_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.connectors_service">app.services.connectors_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.contracts_service">app.services.contracts_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.edc_launcher_service">app.services.edc_launcher_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.policies_service">app.services.policies_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services.transfers_service">app.services.transfers_service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html#module-app.services">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.util.html">app.util package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#module-app.util.edc_helpers">app.util.edc_helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.util.html#module-app.util">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-app.main">app.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#app.main.startup_db"><code class="docutils literal notranslate"><span class="pre">startup_db()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-app">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EDC Studio Backend</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">app package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/app.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="app-package">
+<h1>app package<a class="headerlink" href="#app-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="app.db.html">app.db package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.db.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.db.html#module-app.db.client">app.db.client module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.db.html#app.db.client.init_mongo"><code class="docutils literal notranslate"><span class="pre">init_mongo()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.db.html#app.db.client.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.db.html#module-app.db">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="app.models.html">app.models package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.models.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.models.html#module-app.models.asset">app.models.asset module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.asset.Asset"><code class="docutils literal notranslate"><span class="pre">Asset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset.asset_id"><code class="docutils literal notranslate"><span class="pre">Asset.asset_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset.name"><code class="docutils literal notranslate"><span class="pre">Asset.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset.content_type"><code class="docutils literal notranslate"><span class="pre">Asset.content_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset.data_address_name"><code class="docutils literal notranslate"><span class="pre">Asset.data_address_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset._abc_impl"><code class="docutils literal notranslate"><span class="pre">Asset._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset.model_config"><code class="docutils literal notranslate"><span class="pre">Asset.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset.data_address_type"><code class="docutils literal notranslate"><span class="pre">Asset.data_address_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset.data_address_proxy"><code class="docutils literal notranslate"><span class="pre">Asset.data_address_proxy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset.base_url"><code class="docutils literal notranslate"><span class="pre">Asset.base_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.asset.Asset.edc"><code class="docutils literal notranslate"><span class="pre">Asset.edc</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.models.html#module-app.models.connector">app.models.connector module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.connector.PortConfig"><code class="docutils literal notranslate"><span class="pre">PortConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.PortConfig.http"><code class="docutils literal notranslate"><span class="pre">PortConfig.http</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.PortConfig.management"><code class="docutils literal notranslate"><span class="pre">PortConfig.management</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.PortConfig.protocol"><code class="docutils literal notranslate"><span class="pre">PortConfig.protocol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.PortConfig.control"><code class="docutils literal notranslate"><span class="pre">PortConfig.control</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.PortConfig.public"><code class="docutils literal notranslate"><span class="pre">PortConfig.public</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.PortConfig.version"><code class="docutils literal notranslate"><span class="pre">PortConfig.version</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.PortConfig._abc_impl"><code class="docutils literal notranslate"><span class="pre">PortConfig._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.PortConfig.model_config"><code class="docutils literal notranslate"><span class="pre">PortConfig.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.connector.Endpoints"><code class="docutils literal notranslate"><span class="pre">Endpoints</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Endpoints.management"><code class="docutils literal notranslate"><span class="pre">Endpoints.management</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Endpoints.protocol"><code class="docutils literal notranslate"><span class="pre">Endpoints.protocol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Endpoints._abc_impl"><code class="docutils literal notranslate"><span class="pre">Endpoints._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Endpoints.model_config"><code class="docutils literal notranslate"><span class="pre">Endpoints.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.connector.Connector"><code class="docutils literal notranslate"><span class="pre">Connector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector._abc_impl"><code class="docutils literal notranslate"><span class="pre">Connector._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.model_config"><code class="docutils literal notranslate"><span class="pre">Connector.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.name"><code class="docutils literal notranslate"><span class="pre">Connector.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.description"><code class="docutils literal notranslate"><span class="pre">Connector.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.type"><code class="docutils literal notranslate"><span class="pre">Connector.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.ports"><code class="docutils literal notranslate"><span class="pre">Connector.ports</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.api_key"><code class="docutils literal notranslate"><span class="pre">Connector.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.state"><code class="docutils literal notranslate"><span class="pre">Connector.state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.mode"><code class="docutils literal notranslate"><span class="pre">Connector.mode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.endpoints_url"><code class="docutils literal notranslate"><span class="pre">Connector.endpoints_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.connector.Connector.domain"><code class="docutils literal notranslate"><span class="pre">Connector.domain</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.models.html#module-app.models.contract">app.models.contract module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.contract.Contract"><code class="docutils literal notranslate"><span class="pre">Contract</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.contract.Contract.edc"><code class="docutils literal notranslate"><span class="pre">Contract.edc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.contract.Contract.contract_id"><code class="docutils literal notranslate"><span class="pre">Contract.contract_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.contract.Contract.accessPolicyId"><code class="docutils literal notranslate"><span class="pre">Contract.accessPolicyId</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.contract.Contract._abc_impl"><code class="docutils literal notranslate"><span class="pre">Contract._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.contract.Contract.model_config"><code class="docutils literal notranslate"><span class="pre">Contract.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.contract.Contract.contractPolicyId"><code class="docutils literal notranslate"><span class="pre">Contract.contractPolicyId</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.contract.Contract.assetsSelector"><code class="docutils literal notranslate"><span class="pre">Contract.assetsSelector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.contract.Contract.context"><code class="docutils literal notranslate"><span class="pre">Contract.context</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.models.html#module-app.models.policy">app.models.policy module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.policy.Operator"><code class="docutils literal notranslate"><span class="pre">Operator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Operator.id"><code class="docutils literal notranslate"><span class="pre">Operator.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Operator._abc_impl"><code class="docutils literal notranslate"><span class="pre">Operator._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Operator.model_config"><code class="docutils literal notranslate"><span class="pre">Operator.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.policy.Constraint"><code class="docutils literal notranslate"><span class="pre">Constraint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Constraint.leftOperand"><code class="docutils literal notranslate"><span class="pre">Constraint.leftOperand</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Constraint.operator"><code class="docutils literal notranslate"><span class="pre">Constraint.operator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Constraint.rightOperand"><code class="docutils literal notranslate"><span class="pre">Constraint.rightOperand</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Constraint._abc_impl"><code class="docutils literal notranslate"><span class="pre">Constraint._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Constraint.model_config"><code class="docutils literal notranslate"><span class="pre">Constraint.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.policy.Rule"><code class="docutils literal notranslate"><span class="pre">Rule</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Rule.action"><code class="docutils literal notranslate"><span class="pre">Rule.action</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Rule.constraint"><code class="docutils literal notranslate"><span class="pre">Rule.constraint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Rule._abc_impl"><code class="docutils literal notranslate"><span class="pre">Rule._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Rule.model_config"><code class="docutils literal notranslate"><span class="pre">Rule.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.policy.PolicyDefinition"><code class="docutils literal notranslate"><span class="pre">PolicyDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.PolicyDefinition.permission"><code class="docutils literal notranslate"><span class="pre">PolicyDefinition.permission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.PolicyDefinition.prohibition"><code class="docutils literal notranslate"><span class="pre">PolicyDefinition.prohibition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.PolicyDefinition._abc_impl"><code class="docutils literal notranslate"><span class="pre">PolicyDefinition._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.PolicyDefinition.model_config"><code class="docutils literal notranslate"><span class="pre">PolicyDefinition.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.PolicyDefinition.obligation"><code class="docutils literal notranslate"><span class="pre">PolicyDefinition.obligation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.PolicyDefinition.context"><code class="docutils literal notranslate"><span class="pre">PolicyDefinition.context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.PolicyDefinition.type"><code class="docutils literal notranslate"><span class="pre">PolicyDefinition.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.policy.Policy"><code class="docutils literal notranslate"><span class="pre">Policy</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Policy._abc_impl"><code class="docutils literal notranslate"><span class="pre">Policy._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Policy.model_config"><code class="docutils literal notranslate"><span class="pre">Policy.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Policy.edc"><code class="docutils literal notranslate"><span class="pre">Policy.edc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Policy.policy_id"><code class="docutils literal notranslate"><span class="pre">Policy.policy_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Policy.policy"><code class="docutils literal notranslate"><span class="pre">Policy.policy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.policy.Policy.context"><code class="docutils literal notranslate"><span class="pre">Policy.context</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.models.html#module-app.models.transfer">app.models.transfer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer"><code class="docutils literal notranslate"><span class="pre">Transfer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.consumer"><code class="docutils literal notranslate"><span class="pre">Transfer.consumer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.provider"><code class="docutils literal notranslate"><span class="pre">Transfer.provider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.asset"><code class="docutils literal notranslate"><span class="pre">Transfer.asset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.has_policy_id"><code class="docutils literal notranslate"><span class="pre">Transfer.has_policy_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.negotiate_contract_id"><code class="docutils literal notranslate"><span class="pre">Transfer.negotiate_contract_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer._abc_impl"><code class="docutils literal notranslate"><span class="pre">Transfer._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.model_config"><code class="docutils literal notranslate"><span class="pre">Transfer.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.contract_agreement_id"><code class="docutils literal notranslate"><span class="pre">Transfer.contract_agreement_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.transfer_process_id"><code class="docutils literal notranslate"><span class="pre">Transfer.transfer_process_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.transfer_flow"><code class="docutils literal notranslate"><span class="pre">Transfer.transfer_flow</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.authorization"><code class="docutils literal notranslate"><span class="pre">Transfer.authorization</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html#app.models.transfer.Transfer.endpoint"><code class="docutils literal notranslate"><span class="pre">Transfer.endpoint</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.models.html#module-app.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="app.routes.html">app.routes package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.routes.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.routes.html#module-app.routes.assets_routes">app.routes.assets_routes module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.assets_routes.create_asset_route"><code class="docutils literal notranslate"><span class="pre">create_asset_route()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.assets_routes.list_assets_by_edc"><code class="docutils literal notranslate"><span class="pre">list_assets_by_edc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.assets_routes.get_asset_by_asset_id"><code class="docutils literal notranslate"><span class="pre">get_asset_by_asset_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.assets_routes.update_asset_route"><code class="docutils literal notranslate"><span class="pre">update_asset_route()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.assets_routes.delete_asset_route"><code class="docutils literal notranslate"><span class="pre">delete_asset_route()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.routes.html#module-app.routes.connectors_routes">app.routes.connectors_routes module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.connectors_routes.create_connector_route"><code class="docutils literal notranslate"><span class="pre">create_connector_route()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.connectors_routes.start_edc"><code class="docutils literal notranslate"><span class="pre">start_edc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.connectors_routes.stop_edc"><code class="docutils literal notranslate"><span class="pre">stop_edc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.connectors_routes.list_connectors"><code class="docutils literal notranslate"><span class="pre">list_connectors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.connectors_routes.get_connector"><code class="docutils literal notranslate"><span class="pre">get_connector()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.connectors_routes.update_connector_route"><code class="docutils literal notranslate"><span class="pre">update_connector_route()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.connectors_routes.delete_connector_route"><code class="docutils literal notranslate"><span class="pre">delete_connector_route()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.routes.html#module-app.routes.contracts_routes">app.routes.contracts_routes module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.contracts_routes.create_contract_route"><code class="docutils literal notranslate"><span class="pre">create_contract_route()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.contracts_routes.list_contracts_by_edc"><code class="docutils literal notranslate"><span class="pre">list_contracts_by_edc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.contracts_routes.get_contract_by_contract_id"><code class="docutils literal notranslate"><span class="pre">get_contract_by_contract_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.contracts_routes.update_contract_route"><code class="docutils literal notranslate"><span class="pre">update_contract_route()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.contracts_routes.delete_contract_route"><code class="docutils literal notranslate"><span class="pre">delete_contract_route()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.routes.html#module-app.routes.policies_routes">app.routes.policies_routes module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.policies_routes.create_policy_route"><code class="docutils literal notranslate"><span class="pre">create_policy_route()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.policies_routes.list_policies_by_edc"><code class="docutils literal notranslate"><span class="pre">list_policies_by_edc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.policies_routes.get_policy_by_policy_id"><code class="docutils literal notranslate"><span class="pre">get_policy_by_policy_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.policies_routes.delete_asset_route"><code class="docutils literal notranslate"><span class="pre">delete_asset_route()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.routes.html#module-app.routes.transfers_routes">app.routes.transfers_routes module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.catalog_request"><code class="docutils literal notranslate"><span class="pre">catalog_request()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.negotiate_contract"><code class="docutils literal notranslate"><span class="pre">negotiate_contract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.contract_agreement"><code class="docutils literal notranslate"><span class="pre">contract_agreement()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.start_http_server"><code class="docutils literal notranslate"><span class="pre">start_http_server()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.stop_http_server"><code class="docutils literal notranslate"><span class="pre">stop_http_server()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.start_transfer"><code class="docutils literal notranslate"><span class="pre">start_transfer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.check_transfer"><code class="docutils literal notranslate"><span class="pre">check_transfer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.new_transfer"><code class="docutils literal notranslate"><span class="pre">new_transfer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.get_all_transfers"><code class="docutils literal notranslate"><span class="pre">get_all_transfers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.start_transfer_pull"><code class="docutils literal notranslate"><span class="pre">start_transfer_pull()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.check_data_pull"><code class="docutils literal notranslate"><span class="pre">check_data_pull()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.proxy_http_logger"><code class="docutils literal notranslate"><span class="pre">proxy_http_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.routes.html#app.routes.transfers_routes.proxy_pull"><code class="docutils literal notranslate"><span class="pre">proxy_pull()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.routes.html#module-app.routes">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="app.schemas.html">app.schemas package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.schemas.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.schemas.html#module-app.schemas.connector">app.schemas.connector module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.id"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.name"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.description"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.type"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.ports"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.ports</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.state"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.mode"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.mode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.endpoints_url"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.endpoints_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.api_key"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse._abc_impl"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorResponse.model_config"><code class="docutils literal notranslate"><span class="pre">ConnectorResponse.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate._abc_impl"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate.model_config"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate.name"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate.description"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate.type"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate.ports"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate.ports</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate.api_key"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate.state"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate.state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate.mode"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate.mode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.connector.ConnectorUpdate.endpoints_url"><code class="docutils literal notranslate"><span class="pre">ConnectorUpdate.endpoints_url</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.schemas.html#module-app.schemas.transfer">app.schemas.transfer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse"><code class="docutils literal notranslate"><span class="pre">TransferResponse</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.id"><code class="docutils literal notranslate"><span class="pre">TransferResponse.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.consumer"><code class="docutils literal notranslate"><span class="pre">TransferResponse.consumer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.provider"><code class="docutils literal notranslate"><span class="pre">TransferResponse.provider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.asset"><code class="docutils literal notranslate"><span class="pre">TransferResponse.asset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.has_policy_id"><code class="docutils literal notranslate"><span class="pre">TransferResponse.has_policy_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.negotiate_contract_id"><code class="docutils literal notranslate"><span class="pre">TransferResponse.negotiate_contract_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.contract_agreement_id"><code class="docutils literal notranslate"><span class="pre">TransferResponse.contract_agreement_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.transfer_process_id"><code class="docutils literal notranslate"><span class="pre">TransferResponse.transfer_process_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.transfer_flow"><code class="docutils literal notranslate"><span class="pre">TransferResponse.transfer_flow</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.authorization"><code class="docutils literal notranslate"><span class="pre">TransferResponse.authorization</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.endpoint"><code class="docutils literal notranslate"><span class="pre">TransferResponse.endpoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse._abc_impl"><code class="docutils literal notranslate"><span class="pre">TransferResponse._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.TransferResponse.model_config"><code class="docutils literal notranslate"><span class="pre">TransferResponse.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.RequestCatalog"><code class="docutils literal notranslate"><span class="pre">RequestCatalog</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.RequestCatalog.consumer"><code class="docutils literal notranslate"><span class="pre">RequestCatalog.consumer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.RequestCatalog.provider"><code class="docutils literal notranslate"><span class="pre">RequestCatalog.provider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.RequestCatalog._abc_impl"><code class="docutils literal notranslate"><span class="pre">RequestCatalog._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.RequestCatalog.model_config"><code class="docutils literal notranslate"><span class="pre">RequestCatalog.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.NegotitateContract"><code class="docutils literal notranslate"><span class="pre">NegotitateContract</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.NegotitateContract._abc_impl"><code class="docutils literal notranslate"><span class="pre">NegotitateContract._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.NegotitateContract.model_config"><code class="docutils literal notranslate"><span class="pre">NegotitateContract.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.NegotitateContract.consumer"><code class="docutils literal notranslate"><span class="pre">NegotitateContract.consumer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.NegotitateContract.provider"><code class="docutils literal notranslate"><span class="pre">NegotitateContract.provider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.NegotitateContract.contract_offer_id"><code class="docutils literal notranslate"><span class="pre">NegotitateContract.contract_offer_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.NegotitateContract.asset"><code class="docutils literal notranslate"><span class="pre">NegotitateContract.asset</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.ContractAgreement"><code class="docutils literal notranslate"><span class="pre">ContractAgreement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.ContractAgreement._abc_impl"><code class="docutils literal notranslate"><span class="pre">ContractAgreement._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.ContractAgreement.model_config"><code class="docutils literal notranslate"><span class="pre">ContractAgreement.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.ContractAgreement.consumer"><code class="docutils literal notranslate"><span class="pre">ContractAgreement.consumer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.ContractAgreement.id_contract_negotiation"><code class="docutils literal notranslate"><span class="pre">ContractAgreement.id_contract_negotiation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.StartTransfer"><code class="docutils literal notranslate"><span class="pre">StartTransfer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.StartTransfer._abc_impl"><code class="docutils literal notranslate"><span class="pre">StartTransfer._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.StartTransfer.model_config"><code class="docutils literal notranslate"><span class="pre">StartTransfer.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.StartTransfer.consumer"><code class="docutils literal notranslate"><span class="pre">StartTransfer.consumer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.StartTransfer.provider"><code class="docutils literal notranslate"><span class="pre">StartTransfer.provider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.StartTransfer.contract_agreement_id"><code class="docutils literal notranslate"><span class="pre">StartTransfer.contract_agreement_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.CheckTransfer"><code class="docutils literal notranslate"><span class="pre">CheckTransfer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.CheckTransfer._abc_impl"><code class="docutils literal notranslate"><span class="pre">CheckTransfer._abc_impl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.CheckTransfer.model_config"><code class="docutils literal notranslate"><span class="pre">CheckTransfer.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.CheckTransfer.consumer"><code class="docutils literal notranslate"><span class="pre">CheckTransfer.consumer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.schemas.html#app.schemas.transfer.CheckTransfer.transfer_process_id"><code class="docutils literal notranslate"><span class="pre">CheckTransfer.transfer_process_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.schemas.html#module-app.schemas">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="app.services.html">app.services package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.assets_service">app.services.assets_service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.assets_service.create_asset"><code class="docutils literal notranslate"><span class="pre">create_asset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.assets_service.register_asset_with_edc"><code class="docutils literal notranslate"><span class="pre">register_asset_with_edc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.assets_service.get_asset_by_asset_id_service"><code class="docutils literal notranslate"><span class="pre">get_asset_by_asset_id_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.assets_service.update_asset"><code class="docutils literal notranslate"><span class="pre">update_asset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.assets_service.delete_asset"><code class="docutils literal notranslate"><span class="pre">delete_asset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.assets_service.get_assets_by_edc_id"><code class="docutils literal notranslate"><span class="pre">get_assets_by_edc_id()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.connectors_service">app.services.connectors_service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.connectors_service.create_connector"><code class="docutils literal notranslate"><span class="pre">create_connector()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.connectors_service.check_ports_unique"><code class="docutils literal notranslate"><span class="pre">check_ports_unique()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.connectors_service.is_port_in_use"><code class="docutils literal notranslate"><span class="pre">is_port_in_use()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.connectors_service.start_edc_service"><code class="docutils literal notranslate"><span class="pre">start_edc_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.connectors_service.stop_edc_service"><code class="docutils literal notranslate"><span class="pre">stop_edc_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.connectors_service.get_all_connectors"><code class="docutils literal notranslate"><span class="pre">get_all_connectors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.connectors_service.get_connector_by_id"><code class="docutils literal notranslate"><span class="pre">get_connector_by_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.connectors_service.update_connector"><code class="docutils literal notranslate"><span class="pre">update_connector()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.connectors_service.delete_connector"><code class="docutils literal notranslate"><span class="pre">delete_connector()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.contracts_service">app.services.contracts_service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.contracts_service.create_contract"><code class="docutils literal notranslate"><span class="pre">create_contract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.contracts_service._register_contract_with_edc"><code class="docutils literal notranslate"><span class="pre">_register_contract_with_edc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.contracts_service._convert_contract_to_edc_format"><code class="docutils literal notranslate"><span class="pre">_convert_contract_to_edc_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.contracts_service.get_contracts_by_edc_id"><code class="docutils literal notranslate"><span class="pre">get_contracts_by_edc_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.contracts_service.get_contract_by_contract_id_service"><code class="docutils literal notranslate"><span class="pre">get_contract_by_contract_id_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.contracts_service.update_contract"><code class="docutils literal notranslate"><span class="pre">update_contract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.contracts_service.delete_contract"><code class="docutils literal notranslate"><span class="pre">delete_contract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.contracts_service._get_connector"><code class="docutils literal notranslate"><span class="pre">_get_connector()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.contracts_service._parse_contract_item"><code class="docutils literal notranslate"><span class="pre">_parse_contract_item()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.edc_launcher_service">app.services.edc_launcher_service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.edc_launcher_service.keystore_password"><code class="docutils literal notranslate"><span class="pre">keystore_password</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.edc_launcher_service._generate_files"><code class="docutils literal notranslate"><span class="pre">_generate_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.edc_launcher_service._wait_for_postgres"><code class="docutils literal notranslate"><span class="pre">_wait_for_postgres()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.edc_launcher_service._run_docker_compose"><code class="docutils literal notranslate"><span class="pre">_run_docker_compose()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.edc_launcher_service._run_docker_compose_down"><code class="docutils literal notranslate"><span class="pre">_run_docker_compose_down()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.edc_launcher_service._create_docker_network_if_not_exists"><code class="docutils literal notranslate"><span class="pre">_create_docker_network_if_not_exists()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.policies_service">app.services.policies_service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.policies_service.create_policy"><code class="docutils literal notranslate"><span class="pre">create_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.policies_service.register_policy_with_edc"><code class="docutils literal notranslate"><span class="pre">register_policy_with_edc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.policies_service.convert_policy_to_edc_format"><code class="docutils literal notranslate"><span class="pre">convert_policy_to_edc_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.policies_service._convert_rules"><code class="docutils literal notranslate"><span class="pre">_convert_rules()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.policies_service.normalize_odrl_list"><code class="docutils literal notranslate"><span class="pre">normalize_odrl_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.policies_service.convert_rules_get"><code class="docutils literal notranslate"><span class="pre">convert_rules_get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.policies_service.get_policies_by_edc_id"><code class="docutils literal notranslate"><span class="pre">get_policies_by_edc_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.policies_service.get_policy_by_policy_id_service"><code class="docutils literal notranslate"><span class="pre">get_policy_by_policy_id_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.policies_service.delete_policy"><code class="docutils literal notranslate"><span class="pre">delete_policy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services.transfers_service">app.services.transfers_service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.catalog_request_service"><code class="docutils literal notranslate"><span class="pre">catalog_request_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.catalog_request_curl"><code class="docutils literal notranslate"><span class="pre">catalog_request_curl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.negotiate_contract_service"><code class="docutils literal notranslate"><span class="pre">negotiate_contract_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.negotiate_contract_curl"><code class="docutils literal notranslate"><span class="pre">negotiate_contract_curl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.get_contract_agreement_service"><code class="docutils literal notranslate"><span class="pre">get_contract_agreement_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.get_contract_agreement_curl"><code class="docutils literal notranslate"><span class="pre">get_contract_agreement_curl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.start_http_server_service"><code class="docutils literal notranslate"><span class="pre">start_http_server_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.stop_http_server_service"><code class="docutils literal notranslate"><span class="pre">stop_http_server_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.start_transfer_service"><code class="docutils literal notranslate"><span class="pre">start_transfer_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.start_transfer_curl"><code class="docutils literal notranslate"><span class="pre">start_transfer_curl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.check_transfer_service"><code class="docutils literal notranslate"><span class="pre">check_transfer_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.check_transfer_curl"><code class="docutils literal notranslate"><span class="pre">check_transfer_curl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.create_transfer_service"><code class="docutils literal notranslate"><span class="pre">create_transfer_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.get_all_transfers_service"><code class="docutils literal notranslate"><span class="pre">get_all_transfers_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.convert_objectids"><code class="docutils literal notranslate"><span class="pre">convert_objectids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.start_transfer_service_pull"><code class="docutils literal notranslate"><span class="pre">start_transfer_service_pull()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.start_transfer_curl_pull"><code class="docutils literal notranslate"><span class="pre">start_transfer_curl_pull()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.check_transfer_data_pull_service"><code class="docutils literal notranslate"><span class="pre">check_transfer_data_pull_service()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html#app.services.transfers_service.check_transfer_data_curl_pull"><code class="docutils literal notranslate"><span class="pre">check_transfer_data_curl_pull()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html#module-app.services">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="app.util.html">app.util package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.util.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.util.html#module-app.util.edc_helpers">app.util.edc_helpers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.util.html#app.util.edc_helpers.get_base_url"><code class="docutils literal notranslate"><span class="pre">get_base_url()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.util.html#app.util.edc_helpers.get_api_key"><code class="docutils literal notranslate"><span class="pre">get_api_key()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.util.html#module-app.util">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-app.main">
+<span id="app-main-module"></span><h2>app.main module<a class="headerlink" href="#module-app.main" title="Link to this heading"></a></h2>
+<p>EDC Studio Backend — FastAPI application entry point.</p>
+<p>This module initializes the FastAPI application that manages
+Eclipse Data Connectors (EDC). It configures CORS, connects to MongoDB,
+and registers all API routes related to connectors, assets, policies,
+contracts, and transfers.</p>
+<p>The API acts as a centralized controller for EDC connector management.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.main.startup_db">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.main.</span></span><span class="sig-name descname"><span class="pre">startup_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.main.startup_db" title="Link to this definition"></a></dt>
+<dd><p>Initialize the MongoDB client on application startup.</p>
+<p>This ensures that the database connection is ready before handling requests.</p>
+</dd></dl>
+
+</section>
+<section id="module-app">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="EDC Studio Backend Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app.db.html" class="btn btn-neutral float-right" title="app.db package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Itziar Mensa Minguito.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

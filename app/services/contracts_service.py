@@ -1,3 +1,15 @@
+"""
+Contracts service.
+
+This module implements the business logic for managing contract definitions
+within the EDC Studio Backend. It handles the interaction between the API,
+the MongoDB database, and the EDC Management API for creating, reading,
+updating, and deleting contract definitions.
+
+Contracts link assets with access and usage policies to define the conditions
+under which data can be exchanged between EDC connectors.
+"""
+
 from fastapi import HTTPException
 from app.models.contract import Contract
 from app.db.client import get_db
@@ -7,7 +19,22 @@ import httpx
 
 
 async def create_contract(data: Contract) -> str:
-    db = get_db()
+    """
+    Creates a new contract definition in the EDC system.
+
+    The function retrieves the connector configuration from the database and
+    registers the new contract definition via the EDC Management API.
+
+    Args:
+        data (Contract): Contract definition data to be created.
+
+    Returns:
+        str: JSON response from the EDC Management API.
+
+    Raises:
+        HTTPException: If the connector is not found or registration fails.
+    """
+
     edc_id = data.edc
     connector = await _get_connector(edc_id)
 
@@ -20,6 +47,20 @@ async def create_contract(data: Contract) -> str:
 
 
 async def _register_contract_with_edc(contract: dict, connector: dict):
+    """
+    Registers a contract definition in the EDC Management API.
+
+    Args:
+        contract (dict): Contract data to register.
+        connector (dict): Connector configuration data.
+
+    Returns:
+        dict: Response from the EDC Management API.
+
+    Raises:
+        HTTPException: If the EDC returns an error response.
+    """
+
     base_url = get_base_url(connector, "/management/v3/contractdefinitions")
     api_key = get_api_key(connector)
 
@@ -34,6 +75,16 @@ async def _register_contract_with_edc(contract: dict, connector: dict):
 
 
 def _convert_contract_to_edc_format(contract: dict) -> dict:
+    """
+    Converts a contract from the internal format to the EDC API format.
+
+    Args:
+        contract (dict): Internal contract representation.
+
+    Returns:
+        dict: Contract formatted according to the EDC Management API specification.
+    """
+
     asset_selectors = [
         {
             "@type": "https://w3id.org/edc/v0.0.1/ns/Criterion",
@@ -54,7 +105,19 @@ def _convert_contract_to_edc_format(contract: dict) -> dict:
 
 
 async def get_contracts_by_edc_id(edc_id: str) -> list[Contract]:
-    db = get_db()
+    """
+    Retrieves all contract definitions from a given EDC connector.
+
+    Args:
+        edc_id (str): MongoDB ID of the connector.
+
+    Returns:
+        list[Contract]: List of contract definitions available in the connector.
+
+    Raises:
+        HTTPException: If the connector is not found or communication fails.
+    """
+
     connector = await _get_connector(edc_id)
 
     base_url = get_base_url(connector, "/management/v3/contractdefinitions/request")
@@ -79,7 +142,20 @@ async def get_contracts_by_edc_id(edc_id: str) -> list[Contract]:
 
 
 async def get_contract_by_contract_id_service(edc_id: str, contract_id: str) -> Contract:
-    db = get_db()
+    """
+    Retrieves a single contract definition by its ID.
+
+    Args:
+        edc_id (str): Connector MongoDB ID.
+        contract_id (str): Contract definition ID in the EDC system.
+
+    Returns:
+        Contract: Parsed contract object.
+
+    Raises:
+        HTTPException: If the connector or contract cannot be found.
+    """
+
     connector = await _get_connector(edc_id)
 
     base_url = get_base_url(connector, f"/management/v3/contractdefinitions/{contract_id}")
@@ -95,7 +171,17 @@ async def get_contract_by_contract_id_service(edc_id: str, contract_id: str) -> 
 
 
 async def update_contract(contract: Contract, edc_id: str) -> bool:
-    db = get_db()
+    """
+    Updates an existing contract definition in the EDC system.
+
+    Args:
+        contract (Contract): Contract data to update.
+        edc_id (str): MongoDB ID of the connector.
+
+    Returns:
+        bool: True if the update succeeded, False otherwise.
+    """
+
     connector = await _get_connector(edc_id)
 
     base_url = get_base_url(connector, "/management/v3/contractdefinitions")
@@ -141,7 +227,17 @@ async def update_contract(contract: Contract, edc_id: str) -> bool:
 
 
 async def delete_contract(contract_id: str, edc_id: str) -> bool:
-    db = get_db()
+    """
+    Deletes a contract definition from the EDC system.
+
+    Args:
+        contract_id (str): Contract ID to delete.
+        edc_id (str): MongoDB ID of the connector.
+
+    Returns:
+        bool: True if deletion succeeded, False otherwise.
+    """
+
     connector = await _get_connector(edc_id)
 
     base_url = get_base_url(connector, f"/management/v3/contractdefinitions/{contract_id}")
@@ -156,6 +252,19 @@ async def delete_contract(contract_id: str, edc_id: str) -> bool:
 
 
 async def _get_connector(edc_id: str) -> dict:
+    """
+    Retrieves connector configuration from the database.
+
+    Args:
+        edc_id (str): MongoDB ID of the connector.
+
+    Returns:
+        dict: Connector document.
+
+    Raises:
+        HTTPException: If the connector does not exist.
+    """
+
     db = get_db()
     connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
     if not connector:
@@ -164,6 +273,17 @@ async def _get_connector(edc_id: str) -> dict:
 
 
 def _parse_contract_item(item: dict, edc_id: str) -> Contract:
+    """
+    Parses a raw contract JSON object into a `Contract` model.
+
+    Args:
+        item (dict): Raw contract data returned by the EDC.
+        edc_id (str): ID of the connector associated with the contract.
+
+    Returns:
+        Contract: Parsed contract model.
+    """
+
     assets = []
     assets_selector = item.get("assetsSelector")
 
