@@ -62,6 +62,18 @@ class ConnectorResponse(BaseModel):
 
     api_key: Optional[str] = None
     """Authentication key for the connector, if applicable."""
+    
+    domain: Optional[str] = None
+    """Public domain name of the connector.
+
+    Specifies the external hostname where the connector is accessible 
+    (e.g., ``edc-provider.mycompany.com``). This field is required when 
+    the connector is deployed on a remote server and must be reachable 
+    by other EDC connectors. 
+
+    For local environments or isolated testing, this field can be left 
+    empty or set to ``localhost``.
+    """ 
 
 class ConnectorUpdate(BaseModel):
     """
@@ -102,3 +114,15 @@ class ConnectorUpdate(BaseModel):
 
     endpoints_url: Optional[Endpoints] = None
     """Updated management and protocol endpoint URLs."""
+
+    domain: Optional[str] = None
+    """Public domain name of the connector.
+
+    Specifies the external hostname where the connector is accessible 
+    (e.g., ``edc-provider.mycompany.com``). This field is required when 
+    the connector is deployed on a remote server and must be reachable 
+    by other EDC connectors. 
+
+    For local environments or isolated testing, this field can be left 
+    empty or set to ``localhost``.
+    """ 
