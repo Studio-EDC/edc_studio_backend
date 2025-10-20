@@ -12,6 +12,7 @@ class ConnectorResponse(BaseModel):
     mode: Literal["managed", "remote"]
     endpoints_url: Optional[Endpoints] = None
     api_key: Optional[str] = None
+    domain: Optional[str] = None
 
 class ConnectorUpdate(BaseModel):
     name: Optional[str]
@@ -22,3 +23,4 @@ class ConnectorUpdate(BaseModel):
     state: Optional[Literal["running", "stopped"]]
     mode: Optional[Literal["managed", "unmanaged"]]
     endpoints_url: Optional[Endpoints] = None
+    domain: Optional[str] = None
