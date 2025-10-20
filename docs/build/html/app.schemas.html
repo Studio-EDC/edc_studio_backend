@@ -231,6 +231,18 @@ validated to form a valid model.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.schemas.connector.ConnectorResponse.domain">
+<span class="sig-name descname"><span class="pre">domain</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#app.schemas.connector.ConnectorResponse.domain" title="Link to this definition"></a></dt>
+<dd><p>Public domain name of the connector.</p>
+<p>Specifies the external hostname where the connector is accessible
+(e.g., <code class="docutils literal notranslate"><span class="pre">edc-provider.mycompany.com</span></code>). This field is required when
+the connector is deployed on a remote server and must be reachable
+by other EDC connectors.</p>
+<p>For local environments or isolated testing, this field can be left
+empty or set to <code class="docutils literal notranslate"><span class="pre">localhost</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.schemas.connector.ConnectorResponse._abc_impl">
 <span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#app.schemas.connector.ConnectorResponse._abc_impl" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -320,6 +332,18 @@ validated to form a valid model.</p>
 <dt class="sig sig-object py" id="app.schemas.connector.ConnectorUpdate.endpoints_url">
 <span class="sig-name descname"><span class="pre">endpoints_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><a class="reference internal" href="app.models.html#app.models.connector.Endpoints" title="app.models.connector.Endpoints"><code class="xref py py-class docutils literal notranslate"><span class="pre">Endpoints</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#app.schemas.connector.ConnectorUpdate.endpoints_url" title="Link to this definition"></a></dt>
 <dd><p>Updated management and protocol endpoint URLs.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.schemas.connector.ConnectorUpdate.domain">
+<span class="sig-name descname"><span class="pre">domain</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#app.schemas.connector.ConnectorUpdate.domain" title="Link to this definition"></a></dt>
+<dd><p>Public domain name of the connector.</p>
+<p>Specifies the external hostname where the connector is accessible
+(e.g., <code class="docutils literal notranslate"><span class="pre">edc-provider.mycompany.com</span></code>). This field is required when
+the connector is deployed on a remote server and must be reachable
+by other EDC connectors.</p>
+<p>For local environments or isolated testing, this field can be left
+empty or set to <code class="docutils literal notranslate"><span class="pre">localhost</span></code>.</p>
 </dd></dl>
 
 </dd></dl>
