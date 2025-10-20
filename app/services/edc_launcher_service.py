@@ -78,7 +78,7 @@ def _generate_files(connector: dict, base_path: Path):
   id = connector["_id"]
   ctype = connector["type"]
   secret = connector["api_key"]
-  virtual_host = connector["domain"]
+  virtual_host = connector.get("domain", "localhost")
 
   proxy_public_line = ""
   if ctype == "provider":
