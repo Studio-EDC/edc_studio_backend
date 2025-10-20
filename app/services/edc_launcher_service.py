@@ -1,3 +1,19 @@
+"""
+EDC Launcher service.
+
+This module manages the local lifecycle of EDC connectors by generating
+runtime configuration files, certificates, and Docker Compose setups.
+
+It handles:
+    - File and certificate generation
+    - PostgreSQL database initialization
+    - Docker Compose orchestration
+    - Docker network creation
+
+These utilities are used when launching managed connectors through
+the EDC Studio Backend.
+"""
+
 import os
 import secrets
 import subprocess
@@ -9,7 +25,12 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2 import sql
 import sqlparse
 
+# -----------------------------------------------------------------------------
+# Templates and global configuration
+# -----------------------------------------------------------------------------
+
 keystore_password = secrets.token_urlsafe(16)
+"""Randomly generated keystore password for EDC connector certificates."""
 
 CONFIG_TEMPLATE = """
 edc.hostname=localhost
@@ -72,62 +93,93 @@ networks:
     external: true
 """
 
+# -----------------------------------------------------------------------------
+# Core utility functions
+# -----------------------------------------------------------------------------
+
 def _generate_files(connector: dict, base_path: Path):
-  ports = connector["ports"]
-  name = connector["name"]
-  id = connector["_id"]
-  ctype = connector["type"]
-  secret = connector["api_key"]
-  virtual_host = connector["domain"]
+    """
+    Generates configuration files, certificates, and Docker Compose setup
+    for a given EDC connector.
 
-  proxy_public_line = ""
-  if ctype == "provider":
-      proxy_public_line = f"\nedc.dataplane.proxy.public.endpoint=http://edc-{ctype}-{id}:{ports['public']}/public\n"
+    This function creates:
+        - `config.properties` for EDC runtime configuration
+        - PKCS#12 certificate keystore (`cert.pfx`)
+        - `docker-compose.yml` for launching the connector
 
-  # Create folders
-  config_path = base_path / "resources" / "configuration"
-  certs_path = base_path / "resources" / "certs"
-  config_path.mkdir(parents=True, exist_ok=True)
-  certs_path.mkdir(parents=True, exist_ok=True)
+    Args:
+        connector (dict): MongoDB connector document.
+        base_path (Path): Base directory where runtime files are stored.
 
-  load_dotenv()
-  port_postgress=os.getenv("POSTGRES_PORT", 5432)
-
-  # Write config.properties
-  config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports, secret=secret, port_postgress=port_postgress) + proxy_public_line
-  (config_path / "config.properties").write_text(config_content)
-
-  # Generate real cert.pfx using keytool
-  cert_path = certs_path / "cert.pfx"
-  if cert_path.exists():
-      cert_path.unlink()
-  try:
-      subprocess.run([
-          "keytool", "-genkeypair",
-          "-alias", "private-key",
-          "-keyalg", "RSA",
-          "-keysize", "2048",
-          "-keystore", str(cert_path),
-          "-storetype", "PKCS12",
-          "-storepass", keystore_password,
-          "-keypass", keystore_password,
-          "-dname", f"CN={id}"
-      ], capture_output=True, text=True, check=True)
-  except subprocess.CalledProcessError as e:
-      raise RuntimeError(f"keytool failed:\nSTDOUT:\n{e.stdout}\nSTDERR:\n{e.stderr}")
-
-
-  load_dotenv()
+    Raises:
+        RuntimeError: If keytool fails to generate the certificate.
+    """
   
-  # Write docker-compose.yml
-  compose_file = base_path / "docker-compose.yml"
-  compose_file.write_text(DOCKER_COMPOSE_TEMPLATE.format(
-      type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password, 
-      virtual_host=virtual_host, virtual_port=ports['http'],
-      network_name=os.getenv("NETWORK_NAME", "edc-network")
-  ))
+    ports = connector["ports"]
+    name = connector["name"]
+    id = connector["_id"]
+    ctype = connector["type"]
+    secret = connector["api_key"]
+    virtual_host = connector["domain"]
+
+    proxy_public_line = ""
+    if ctype == "provider":
+        proxy_public_line = f"\nedc.dataplane.proxy.public.endpoint=http://edc-{ctype}-{id}:{ports['public']}/public\n"
+
+    # Create folders
+    config_path = base_path / "resources" / "configuration"
+    certs_path = base_path / "resources" / "certs"
+    config_path.mkdir(parents=True, exist_ok=True)
+    certs_path.mkdir(parents=True, exist_ok=True)
+
+    load_dotenv()
+    port_postgress=os.getenv("POSTGRES_PORT", 5432)
+
+    # Write config.properties
+    config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports, secret=secret, port_postgress=port_postgress) + proxy_public_line
+    (config_path / "config.properties").write_text(config_content)
+
+    # Generate real cert.pfx using keytool
+    cert_path = certs_path / "cert.pfx"
+    if cert_path.exists():
+        cert_path.unlink()
+    try:
+        subprocess.run([
+            "keytool", "-genkeypair",
+            "-alias", "private-key",
+            "-keyalg", "RSA",
+            "-keysize", "2048",
+            "-keystore", str(cert_path),
+            "-storetype", "PKCS12",
+            "-storepass", keystore_password,
+            "-keypass", keystore_password,
+            "-dname", f"CN={id}"
+        ], capture_output=True, text=True, check=True)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"keytool failed:\nSTDOUT:\n{e.stdout}\nSTDERR:\n{e.stderr}")
+
+
+    load_dotenv()
+    
+    # Write docker-compose.yml
+    compose_file = base_path / "docker-compose.yml"
+    compose_file.write_text(DOCKER_COMPOSE_TEMPLATE.format(
+        type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password, 
+        virtual_host=virtual_host, virtual_port=ports['http'],
+        network_name=os.getenv("NETWORK_NAME", "edc-network")
+    ))
 
 def _wait_for_postgres():
+    """
+    Waits until the PostgreSQL service becomes available.
+
+    The function attempts to connect to PostgreSQL periodically until a timeout
+    of 30 seconds is reached.
+
+    Raises:
+        TimeoutError: If PostgreSQL is not available within 30 seconds.
+    """
+
     load_dotenv()
     host=os.getenv("POSTGRES_HOST", "localhost")
     port=os.getenv("POSTGRES_PORT", 5432)
@@ -146,6 +198,24 @@ def _wait_for_postgres():
     raise TimeoutError("PostgreSQL no está disponible tras esperar 30 segundos.")
 
 def _run_docker_compose(path: Path, db_name: str):
+    """
+    Initializes PostgreSQL, prepares the database schema, and starts Docker Compose.
+
+    This function:
+        1. Waits for PostgreSQL availability.
+        2. Creates a database for the connector if it does not exist.
+        3. Executes the initialization SQL script.
+        4. Launches the Docker Compose stack for the connector.
+
+    Args:
+        path (Path): Path to the connector’s runtime directory.
+        db_name (str): Name of the database to create.
+
+    Raises:
+        ValueError: If the runtime folder does not exist.
+        FileNotFoundError: If `init.sql` is missing.
+        Exception: If database creation or Docker startup fails.
+    """
 
     load_dotenv()
 
@@ -227,9 +297,21 @@ def _run_docker_compose(path: Path, db_name: str):
     print("Sistema arrancado correctamente.")
 
 def _run_docker_compose_down(path: Path):
-  subprocess.run(["docker", "compose", "down"], cwd=path)
+    """
+    Stops and removes Docker Compose services for a connector.
+
+    Args:
+        path (Path): Path to the connector’s runtime directory.
+    """
+    subprocess.run(["docker", "compose", "down"], cwd=path)
 
 def _create_docker_network_if_not_exists(network_name: str):
+    """
+    Ensures that a given Docker network exists, creating it if necessary.
+
+    Args:
+        network_name (str): Name of the Docker network to validate or create.
+    """
     result = subprocess.run(["docker", "network", "ls", "--format", "{{.Name}}"], capture_output=True, text=True)
     networks = result.stdout.strip().splitlines()
     if network_name not in networks:

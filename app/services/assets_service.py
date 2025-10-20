@@ -1,3 +1,15 @@
+"""
+Assets service.
+
+This module defines the core business logic for managing `Asset` entities
+within the EDC Studio Backend. It handles database operations, API requests
+to the EDC management endpoints, and validation of connector references.
+
+Each function encapsulates a specific responsibility, such as creating,
+updating, deleting, or retrieving assets, both from the internal MongoDB
+database and from the EDC connectors via HTTP requests.
+"""
+
 from fastapi import HTTPException
 from app.db.client import get_db
 from bson import ObjectId
@@ -7,6 +19,23 @@ from app.util.edc_helpers import get_base_url, get_api_key
 
 
 async def create_asset(data: Asset) -> dict:
+    """
+    Creates a new asset and registers it with the corresponding EDC connector.
+
+    The function validates the existence of the connector in the database,
+    transforms the asset data into the required EDC format, and calls the
+    EDC management API to register the asset.
+
+    Args:
+        data (Asset): Asset information to be created and registered.
+
+    Returns:
+        dict: JSON response from the EDC connector containing the asset ID.
+
+    Raises:
+        HTTPException: If the EDC connector is not found or the HTTP request fails.
+    """
+
     db = get_db()
     edc_id = data.edc
 
@@ -28,6 +57,17 @@ async def create_asset(data: Asset) -> dict:
 
 
 async def register_asset_with_edc(asset: dict, connector: dict):
+    """
+    Registers a new asset directly with the EDC management API.
+
+    Args:
+        asset (dict): Asset data in dictionary format.
+        connector (dict): Connector configuration retrieved from the database.
+
+    Returns:
+        dict: JSON response from the EDC management API.
+    """
+
     base_url = get_base_url(connector, f"/management/v3/assets")
     api_key = get_api_key(connector)
 
@@ -54,26 +94,21 @@ async def register_asset_with_edc(asset: dict, connector: dict):
         return response.json()
 
 
-async def get_all_assets() -> list[dict]:
-    db = get_db()
-    assets = await db["assets"].find().to_list(length=None)
-    for a in assets:
-        a["id"] = str(a["_id"])
-        del a["_id"]
-    return assets
-
-
-async def get_asset_by_id(asset_id: str) -> dict:
-    db = get_db()
-    asset = await db["assets"].find_one({"_id": ObjectId(asset_id)})
-    if not asset:
-        raise HTTPException(status_code=404, detail="Asset not found")
-    asset["id"] = str(asset["_id"])
-    del asset["_id"]
-    return asset
-
-
 async def get_asset_by_asset_id_service(edc_id: str, asset_id: str) -> Asset:
+    """
+    Retrieves an asset by its ID directly from the EDC connector.
+
+    Args:
+        edc_id (str): ID of the EDC connector.
+        asset_id (str): Asset identifier within the EDC system.
+
+    Returns:
+        Asset: Asset object retrieved from the EDC.
+
+    Raises:
+        HTTPException: If the connector is not found or the EDC request fails.
+    """
+
     db = get_db()
 
     connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
@@ -110,6 +145,20 @@ async def get_asset_by_asset_id_service(edc_id: str, asset_id: str) -> Asset:
 
 
 async def update_asset(asset: Asset, edc_id: str) -> bool:
+    """
+    Updates an existing asset in the EDC connector.
+
+    Args:
+        asset (Asset): Updated asset data.
+        edc_id (str): ID of the EDC connector.
+
+    Returns:
+        bool: True if the update succeeded.
+
+    Raises:
+        HTTPException: If the connector is not found or the HTTP request fails.
+    """
+
     db = get_db()
 
     connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
@@ -156,6 +205,20 @@ async def update_asset(asset: Asset, edc_id: str) -> bool:
 
 
 async def delete_asset(asset_id: str, edc_id: str) -> bool:
+    """
+    Deletes an asset from the EDC connector.
+
+    Args:
+        asset_id (str): Identifier of the asset to delete.
+        edc_id (str): Identifier of the EDC connector.
+
+    Returns:
+        bool: True if the asset was successfully deleted.
+
+    Raises:
+        HTTPException: If the connector is not found or the HTTP request fails.
+    """
+
     db = get_db()
 
     connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
@@ -181,6 +244,19 @@ async def delete_asset(asset_id: str, edc_id: str) -> bool:
 
 
 async def get_assets_by_edc_id(edc_id: str) -> list[Asset]:
+    """
+    Retrieves all assets registered in a specific EDC connector.
+
+    Args:
+        edc_id (str): ID of the EDC connector.
+
+    Returns:
+        list[Asset]: List of `Asset` objects registered in the EDC.
+
+    Raises:
+        HTTPException: If the connector is not found or the HTTP request fails.
+    """
+    
     db = get_db()
 
     connector = await db["connectors"].find_one({"_id": ObjectId(edc_id)})
@@ -188,7 +264,6 @@ async def get_assets_by_edc_id(edc_id: str) -> list[Asset]:
         raise HTTPException(status_code=404, detail="EDC not found")
 
     base_url = get_base_url(connector, "/management/v3/assets/request")
-    print(base_url)
     api_key = get_api_key(connector)
 
     payload = {

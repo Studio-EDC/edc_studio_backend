@@ -1,3 +1,14 @@
+"""
+Connectors service.
+
+This module implements the business logic for managing EDC connectors within
+the EDC Studio Backend. It handles database interactions, Docker lifecycle
+management, and port validation for locally managed EDC instances.
+
+The service supports creating, starting, stopping, updating, and deleting
+connectors, as well as verifying their operational state and uniqueness of ports.
+"""
+
 import os
 from dotenv import load_dotenv
 from fastapi import HTTPException
@@ -13,6 +24,23 @@ from pymongo.results import DeleteResult
 import socket
 
 async def create_connector(connector: Connector) -> str:
+    """
+    Creates a new connector and stores it in the MongoDB database.
+
+    The function first validates that the connector's ports are unique and
+    not already in use. If validation passes, the connector is inserted into
+    the database.
+
+    Args:
+        connector (Connector): Connector configuration data.
+
+    Returns:
+        str: The inserted connector’s MongoDB ID as a string.
+
+    Raises:
+        HTTPException: If one or more ports are already in use.
+    """
+
     db = get_db()
     await check_ports_unique(connector, db)
     connector_dict = connector.dict()
@@ -20,6 +48,19 @@ async def create_connector(connector: Connector) -> str:
     return str(result.inserted_id)
 
 async def check_ports_unique(connector: Connector, db):
+    """
+    Validates that the ports used by a connector are unique.
+
+    Ensures no other connector in the database or process in the system
+    is already using any of the specified ports.
+
+    Args:
+        connector (Connector): Connector to validate.
+        db: Database client instance.
+
+    Raises:
+        HTTPException: If any port is already assigned or in use.
+    """
 
     if connector.ports is None:
         return
@@ -51,12 +92,33 @@ async def check_ports_unique(connector: Connector, db):
             raise HTTPException(status_code=400, detail=f"Port {port} is already in use on this machine.")
         
 def is_port_in_use(port: int) -> bool:
-    """Check if a given port is currently being used by any process."""
+    """
+    Checks whether a given port is already in use on the host machine.
+
+    Args:
+        port (int): The port number to check.
+
+    Returns:
+        bool: True if the port is in use, False otherwise.
+    """
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         result = s.connect_ex(('127.0.0.1', port))
         return result == 0
 
 async def start_edc_service(connector_id: str):
+    """
+    Starts a managed EDC connector by generating its runtime configuration
+    and launching the associated Docker containers.
+
+    Args:
+        connector_id (str): The MongoDB ID of the connector to start.
+
+    Raises:
+        ValueError: If the connector does not exist.
+        RuntimeError: If the Docker launch process fails.
+    """
+
     db = get_db()
     connector = await db["connectors"].find_one({"_id": ObjectId(connector_id)})
     if not connector:
@@ -76,6 +138,17 @@ async def start_edc_service(connector_id: str):
         raise RuntimeError(f"Failed to start connector: {e}")
 
 async def stop_edc_service(connector_id: str):
+    """
+    Stops a running managed EDC connector and updates its state.
+
+    Args:
+        connector_id (str): The MongoDB ID of the connector to stop.
+
+    Raises:
+        ValueError: If the runtime directory does not exist.
+        RuntimeError: If stopping the connector fails.
+    """
+
     db = get_db()
     base_path = Path("runtime") / str(connector_id)
 
@@ -89,6 +162,16 @@ async def stop_edc_service(connector_id: str):
         raise RuntimeError(f"Failed to stop connector: {e}")
 
 async def get_all_connectors() -> list[dict]:
+    """
+    Retrieves all connectors from the database and checks their runtime state.
+
+    For managed connectors, it inspects Docker to determine if the containers
+    are running and updates the connector state in the database accordingly.
+
+    Returns:
+        list[dict]: A list of connector objects with updated runtime states.
+    """
+
     db = get_db()
     connectors = await db["connectors"].find().to_list(length=None)
 
@@ -121,6 +204,19 @@ async def get_all_connectors() -> list[dict]:
     return connectors
 
 async def get_connector_by_id(id: str) -> dict:
+    """
+    Retrieves a connector by its MongoDB ID.
+
+    Args:
+        id (str): Connector ID as a string.
+
+    Returns:
+        dict: Connector data.
+
+    Raises:
+        ValueError: If the connector is not found.
+    """
+
     db = get_db()
     connector = await db["connectors"].find_one({"_id": ObjectId(id)})
 
@@ -133,6 +229,17 @@ async def get_connector_by_id(id: str) -> dict:
     return connector
 
 async def update_connector(id: str, update_data: dict):
+    """
+    Updates an existing connector with new data.
+
+    Args:
+        id (str): The MongoDB ID of the connector.
+        update_data (dict): Dictionary containing the fields to update.
+
+    Raises:
+        ValueError: If the connector does not exist.
+    """
+
     db = get_db()
     result = await db["connectors"].update_one(
         {"_id": ObjectId(id)},
@@ -142,6 +249,19 @@ async def update_connector(id: str, update_data: dict):
         raise ValueError("Connector not found")
     
 async def delete_connector(id: str):
+    """
+    Deletes a connector and its associated runtime folder.
+
+    The runtime directory under `runtime/{connector_id}` is removed from disk
+    before the database record is deleted.
+
+    Args:
+        id (str): The MongoDB ID of the connector.
+
+    Raises:
+        ValueError: If the runtime folder or connector record does not exist.
+    """
+    
     db = get_db()
     base_path = Path("runtime") / str(id)
 
