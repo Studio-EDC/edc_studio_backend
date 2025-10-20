@@ -1,15 +1,38 @@
-.. EDC Studio Backend documentation master file, created by
-   sphinx-quickstart on Tue Oct 14 11:46:08 2025.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-EDC Studio Backend documentation
+EDC Studio Backend Documentation
 ================================
 
+**EDC Studio Backend** is a RESTful API built with *FastAPI* and *MongoDB*, designed to automate the lifecycle management of **Eclipse Dataspace Connectors (EDC)**.  
+It enables secure and efficient data exchange between providers and consumers in a federated dataspace ecosystem.
+
+The backend is part of the **EDC Studio** suite, which provides a complete environment for managing dataspace connectors, assets, and policies without using the terminal.
+
+Main Features
+--------------
+
+- Create and configure **EDC connectors** (provider / consumer).
+- Manage **assets**, **policies**, and **data transfers**.
+- Launch, monitor, and stop EDC instances in Docker.
+- Execute data transfers in **PUSH** and **PULL** modes.
+- Retrieve catalogs and manage contract agreements.
+- Store connector and transfer metadata in MongoDB.
+
+.. note::
+   This backend operates as the core service of **EDC Studio**, supporting graphical tools and dashboards for managing EDC components in a user-friendly way.
+
+----
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
-   modules
+   app
 
+----
+
+**Author:** Itziar Mensa Minguito  
+
+**Version:** 1.0  
+
+**License:** MIT  
+
+**© 2025 Itziar Mensa Minguito. All rights reserved.**
