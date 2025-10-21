@@ -82,8 +82,6 @@ services:
 
     environment:
       - EDC_KEYSTORE_PASSWORD={keystore_password}
-      - VIRTUAL_HOST={virtual_host}
-      - VIRTUAL_PORT={virtual_port}
 
     networks:
       - {network_name}
@@ -103,13 +101,10 @@ services:
       - VIRTUAL_PORT=8080
     networks:
       - {network_name}
-      - edc_internal_{name}
 
 networks:
   {network_name}:
     external: true
-  edc_internal_{name}:
-    driver: bridge
 """
 
 PROXY_CONF_TEMPLATE = """
