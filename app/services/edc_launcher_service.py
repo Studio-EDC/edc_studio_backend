@@ -145,21 +145,50 @@ server {{
 
 def _generate_files(connector: dict, base_path: Path):
     """
-    Generates configuration files, certificates, and Docker Compose setup
-    for a given EDC connector.
+    Generates all necessary runtime artifacts for a given EDC connector,
+    including configuration files, certificates, and Docker Compose setup.
 
-    This function creates:
-        - `config.properties` for EDC runtime configuration
-        - PKCS#12 certificate keystore (`cert.pfx`)
-        - `docker-compose.yml` for launching the connector
+    This function performs the following steps:
+
+        1. Creates the required runtime folder structure under the given base path.
+        2. Generates the EDC runtime configuration file (`config.properties`)
+           with dynamic port assignments, authentication key, and database
+           connection details.
+        3. Generates a PKCS#12 keystore (`cert.pfx`) used by the connector for
+           secure communication.
+        4. Creates a `docker-compose.yml` file to launch the connector in Docker.
+           The connector services are exposed internally (via `expose`) but not
+           published to the host system, allowing multiple connectors to run
+           simultaneously without port conflicts.
+
+           Each connector is connected to a shared Docker network where an
+           automatic reverse proxy container (`nginx-proxy`) is also attached.
+           This proxy detects new containers via environment variables
+           (`VIRTUAL_HOST`, `VIRTUAL_PORT`) and
+           automatically generates the corresponding Nginx configuration files
+           under `/etc/nginx/conf.d/`.
+
+           As a result:
+               - Each connector becomes reachable through its own domain name,
+                 without manual Nginx configuration.
+               - The proxy forwards external requests to the correct internal
+                 service and port (for example, `/management` or `/public`).
+               - The use of `expose` ensures that only the proxy can access
+                 connector services, enhancing network isolation and security.
+
+        5. (For provider connectors) Appends an additional configuration line
+           in `config.properties` to declare the public data plane endpoint.
 
     Args:
-        connector (dict): MongoDB connector document.
-        base_path (Path): Base directory where runtime files are stored.
+        connector (dict): MongoDB connector document containing fields such as
+            `_id`, `name`, `type`, `ports`, `api_key`, and `domain`.
+        base_path (Path): Base directory where the connector’s runtime files
+            and Docker configuration will be created.
 
     Raises:
-        RuntimeError: If keytool fails to generate the certificate.
+        RuntimeError: If the certificate generation command (`keytool`) fails.
     """
+
   
     ports = connector["ports"]
     name = connector["name"]

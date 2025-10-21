@@ -665,32 +665,61 @@ runtime configuration files, certificates, and Docker Compose setups.</p>
 the EDC Studio Backend.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="app.services.edc_launcher_service.keystore_password">
-<span class="sig-prename descclassname"><span class="pre">app.services.edc_launcher_service.</span></span><span class="sig-name descname"><span class="pre">keystore_password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ECJziB1zIWulrBtVJ4x2ew'</span></em><a class="headerlink" href="#app.services.edc_launcher_service.keystore_password" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">app.services.edc_launcher_service.</span></span><span class="sig-name descname"><span class="pre">keystore_password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mm_dA0U2Qxr8mpYESqSXLA'</span></em><a class="headerlink" href="#app.services.edc_launcher_service.keystore_password" title="Link to this definition"></a></dt>
 <dd><p>Randomly generated keystore password for EDC connector certificates.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.services.edc_launcher_service._generate_files">
 <span class="sig-prename descclassname"><span class="pre">app.services.edc_launcher_service.</span></span><span class="sig-name descname"><span class="pre">_generate_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.services.edc_launcher_service._generate_files" title="Link to this definition"></a></dt>
-<dd><p>Generates configuration files, certificates, and Docker Compose setup
-for a given EDC connector.</p>
+<dd><p>Generates all necessary runtime artifacts for a given EDC connector,
+including configuration files, certificates, and Docker Compose setup.</p>
+<p>This function performs the following steps:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p>Creates the required runtime folder structure under the given base path.</p></li>
+<li><p>Generates the EDC runtime configuration file (<cite>config.properties</cite>)
+with dynamic port assignments, authentication key, and database
+connection details.</p></li>
+<li><p>Generates a PKCS#12 keystore (<cite>cert.pfx</cite>) used by the connector for
+secure communication.</p></li>
+<li><p>Creates a <cite>docker-compose.yml</cite> file to launch the connector in Docker.
+The connector services are exposed internally (via <cite>expose</cite>) but not
+published to the host system, allowing multiple connectors to run
+simultaneously without port conflicts.</p>
+<p>Each connector is connected to a shared Docker network where an
+automatic reverse proxy container (<cite>nginx-proxy</cite>) is also attached.
+This proxy detects new containers via environment variables
+(<cite>VIRTUAL_HOST</cite>, <cite>VIRTUAL_PORT</cite>) and
+automatically generates the corresponding Nginx configuration files
+under <cite>/etc/nginx/conf.d/</cite>.</p>
 <dl class="simple">
-<dt>This function creates:</dt><dd><ul class="simple">
-<li><p><cite>config.properties</cite> for EDC runtime configuration</p></li>
-<li><p>PKCS#12 certificate keystore (<cite>cert.pfx</cite>)</p></li>
-<li><p><cite>docker-compose.yml</cite> for launching the connector</p></li>
+<dt>As a result:</dt><dd><ul class="simple">
+<li><p>Each connector becomes reachable through its own domain name,
+without manual Nginx configuration.</p></li>
+<li><p>The proxy forwards external requests to the correct internal
+service and port (for example, <cite>/management</cite> or <cite>/public</cite>).</p></li>
+<li><p>The use of <cite>expose</cite> ensures that only the proxy can access
+connector services, enhancing network isolation and security.</p></li>
 </ul>
 </dd>
 </dl>
+</li>
+<li><p>(For provider connectors) Appends an additional configuration line
+in <cite>config.properties</cite> to declare the public data plane endpoint.</p></li>
+</ol>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>connector</strong> (<em>dict</em>) – MongoDB connector document.</p></li>
-<li><p><strong>base_path</strong> (<em>Path</em>) – Base directory where runtime files are stored.</p></li>
+<li><p><strong>connector</strong> (<em>dict</em>) – MongoDB connector document containing fields such as
+<cite>_id</cite>, <cite>name</cite>, <cite>type</cite>, <cite>ports</cite>, <cite>api_key</cite>, and <cite>domain</cite>.</p></li>
+<li><p><strong>base_path</strong> (<em>Path</em>) – Base directory where the connector’s runtime files
+and Docker configuration will be created.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If keytool fails to generate the certificate.</p>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the certificate generation command (<cite>keytool</cite>) fails.</p>
 </dd>
 </dl>
 </dd></dl>
