@@ -87,11 +87,57 @@ services:
 
     networks:
       - {network_name}
+      - edc_internal_{name}
+
+  edc-proxy-{name}:
+    image: nginx:1.25-alpine
+    container_name: edc-proxy-{name}
+    depends_on:
+      - {type}
+    expose:
+      - "8080"
+    volumes:
+      - {runtime_path}/{name}/nginx/edc-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    environment:
+      - VIRTUAL_HOST={virtual_host}
+      - VIRTUAL_PORT=8080
+    networks:
+      - {network_name}
+      - edc_internal_{name}
 
 networks:
   {network_name}:
     external: true
+  edc_internal_{name}:
+    driver: bridge
 """
+
+PROXY_CONF_TEMPLATE = """
+server {{
+    listen 8080;
+
+    # Ruta privada (management)
+    location /management/ {{
+        proxy_pass http://edc-{type}-{id}:{management}/management/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }}
+
+    # Ruta pública (protocol)
+    location /public/ {{
+        proxy_pass http://edc-{type}-{id}:{public}/public/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }}
+
+    location / {{
+        return 404;
+    }}
+}}
+"""
+
 
 # -----------------------------------------------------------------------------
 # Core utility functions
@@ -168,6 +214,17 @@ def _generate_files(connector: dict, base_path: Path):
         virtual_host=virtual_host, virtual_port=ports['management'],
         network_name=os.getenv("NETWORK_NAME", "edc-network")
     ))
+
+    nginx_path = base_path / "nginx"
+    nginx_path.mkdir(parents=True, exist_ok=True)
+
+    proxy_conf_content = PROXY_CONF_TEMPLATE.format(
+        type=ctype,
+        id=id,
+        management=ports["management"],
+        public=ports["public"]
+    )
+    (nginx_path / "edc-proxy.conf").write_text(proxy_conf_content)
 
 def _wait_for_postgres():
     """
