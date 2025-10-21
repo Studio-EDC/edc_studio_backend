@@ -82,9 +82,22 @@ services:
 
     environment:
       - EDC_KEYSTORE_PASSWORD={keystore_password}
-      - VIRTUAL_HOST={virtual_host}
-      - VIRTUAL_PORT={virtual_port}
 
+    networks:
+      - {network_name}
+
+  edc-proxy-{name}:
+    image: nginx:1.25-alpine
+    container_name: edc-proxy-{name}
+    depends_on:
+      - {type}
+    expose:
+      - "8080"
+    volumes:
+      - {runtime_path}/{name}/nginx/edc-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    environment:
+      - VIRTUAL_HOST={virtual_host}
+      - VIRTUAL_PORT=8080
     networks:
       - {network_name}
 
@@ -93,27 +106,83 @@ networks:
     external: true
 """
 
+PROXY_CONF_TEMPLATE = """
+server {{
+    listen 8080;
+
+    # Ruta privada (management)
+    location /management/ {{
+        proxy_pass http://edc-{type}-{id}:{management}/management/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }}
+
+    # Ruta pública (protocol)
+    location /public {{
+        proxy_pass http://edc-{type}-{id}:{public}/public/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }}
+
+    location / {{
+        return 404;
+    }}
+}}
+"""
+
+
 # -----------------------------------------------------------------------------
 # Core utility functions
 # -----------------------------------------------------------------------------
 
 def _generate_files(connector: dict, base_path: Path):
     """
-    Generates configuration files, certificates, and Docker Compose setup
-    for a given EDC connector.
+    Generates all necessary runtime artifacts for a given EDC connector,
+    including configuration files, certificates, and Docker Compose setup.
 
-    This function creates:
-        - `config.properties` for EDC runtime configuration
-        - PKCS#12 certificate keystore (`cert.pfx`)
-        - `docker-compose.yml` for launching the connector
+    This function performs the following steps:
+
+        1. Creates the required runtime folder structure under the given base path.
+        2. Generates the EDC runtime configuration file (`config.properties`)
+           with dynamic port assignments, authentication key, and database
+           connection details.
+        3. Generates a PKCS#12 keystore (`cert.pfx`) used by the connector for
+           secure communication.
+        4. Creates a `docker-compose.yml` file to launch the connector in Docker.
+           The connector services are exposed internally (via `expose`) but not
+           published to the host system, allowing multiple connectors to run
+           simultaneously without port conflicts.
+
+           Each connector is connected to a shared Docker network where an
+           automatic reverse proxy container (`nginx-proxy`) is also attached.
+           This proxy detects new containers via environment variables
+           (`VIRTUAL_HOST`, `VIRTUAL_PORT`) and
+           automatically generates the corresponding Nginx configuration files
+           under `/etc/nginx/conf.d/`.
+
+           As a result:
+               - Each connector becomes reachable through its own domain name,
+                 without manual Nginx configuration.
+               - The proxy forwards external requests to the correct internal
+                 service and port (for example, `/management` or `/public`).
+               - The use of `expose` ensures that only the proxy can access
+                 connector services, enhancing network isolation and security.
+
+        5. (For provider connectors) Appends an additional configuration line
+           in `config.properties` to declare the public data plane endpoint.
 
     Args:
-        connector (dict): MongoDB connector document.
-        base_path (Path): Base directory where runtime files are stored.
+        connector (dict): MongoDB connector document containing fields such as
+            `_id`, `name`, `type`, `ports`, `api_key`, and `domain`.
+        base_path (Path): Base directory where the connector’s runtime files
+            and Docker configuration will be created.
 
     Raises:
-        RuntimeError: If keytool fails to generate the certificate.
+        RuntimeError: If the certificate generation command (`keytool`) fails.
     """
+
   
     ports = connector["ports"]
     name = connector["name"]
@@ -168,6 +237,17 @@ def _generate_files(connector: dict, base_path: Path):
         virtual_host=virtual_host, virtual_port=ports['management'],
         network_name=os.getenv("NETWORK_NAME", "edc-network")
     ))
+
+    nginx_path = base_path / "nginx"
+    nginx_path.mkdir(parents=True, exist_ok=True)
+
+    proxy_conf_content = PROXY_CONF_TEMPLATE.format(
+        type=ctype,
+        id=id,
+        management=ports["management"],
+        public=ports["public"]
+    )
+    (nginx_path / "edc-proxy.conf").write_text(proxy_conf_content)
 
 def _wait_for_postgres():
     """
