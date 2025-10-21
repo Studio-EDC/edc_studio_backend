@@ -119,7 +119,7 @@ server {{
     }}
 
     # Ruta pública (protocol)
-    location /public/ {{
+    location /public {{
         proxy_pass http://edc-{type}-{id}:{public}/public/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
