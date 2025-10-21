@@ -85,7 +85,6 @@ services:
 
     networks:
       - {network_name}
-      - edc_internal_{name}
 
   edc-proxy-{name}:
     image: nginx:1.25-alpine
