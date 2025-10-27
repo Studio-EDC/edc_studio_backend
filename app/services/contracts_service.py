@@ -61,7 +61,7 @@ async def _register_contract_with_edc(contract: dict, connector: dict):
         HTTPException: If the EDC returns an error response.
     """
 
-    base_url = get_base_url(connector, "/management/v3/contractdefinitions")
+    base_url = get_base_url(connector, "/v3/contractdefinitions")
     api_key = get_api_key(connector)
 
     payload = _convert_contract_to_edc_format(contract)
@@ -120,7 +120,7 @@ async def get_contracts_by_edc_id(edc_id: str) -> list[Contract]:
 
     connector = await _get_connector(edc_id)
 
-    base_url = get_base_url(connector, "/management/v3/contractdefinitions/request")
+    base_url = get_base_url(connector, "/v3/contractdefinitions/request")
     api_key = get_api_key(connector)
 
     payload = {
@@ -158,7 +158,7 @@ async def get_contract_by_contract_id_service(edc_id: str, contract_id: str) -> 
 
     connector = await _get_connector(edc_id)
 
-    base_url = get_base_url(connector, f"/management/v3/contractdefinitions/{contract_id}")
+    base_url = get_base_url(connector, f"/v3/contractdefinitions/{contract_id}")
     api_key = get_api_key(connector)
     headers = {"x-api-key": api_key}
 
@@ -184,7 +184,7 @@ async def update_contract(contract: Contract, edc_id: str) -> bool:
 
     connector = await _get_connector(edc_id)
 
-    base_url = get_base_url(connector, "/management/v3/contractdefinitions")
+    base_url = get_base_url(connector, "/v3/contractdefinitions")
     api_key = get_api_key(connector)
 
     payload = {
@@ -240,7 +240,7 @@ async def delete_contract(contract_id: str, edc_id: str) -> bool:
 
     connector = await _get_connector(edc_id)
 
-    base_url = get_base_url(connector, f"/management/v3/contractdefinitions/{contract_id}")
+    base_url = get_base_url(connector, f"/v3/contractdefinitions/{contract_id}")
     api_key = get_api_key(connector)
     headers = {"x-api-key": api_key}
 

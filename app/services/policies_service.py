@@ -73,7 +73,7 @@ async def register_policy_with_edc(policy: dict, connector: dict):
         dict: JSON response from the EDC confirming registration.
     """
 
-    base_url = get_base_url(connector, "/management/v3/policydefinitions")
+    base_url = get_base_url(connector, "/v3/policydefinitions")
     api_key = get_api_key(connector)
 
     payload = convert_policy_to_edc_format(policy)
@@ -203,7 +203,7 @@ async def get_policies_by_edc_id(edc_id: str) -> list[Policy]:
     if not connector:
         raise HTTPException(status_code=404, detail="EDC not found")
 
-    base_url = get_base_url(connector, "/management/v3/policydefinitions/request")
+    base_url = get_base_url(connector, "/v3/policydefinitions/request")
     api_key = get_api_key(connector)
 
     payload = {
@@ -265,7 +265,7 @@ async def get_policy_by_policy_id_service(edc_id: str, policy_id: str) -> Policy
     if not connector:
         raise HTTPException(status_code=404, detail="EDC not found")
 
-    base_url = get_base_url(connector, f"/management/v3/policydefinitions/{policy_id}")
+    base_url = get_base_url(connector, f"/v3/policydefinitions/{policy_id}")
     api_key = get_api_key(connector)
 
     headers = {"x-api-key": api_key}
@@ -319,7 +319,7 @@ async def delete_policy(policy_id: str, edc_id: str) -> bool:
     if not connector:
         raise HTTPException(status_code=404, detail="EDC not found")
 
-    base_url = get_base_url(connector, f"/management/v3/policydefinitions/{policy_id}")
+    base_url = get_base_url(connector, f"/v3/policydefinitions/{policy_id}")
     api_key = get_api_key(connector)
 
     headers = {"x-api-key": api_key}

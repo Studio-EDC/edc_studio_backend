@@ -75,11 +75,16 @@ async def catalog_request_curl(consumer: dict, provider: dict):
     """
 
     if consumer["mode"] == "managed":
-        protocol_port = provider["ports"]["protocol"]
-        management_url = get_base_url(consumer, f"/management/v3/catalog/request")
-        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
+        management_url = get_base_url(consumer, f"/v3/catalog/request")
     elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/catalog/request"
+        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/catalog/request"
+    else:
+        raise ValueError("Invalid connector mode")
+    
+    if provider["mode"] == "managed":
+        protocol_port = provider["ports"]["protocol"]
+        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
+    elif provider["mode"] == "remote":
         protocol_url = f"{provider['endpoints_url']['protocol']}"
     else:
         raise ValueError("Invalid connector mode")
@@ -91,6 +96,8 @@ async def catalog_request_curl(consumer: dict, provider: dict):
         "counterPartyAddress": protocol_url,  
         "protocol": "dataspace-protocol-http"
     }
+
+    print(management_url)
 
     api_key = consumer["api_key"]
     if not api_key:
@@ -155,10 +162,10 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
     if consumer["mode"] == "managed":
         management_port = consumer["ports"]["management"]
         protocol_port = provider["ports"]["protocol"]
-        management_url = get_base_url(consumer, f"/management/v3/contractnegotiations")
+        management_url = get_base_url(consumer, f"/v3/contractnegotiations")
         protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/contractnegotiations"
+        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/contractnegotiations"
         protocol_url = f"{provider['endpoints_url']['protocol']}"
     else:
         raise ValueError("Invalid connector mode")
@@ -232,9 +239,9 @@ async def get_contract_agreement_curl(consumer: dict, id_contract_negotiation: s
     """
 
     if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/management/v3/contractnegotiations/{id_contract_negotiation}")
+        management_url = get_base_url(consumer, f"/v3/contractnegotiations/{id_contract_negotiation}")
     elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/contractnegotiations/{id_contract_negotiation}"
+        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/contractnegotiations/{id_contract_negotiation}"
     else:
         raise ValueError("Invalid connector mode")
 
@@ -340,10 +347,10 @@ async def start_transfer_curl(consumer: dict, provider: dict, contract_agreement
     if consumer["mode"] == "managed":
         management_port = consumer["ports"]["management"]
         protocol_port = provider["ports"]["protocol"]
-        management_url = get_base_url(consumer, f"/management/v3/transferprocesses")
+        management_url = get_base_url(consumer, f"/v3/transferprocesses")
         protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/transferprocesses"
+        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/transferprocesses"
         protocol_url = f"{provider['endpoints_url']['protocol']}"
     else:
         raise ValueError("Invalid connector mode")
@@ -424,9 +431,9 @@ async def check_transfer_curl(consumer: dict, transfer_process_id: str):
     """
 
     if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/management/v3/transferprocesses/{transfer_process_id}")
+        management_url = get_base_url(consumer, f"/v3/transferprocesses/{transfer_process_id}")
     elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/transferprocesses/{transfer_process_id}"
+        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/transferprocesses/{transfer_process_id}"
     else:
         raise ValueError("Invalid connector mode")
 
@@ -579,10 +586,10 @@ async def start_transfer_curl_pull(consumer: dict, provider: dict, contract_agre
 
     if consumer["mode"] == "managed":
         protocol_port = provider["ports"]["protocol"]
-        management_url = get_base_url(consumer, f"/management/v3/transferprocesses")
+        management_url = get_base_url(consumer, f"/v3/transferprocesses")
         protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/transferprocesses"
+        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/transferprocesses"
         protocol_url = f"{provider['endpoints_url']['protocol']}"
     else:
         raise ValueError("Invalid connector mode")
@@ -655,9 +662,9 @@ async def check_transfer_data_curl_pull(consumer: dict, transfer_process_id: str
     """
     
     if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/management/v3/edrs/{transfer_process_id}/dataaddress")
+        management_url = get_base_url(consumer, f"/v3/edrs/{transfer_process_id}/dataaddress")
     elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/management/v3/edrs/{transfer_process_id}/dataaddress"
+        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/edrs/{transfer_process_id}/dataaddress"
     else:
         raise ValueError("Invalid connector mode")
     

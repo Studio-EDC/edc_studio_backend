@@ -68,7 +68,7 @@ async def register_asset_with_edc(asset: dict, connector: dict):
         dict: JSON response from the EDC management API.
     """
 
-    base_url = get_base_url(connector, f"/management/v3/assets")
+    base_url = get_base_url(connector, f"/v3/assets")
     api_key = get_api_key(connector)
 
     payload = {
@@ -115,7 +115,7 @@ async def get_asset_by_asset_id_service(edc_id: str, asset_id: str) -> Asset:
     if not connector:
         raise HTTPException(status_code=404, detail="EDC not found")
 
-    base_url = get_base_url(connector, f"/management/v3/assets/{asset_id}")
+    base_url = get_base_url(connector, f"/v3/assets/{asset_id}")
     api_key = get_api_key(connector)
 
     headers = {"x-api-key": api_key}
@@ -165,7 +165,7 @@ async def update_asset(asset: Asset, edc_id: str) -> bool:
     if not connector:
         raise HTTPException(status_code=404, detail="EDC not found")
 
-    base_url = get_base_url(connector, f"/management/v3/assets/{asset.asset_id}")
+    base_url = get_base_url(connector, f"/v3/assets/{asset.asset_id}")
     api_key = get_api_key(connector)
 
     payload = {
@@ -225,7 +225,7 @@ async def delete_asset(asset_id: str, edc_id: str) -> bool:
     if not connector:
         raise HTTPException(status_code=404, detail="EDC not found")
 
-    base_url = get_base_url(connector, f"/management/v3/assets/{asset_id}")
+    base_url = get_base_url(connector, f"/v3/assets/{asset_id}")
     api_key = get_api_key(connector)
 
     headers = {"x-api-key": api_key}
@@ -263,7 +263,8 @@ async def get_assets_by_edc_id(edc_id: str) -> list[Asset]:
     if not connector:
         raise HTTPException(status_code=404, detail="EDC not found")
 
-    base_url = get_base_url(connector, "/management/v3/assets/request")
+    base_url = get_base_url(connector, "/v3/assets/request")
+    print(base_url)
     api_key = get_api_key(connector)
 
     payload = {
