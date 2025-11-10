@@ -18,6 +18,7 @@ Handled responsibilities:
     - Policy deletion from EDC Management API
 """
 
+import json
 from fastapi import HTTPException
 from app.models.policy import Constraint, Operator, Policy, PolicyDefinition, Rule
 from app.db.client import get_db
@@ -79,10 +80,20 @@ async def register_policy_with_edc(policy: dict, connector: dict):
     payload = convert_policy_to_edc_format(policy)
     headers = {"x-api-key": api_key}
 
-    async with httpx.AsyncClient() as client:
-        response = await client.post(base_url, json=payload, headers=headers)
-        response.raise_for_status()
-        return response.json()
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(base_url, json=payload, headers=headers)
+            response.raise_for_status()
+            return response.json()
+
+    except httpx.RequestError as e:
+        print(f"❌ [ERROR] Request failed: {e}")
+        raise
+
+    except httpx.HTTPStatusError as e:
+        print(f"❌ [ERROR] HTTP error: {e.response.status_code}")
+        print(f"❌ [ERROR] Response content: {e.response.text}")
+        raise
 
 
 def convert_policy_to_edc_format(policy: dict) -> dict:
@@ -122,15 +133,25 @@ def _convert_rules(rules: list) -> list:
 
     result = []
     for rule in rules:
-        converted = {"action": rule["action"]}
+        converted = {"action": rule["action"].lower()} 
+
         if "constraint" in rule and rule["constraint"]:
-            converted["constraint"] = [
-                {
+            converted["constraint"] = []
+            for c in rule["constraint"]:
+                operator = c.get("operator")
+                if isinstance(operator, dict) and "id" in operator:
+                    operator = operator["id"]
+                if isinstance(operator, str):
+                    operator = operator.lower()
+                    if not operator.startswith("odrl:"):
+                        operator = f"odrl:{operator}"  
+
+                converted["constraint"].append({
                     "leftOperand": c["leftOperand"],
-                    "operator": {"@id": c["operator"]["id"]},
+                    "operator": {"@id": operator},
                     "rightOperand": c["rightOperand"]
-                } for c in rule["constraint"]
-            ]
+                })
+
         result.append(converted)
     return result
 
@@ -169,17 +190,30 @@ def convert_rules_get(rule_list):
         constraints = None
         if "odrl:constraint" in r:
             constraints_raw = normalize_odrl_list(r["odrl:constraint"])
-            constraints = [
-                Constraint(
-                    leftOperand=c["odrl:leftOperand"]["@id"],
-                    operator=Operator(id=c["odrl:operator"]["@id"]),
-                    rightOperand=c["odrl:rightOperand"]
-                ) for c in constraints_raw
-            ]
+            constraints = []
+            for c in constraints_raw:
+                left = c.get("odrl:leftOperand")
+                left = left["@id"] if isinstance(left, dict) else left
+
+                op = c.get("odrl:operator")
+                op = op["@id"] if isinstance(op, dict) else op
+
+                right = c.get("odrl:rightOperand")
+
+                constraints.append(Constraint(
+                    leftOperand=left.replace("edc:", ""),
+                    operator=Operator(id=op.replace("odrl:", "")),
+                    rightOperand=right
+                ))
+
+        action = r.get("odrl:action", {}).get("@id", "odrl:use")
+        action = action.replace("odrl:", "")
+
         result.append(Rule(
-            action=r["odrl:action"]["@id"].replace("edc:", ""),
+            action=action,
             constraint=constraints
         ))
+
     return result
 
 

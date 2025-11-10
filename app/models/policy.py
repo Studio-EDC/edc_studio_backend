@@ -15,8 +15,9 @@ The models follow a hierarchical structure:
 - Policy: top-level model that associates a policy definition with a specific EDC.
 """
 
+from enum import Enum
 from typing import List, Optional, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class Operator(BaseModel):
@@ -55,6 +56,16 @@ class Constraint(BaseModel):
     rightOperand: str
     """Right operand or value of the constraint."""
 
+class Action(str, Enum):
+    USE = "USE"
+    READ = "READ"
+    WRITE = "WRITE"
+    MODIFY = "MODIFY"
+    DELETE = "DELETE"
+    LOG = "LOG"
+    NOTIFY = "NOTIFY"
+    ANONYMIZE = "ANONYMIZE"
+
 
 class Rule(BaseModel):
     """
@@ -73,11 +84,19 @@ class Rule(BaseModel):
         ... )
     """
 
-    action: Literal["USE", "READ", "WRITE", "MODIFY", "DELETE", "LOG", "NOTIFY", "ANONYMIZE"]
+    action: Action
     """Type of action that the rule allows, forbids, or obliges."""
 
     constraint: Optional[List[Constraint]] = None
     """Optional list of constraints associated with this rule."""
+
+    @field_validator("action", mode="before")
+    @classmethod
+    def normalize_action(cls, v):
+        # admite 'odrl:use', 'use', 'USE'…
+        if isinstance(v, str):
+            v = v.split(":")[-1].upper()
+        return v
 
 
 class PolicyDefinition(BaseModel):
