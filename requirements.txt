@@ -1,13 +1,45 @@
-fastapi
-motor
-pydantic
-uvicorn
-python-dotenv
-httpx
-psycopg2-binary
-requests
-sqlparse
-sphinx 
-sphinx-autodoc-typehints 
-sphinx-rtd-theme 
-myst-parser
+# ───────────────
+# Core dependencies
+# ───────────────
+fastapi==0.115.0
+uvicorn==0.30.6
+
+# ───────────────
+# Database
+# ───────────────
+motor==3.6.0  # async driver para MongoDB
+
+# ───────────────
+# Validation & settings
+# ───────────────
+pydantic==2.9.2
+pydantic-settings==2.5.2
+pydantic[email]
+
+# ───────────────
+# Auth & Security
+# ───────────────
+python-jose==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1 
+python-dotenv==1.0.1
+
+# ───────────────
+# Networking
+# ───────────────
+httpx==0.27.2
+requests==2.32.3
+
+# ───────────────
+# Optional / PostgreSQL / Parser
+# ───────────────
+psycopg2-binary==2.9.9
+sqlparse==0.5.1
+
+# ───────────────
+# Docs (Sphinx)
+# ───────────────
+sphinx==7.4.7
+sphinx-autodoc-typehints==2.2.3
+sphinx-rtd-theme==2.0.0
+myst-parser==3.0.1

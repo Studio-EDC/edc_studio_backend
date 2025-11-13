@@ -10,15 +10,17 @@ All routes interact with the connector service layer
 (`app.services.connectors_service`) and use Pydantic models for validation.
 """
 
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
+from app.core.security import get_current_user
 from app.models.connector import Connector
+from app.models.user import User
 from app.services.connectors_service import create_connector, delete_connector, start_edc_service, stop_edc_service, get_all_connectors, get_connector_by_id, update_connector
 from app.schemas.connector import ConnectorResponse, ConnectorUpdate
 
 router = APIRouter()
 
 @router.post("", status_code=201)
-async def create_connector_route(data: Connector):
+async def create_connector_route(data: Connector, current_user: User = Depends(get_current_user)):
     """
     Create a new EDC connector.
 
@@ -44,7 +46,7 @@ async def create_connector_route(data: Connector):
         }
     """
 
-    inserted_id = await create_connector(data)
+    inserted_id = await create_connector(data, current_user)
     if not inserted_id:
         raise HTTPException(status_code=500, detail="Failed to create connector")
     return {"id": inserted_id}
@@ -112,7 +114,7 @@ async def stop_edc(id: str):
         raise HTTPException(status_code=500, detail=f"Failed to stop connector: {e}")
 
 @router.get("", response_model=list[ConnectorResponse])
-async def list_connectors():
+async def list_connectors(current_user: User = Depends(get_current_user)):
     """
     Retrieve all registered connectors.
 
@@ -123,7 +125,9 @@ async def list_connectors():
         >>> GET /connectors
     """
 
-    return await get_all_connectors()
+    print(current_user)
+
+    return await get_all_connectors(current_user)
 
 @router.get("/{id}", response_model=ConnectorResponse)
 async def get_connector(id: str):

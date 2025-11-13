@@ -102,6 +102,8 @@ class Connector(BaseModel):
     name: str
     """Human-readable name of the connector."""
 
+    owner: Optional[str] = None
+
     description: Optional[str] = None
     """Optional text description of the connector."""
 

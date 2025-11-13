@@ -17,13 +17,14 @@ import traceback
 from app.models.connector import Connector
 from app.db.client import get_db
 from pathlib import Path
+from app.models.user import User
 from app.services.edc_launcher_service import _create_docker_network_if_not_exists, _generate_files, _run_docker_compose, _run_docker_compose_down
 from bson import ObjectId
 import shutil
 from pymongo.results import DeleteResult
 import socket
 
-async def create_connector(connector: Connector) -> str:
+async def create_connector(connector: Connector, current_user: User) -> str:
     """
     Creates a new connector and stores it in the MongoDB database.
 
@@ -43,6 +44,7 @@ async def create_connector(connector: Connector) -> str:
 
     db = get_db()
     await check_ports_unique(connector, db)
+    connector.owner = str(current_user['_id'])
     connector_dict = connector.dict()
     result = await db["connectors"].insert_one(connector_dict)
     return str(result.inserted_id)
@@ -161,7 +163,7 @@ async def stop_edc_service(connector_id: str):
     except Exception as e:
         raise RuntimeError(f"Failed to stop connector: {e}")
 
-async def get_all_connectors() -> list[dict]:
+async def get_all_connectors(current_user: User) -> list[dict]:
     """
     Retrieves all connectors from the database and checks their runtime state.
 
@@ -172,8 +174,10 @@ async def get_all_connectors() -> list[dict]:
         list[dict]: A list of connector objects with updated runtime states.
     """
 
+    print(current_user)
+
     db = get_db()
-    connectors = await db["connectors"].find().to_list(length=None)
+    connectors = await db["connectors"].find({"owner": str(current_user['_id'])}).to_list(length=None)
 
     try:
         docker_ps_output = subprocess.check_output(
