@@ -269,10 +269,8 @@ async def delete_connector(id: str):
     db = get_db()
     base_path = Path("runtime") / str(id)
 
-    if not base_path.exists():
-        raise ValueError("Runtime folder does not exist")
-    
-    shutil.rmtree(base_path)
+    if base_path.exists():
+        shutil.rmtree(base_path)
 
     result: DeleteResult = await db["connectors"].delete_one({"_id": ObjectId(id)})
     if result.deleted_count == 0:
