@@ -89,6 +89,8 @@ async def catalog_request_curl(consumer: dict, provider: dict):
     else:
         raise ValueError("Invalid connector mode")
     
+    print(protocol_url)
+    
     payload = {
         "@context": {
             "@vocab": "https://w3id.org/edc/v0.0.1/ns/"

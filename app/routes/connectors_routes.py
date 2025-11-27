@@ -125,8 +125,6 @@ async def list_connectors(current_user: User = Depends(get_current_user)):
         >>> GET /connectors
     """
 
-    print(current_user)
-
     return await get_all_connectors(current_user)
 
 @router.get("/{id}", response_model=ConnectorResponse)

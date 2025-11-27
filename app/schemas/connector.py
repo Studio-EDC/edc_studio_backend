@@ -85,7 +85,7 @@ class ConnectorUpdate(BaseModel):
         >>> update = ConnectorUpdate(
         ...     name="Updated Provider",
         ...     state="stopped",
-        ...     mode="unmanaged"
+        ...     mode="remote"
         ... )
         >>> print(update.state)
         stopped
@@ -103,14 +103,11 @@ class ConnectorUpdate(BaseModel):
     ports: Optional[PortConfig]
     """Updated port configuration."""
 
-    api_key: Optional[str] = None
-    """Updated authentication key, if applicable."""
-
     state: Optional[Literal["running", "stopped"]]
     """Updated operational state (`running` or `stopped`)."""
 
-    mode: Optional[Literal["managed", "unmanaged"]]
-    """Updated deployment mode (`managed` or `unmanaged`)."""
+    mode: Optional[Literal["managed", "remote"]]
+    """Updated deployment mode (`managed` or `remote`)."""
 
     endpoints_url: Optional[Endpoints] = None
     """Updated management and protocol endpoint URLs."""

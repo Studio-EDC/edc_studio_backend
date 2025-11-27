@@ -73,6 +73,9 @@ class Endpoints(BaseModel):
     protocol: Optional[str] = None
     """Protocol endpoint URL (optional)."""
 
+    public: Optional[str] = None
+    """Public endpoint URL (optional)."""
+
 class Connector(BaseModel):
     """
     Represents an Eclipse Data Connector (EDC) instance.
