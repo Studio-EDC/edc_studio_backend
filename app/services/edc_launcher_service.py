@@ -98,6 +98,8 @@ services:
     environment:
       - VIRTUAL_HOST={virtual_host}
       - VIRTUAL_PORT=8080
+      - LETSENCRYPT_HOST={virtual_host}
+      - LETSENCRYPT_EMAIL={letsencrypt_email}
     networks:
       - {network_name}
 
@@ -203,6 +205,7 @@ def _generate_files(connector: dict, base_path: Path):
 
     load_dotenv()
     port_postgress=os.getenv("POSTGRES_PORT", 5432)
+    letsencrypt_email=os.getenv("LETSENCRYPT_EMAIL", "example@gmail.com")
 
     # Write config.properties
     config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports, secret=secret, port_postgress=port_postgress) + proxy_public_line
@@ -234,7 +237,7 @@ def _generate_files(connector: dict, base_path: Path):
     compose_file = base_path / "docker-compose.yml"
     compose_file.write_text(DOCKER_COMPOSE_TEMPLATE.format(
         type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password, 
-        virtual_host=virtual_host, virtual_port=ports['management'],
+        virtual_host=virtual_host, virtual_port=ports['management'], letsencrypt_email=letsencrypt_email,
         network_name=os.getenv("NETWORK_NAME", "edc-network")
     ))
 

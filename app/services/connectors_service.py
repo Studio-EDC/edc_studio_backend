@@ -136,6 +136,7 @@ async def start_edc_service(connector_id: str):
         db_name = 'edc_' + connector['type'] + '_' + str(connector['_id'])
         _run_docker_compose(base_path, db_name)
         await db["connectors"].update_one({"_id": ObjectId(connector_id)}, {"$set": {"state": "running"}})
+        subprocess.run(["docker", "restart", "nginx-proxy"])
     except Exception as e:
         raise RuntimeError(f"Failed to start connector: {e}")
 
