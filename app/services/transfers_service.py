@@ -74,6 +74,9 @@ async def catalog_request_curl(consumer: dict, provider: dict):
         dict: JSON response containing the provider's catalog.
     """
 
+    print(consumer)
+    print(provider)
+
     if consumer["mode"] == "managed":
         management_url = get_base_url(consumer, f"/v3/catalog/request")
     elif consumer["mode"] == "remote":
@@ -88,9 +91,7 @@ async def catalog_request_curl(consumer: dict, provider: dict):
         protocol_url = f"{provider['endpoints_url']['protocol']}"
     else:
         raise ValueError("Invalid connector mode")
-    
-    print(protocol_url)
-    
+        
     payload = {
         "@context": {
             "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
@@ -115,6 +116,7 @@ async def catalog_request_curl(consumer: dict, provider: dict):
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as exc:
+            print(exc.response.text)
             raise HTTPException(
                 status_code=exc.response.status_code,
                 detail=f"EDC error: {exc.response.text}"
@@ -161,13 +163,20 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
         dict: JSON response from the EDC Management API.
     """
 
+    print(consumer)
+    print(provider)
+
     if consumer["mode"] == "managed":
-        management_port = consumer["ports"]["management"]
-        protocol_port = provider["ports"]["protocol"]
         management_url = get_base_url(consumer, f"/v3/contractnegotiations")
-        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/contractnegotiations"
+    else:
+        raise ValueError("Invalid connector mode")
+    
+    if provider["mode"] == "managed":
+        protocol_port = provider["ports"]["protocol"]
+        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
+    elif provider["mode"] == "remote":
         protocol_url = f"{provider['endpoints_url']['protocol']}"
     else:
         raise ValueError("Invalid connector mode")
@@ -187,6 +196,9 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
             "target": asset
         }
     }
+
+    print(management_url)
+    print(protocol_url)
 
     api_key = consumer["api_key"]
     if not api_key:
@@ -254,6 +266,8 @@ async def get_contract_agreement_curl(consumer: dict, id_contract_negotiation: s
     headers = {
         "x-api-key": api_key
     }
+
+    print(management_url)
 
     async with httpx.AsyncClient() as client:
         try:
@@ -347,12 +361,16 @@ async def start_transfer_curl(consumer: dict, provider: dict, contract_agreement
     """
 
     if consumer["mode"] == "managed":
-        management_port = consumer["ports"]["management"]
-        protocol_port = provider["ports"]["protocol"]
         management_url = get_base_url(consumer, f"/v3/transferprocesses")
-        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/transferprocesses"
+    else:
+        raise ValueError("Invalid connector mode")
+    
+    if provider["mode"] == "managed":
+        protocol_port = provider["ports"]["protocol"]
+        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
+    elif provider["mode"] == "remote":
         protocol_url = f"{provider['endpoints_url']['protocol']}"
     else:
         raise ValueError("Invalid connector mode")
@@ -587,11 +605,16 @@ async def start_transfer_curl_pull(consumer: dict, provider: dict, contract_agre
     """
 
     if consumer["mode"] == "managed":
-        protocol_port = provider["ports"]["protocol"]
         management_url = get_base_url(consumer, f"/v3/transferprocesses")
-        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
     elif consumer["mode"] == "remote":
         management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/transferprocesses"
+    else:
+        raise ValueError("Invalid connector mode")
+    
+    if provider["mode"] == "managed":
+        protocol_port = provider["ports"]["protocol"]
+        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
+    elif provider["mode"] == "remote":
         protocol_url = f"{provider['endpoints_url']['protocol']}"
     else:
         raise ValueError("Invalid connector mode")
@@ -682,6 +705,7 @@ async def check_transfer_data_curl_pull(consumer: dict, transfer_process_id: str
         try:
             response = await client.get(management_url, headers=headers)
             response.raise_for_status()
+            print(response.json())
             return response.json()
         except httpx.HTTPStatusError as exc:
             raise HTTPException(

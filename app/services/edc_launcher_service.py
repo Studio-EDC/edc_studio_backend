@@ -33,9 +33,9 @@ keystore_password = secrets.token_urlsafe(16)
 """Randomly generated keystore password for EDC connector certificates."""
 
 CONFIG_TEMPLATE = """
-edc.hostname=localhost
+edc.hostname={hostname}
 edc.participant.id={type}
-edc.dsp.callback.address=http://edc-{type}-{id}:{protocol}/protocol
+edc.dsp.callback.address={callback_address}
 web.http.port={http}
 web.http.path=/api
 web.http.management.port={management}
@@ -215,8 +215,14 @@ def _generate_files(connector: dict, base_path: Path):
     port_postgress=os.getenv("POSTGRES_PORT", 5432)
     letsencrypt_email=os.getenv("LETSENCRYPT_EMAIL", "example@gmail.com")
 
+    callback_url = f"http://edc-{ctype}-{id}:{ports['protocol']}/protocol"
+    hostname="localhost"
+    if connector["domain"] is not None and connector["domain"] != "":
+        callback_url = f"{connector['domain'].rstrip('/')}/protocol"
+        hostname = callback_url.split("//")[1].split("/")[0]
+
     # Write config.properties
-    config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, **ports, secret=secret, port_postgress=port_postgress) + proxy_public_line
+    config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, callback_address=callback_url, hostname=hostname, **ports, secret=secret, port_postgress=port_postgress) + proxy_public_line
     (config_path / "config.properties").write_text(config_content)
 
     # Generate real cert.pfx using keytool
