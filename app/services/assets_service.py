@@ -71,20 +71,23 @@ async def register_asset_with_edc(asset: dict, connector: dict):
     base_url = get_base_url(connector, f"/v3/assets")
     api_key = get_api_key(connector)
 
-    payload = {
-        "@context": {"@vocab": "https://w3id.org/edc/v0.0.1/ns/"},
-        "@id": asset["asset_id"],
-        "properties": {
-            "name": asset["name"],
-            "contenttype": asset["content_type"]
-        },
-        "dataAddress": {
-            "type": asset["data_address_type"],
-            "name": asset["data_address_name"],
-            "baseUrl": asset["base_url"],
-            "proxyPath": str(asset["data_address_proxy"]).lower()
+    if asset.get("properties"):
+        payload = asset["properties"]
+    else:
+        payload = {
+            "@context": {"@vocab": "https://w3id.org/edc/v0.0.1/ns/"},
+            "@id": asset["asset_id"],
+            "properties": {
+                "name": asset["name"],
+                "contenttype": asset["content_type"]
+            },
+            "dataAddress": {
+                "type": asset["data_address_type"],
+                "name": asset["data_address_name"],
+                "baseUrl": asset["base_url"],
+                "proxyPath": str(asset["data_address_proxy"]).lower()
+            }
         }
-    }
 
     headers = {"x-api-key": api_key}
 

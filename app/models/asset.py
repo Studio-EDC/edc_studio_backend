@@ -12,6 +12,7 @@ hinting, ensuring consistency across the API and MongoDB storage.
 
 from typing import Literal
 from pydantic import BaseModel
+from typing import Optional
 
 
 class Asset(BaseModel):
@@ -59,3 +60,5 @@ class Asset(BaseModel):
 
     edc: str
     """Identifier of the EDC connector associated with the asset."""
+
+    properties: Optional[dict] = None
