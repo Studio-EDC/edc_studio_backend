@@ -1,84 +1,45 @@
-# Aquí irá la gestión de archivos en el siguiente paso
 from typing import List, Optional
-from fastapi import APIRouter, UploadFile, File, Response
-import os
-from datetime import datetime
-from fastapi import HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File
+from fastapi import Depends
+from fastapi.responses import StreamingResponse
+from starlette.background import BackgroundTask
 
 from app.core.security import get_current_user
-from app.services.user_service import get_user_by_username
-
-DATA_DIR = "data_pond_storage"
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+from app.services.data_pond_service import (
+    delete_user_file,
+    download_user_file,
+    list_user_files,
+    upload_user_file,
+)
 
 router = APIRouter()
 
-def get_user_dir(username: str):
-    user_dir = os.path.join(DATA_DIR, username)
-    os.makedirs(user_dir, exist_ok=True)
-    return user_dir
-
 @router.post("/files/upload")
-def upload_file(
+async def upload_file(
     file: UploadFile = File(...),
     current_user: dict = Depends(get_current_user)
 ):
-    contents = file.file.read()
-    if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=413, detail="File too large")
-    user_dir = get_user_dir(current_user.get("username"))
-    file_path = os.path.join(user_dir, file.filename)
-    with open(file_path, "wb") as f:
-        f.write(contents)
-    return {"filename": file.filename, "size": len(contents)}
+    return await upload_user_file(current_user, file)
 
 @router.get("/files/", response_model=List[dict])
 async def list_files(
     username: Optional[str] = None,
     current_user: dict = Depends(get_current_user),
 ):
-    if username:
-        user = await get_user_by_username(username)
-
-        if user is None:
-            raise HTTPException(status_code=404, detail="User not found")
-
-        if username != user.get('username') and not current_user.get("is_admin"):
-            raise HTTPException(status_code=403, detail="Not allowed")
-
-        target_user = username
-    else:
-        # Si no hay username, usamos el usuario actual
-        target_user = current_user.get("username")
-
-    user_dir = get_user_dir(target_user)
-    files = []
-    if os.path.exists(user_dir):
-        for fname in os.listdir(user_dir):
-            fpath = os.path.join(user_dir, fname)
-            if os.path.isfile(fpath):
-                stat = os.stat(fpath)
-                files.append({
-                    "username": target_user,
-                    "filename": fname,
-                    "size": stat.st_size,
-                    "modified": datetime.fromtimestamp(stat.st_mtime).isoformat()
-                })
-    return files
+    return await list_user_files(username, current_user)
 
 @router.get("/files/download/{filename}")
 def download_file(
     filename: str,
     current_user: dict = Depends(get_current_user),
 ):
-    user_dir = get_user_dir(current_user.get("username"))
-    file_path = os.path.join(user_dir, filename)
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="File not found")
-    return Response(
-        content=open(file_path, "rb").read(),
-        media_type="application/octet-stream",
-        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    response = download_user_file(current_user, filename)
+    media_type = response.headers.get("content-type", "application/octet-stream")
+    return StreamingResponse(
+        response.stream(32 * 1024),
+        media_type=media_type,
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+        background=BackgroundTask(response.close),
     )
 
 @router.delete("/files/{filename}")
@@ -86,9 +47,4 @@ def delete_file(
     filename: str,
     current_user: dict = Depends(get_current_user),
 ):
-    user_dir = get_user_dir(current_user.get("username"))
-    file_path = os.path.join(user_dir, filename)
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="File not found")
-    os.remove(file_path)
-    return {"ok": True}
+    return delete_user_file(current_user, filename)

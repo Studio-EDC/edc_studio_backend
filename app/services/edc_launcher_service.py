@@ -218,7 +218,10 @@ def _generate_files(connector: dict, base_path: Path):
     callback_url = f"http://edc-{ctype}-{id}:{ports['protocol']}/protocol"
     hostname="localhost"
     if connector["domain"] is not None and connector["domain"] != "":
-        callback_url = f"{connector['domain'].rstrip('/')}/protocol"
+        domain = connector["domain"]
+        if not domain.startswith("http://") and not domain.startswith("https://"):
+            domain = "https://" + domain
+        callback_url = f"{domain.rstrip('/')}/protocol"
         hostname = callback_url.split("//")[1].split("/")[0]
 
     # Write config.properties
