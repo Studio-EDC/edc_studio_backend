@@ -30,6 +30,8 @@ def _get_minio_client() -> Minio:
 
     endpoint, secure = _normalize_minio_endpoint(raw_endpoint, secure_env)
 
+    print(f"[DEBUG] MinIO endpoint: '{endpoint}', secure: {secure}")
+
     try:
         return Minio(
             endpoint,
