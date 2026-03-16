@@ -4,6 +4,7 @@ import io
 import os
 from pathlib import PurePosixPath
 from typing import Optional
+from urllib.parse import urlsplit
 
 from bson import ObjectId
 from fastapi import HTTPException, UploadFile
@@ -16,23 +17,60 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
 def _get_minio_client() -> Minio:
-    endpoint = os.getenv("MINIO_ENDPOINT")
+    raw_endpoint = os.getenv("MINIO_ENDPOINT")
     access_key = os.getenv("MINIO_ACCESS_KEY")
     secret_key = os.getenv("MINIO_SECRET_KEY")
-    secure = os.getenv("MINIO_SECURE", "false").lower() == "true"
+    secure_env = os.getenv("MINIO_SECURE")
 
-    if not endpoint or not access_key or not secret_key:
+    if not raw_endpoint or not access_key or not secret_key:
         raise HTTPException(
             status_code=500,
             detail="MinIO is not configured. Set MINIO_ENDPOINT, MINIO_ACCESS_KEY and MINIO_SECRET_KEY.",
         )
 
-    return Minio(
-        endpoint,
-        access_key=access_key,
-        secret_key=secret_key,
-        secure=secure,
-    )
+    endpoint, secure = _normalize_minio_endpoint(raw_endpoint, secure_env)
+
+    try:
+        return Minio(
+            endpoint,
+            access_key=access_key,
+            secret_key=secret_key,
+            secure=secure,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=500, detail=f"Invalid MinIO configuration: {exc}") from exc
+
+
+def _normalize_minio_endpoint(raw_endpoint: str, secure_env: Optional[str]) -> tuple[str, bool]:
+    endpoint = raw_endpoint.strip()
+    secure = secure_env.lower() == "true" if secure_env is not None else False
+
+    if "://" not in endpoint:
+        if "/" in endpoint:
+            raise HTTPException(
+                status_code=500,
+                detail="Invalid MINIO_ENDPOINT. Use host:port or a bare hostname without path.",
+            )
+        return endpoint, secure
+
+    parsed = urlsplit(endpoint)
+    if parsed.path not in {"", "/"} or parsed.query or parsed.fragment:
+        raise HTTPException(
+            status_code=500,
+            detail="Invalid MINIO_ENDPOINT. Do not include a path, query string, or fragment.",
+        )
+
+    if not parsed.hostname:
+        raise HTTPException(status_code=500, detail="Invalid MINIO_ENDPOINT. Host is required.")
+
+    normalized_endpoint = parsed.hostname
+    if parsed.port:
+        normalized_endpoint = f"{normalized_endpoint}:{parsed.port}"
+
+    if secure_env is None:
+        secure = parsed.scheme == "https"
+
+    return normalized_endpoint, secure
 
 
 def _normalize_filename(filename: str) -> str:
