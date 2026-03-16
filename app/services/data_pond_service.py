@@ -80,10 +80,10 @@ def _normalize_filename(filename: str) -> str:
     return normalized
 
 
-def _bucket_name_from_user_id(user_id: str) -> str:
-    normalized = str(user_id).strip().lower()
+def _bucket_name_from_username(username: str) -> str:
+    normalized = str(username).strip().lower()
     if not normalized:
-        raise HTTPException(status_code=400, detail="Invalid user id")
+        raise HTTPException(status_code=400, detail="Invalid username")
 
     sanitized = []
     for char in normalized:
@@ -94,7 +94,7 @@ def _bucket_name_from_user_id(user_id: str) -> str:
 
     bucket_name = f"user-{''.join(sanitized).strip('-')}"
     if len(bucket_name) < 3:
-        raise HTTPException(status_code=400, detail="Invalid user id")
+        raise HTTPException(status_code=400, detail="Invalid username")
     if len(bucket_name) > 63:
         bucket_name = bucket_name[:63].rstrip("-")
 
@@ -108,8 +108,15 @@ def _serialize_user_id(user: dict) -> str:
     return str(user_id)
 
 
+def _get_username(user: dict) -> str:
+    username = user.get("username")
+    if not username:
+        raise HTTPException(status_code=400, detail="Invalid username")
+    return str(username)
+
+
 def ensure_user_bucket(user: dict) -> str:
-    bucket_name = _bucket_name_from_user_id(_serialize_user_id(user))
+    bucket_name = _bucket_name_from_username(_get_username(user))
     client = _get_minio_client()
 
     try:
