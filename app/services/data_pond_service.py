@@ -150,8 +150,11 @@ async def upload_user_file(user: dict, file: UploadFile) -> dict:
         )
     except S3Error as exc:
         raise HTTPException(status_code=502, detail=f"MinIO upload error: {exc}") from exc
+    
+    public_base = os.getenv("MINIO_PUBLIC_URL", "").rstrip("/")
+    public_url = f"{public_base}/{bucket_name}/{filename}" if public_base else None
 
-    return {"bucket": bucket_name, "filename": filename, "size": len(content)}
+    return {"bucket": bucket_name, "filename": filename, "size": len(content), "url": public_url}
 
 
 async def resolve_target_user(username: Optional[str], current_user: dict) -> dict:
