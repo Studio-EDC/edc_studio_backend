@@ -84,7 +84,21 @@ def _bucket_name_from_user_id(user_id: str) -> str:
     normalized = str(user_id).strip().lower()
     if not normalized:
         raise HTTPException(status_code=400, detail="Invalid user id")
-    return normalized
+
+    sanitized = []
+    for char in normalized:
+        if char.isalnum() or char == "-":
+            sanitized.append(char)
+        else:
+            sanitized.append("-")
+
+    bucket_name = f"user-{''.join(sanitized).strip('-')}"
+    if len(bucket_name) < 3:
+        raise HTTPException(status_code=400, detail="Invalid user id")
+    if len(bucket_name) > 63:
+        bucket_name = bucket_name[:63].rstrip("-")
+
+    return bucket_name
 
 
 def _serialize_user_id(user: dict) -> str:
