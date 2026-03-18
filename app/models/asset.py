@@ -40,10 +40,10 @@ class Asset(BaseModel):
     asset_id: str
     """Unique identifier of the asset within EDC."""
 
-    name: str
+    name: Optional[str]
     """Human-readable name of the asset."""
 
-    content_type: str
+    content_type: Optional[str]
     """MIME type of the asset (e.g., `application/json`)."""
 
     data_address_name: str
