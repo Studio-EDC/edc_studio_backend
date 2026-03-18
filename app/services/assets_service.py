@@ -305,6 +305,7 @@ async def get_assets_by_edc_id(edc_id: str) -> list[Asset]:
                 data_address_type=item.get("dataAddress", {}).get("type"),
                 data_address_proxy=item.get("dataAddress", {}).get("proxyPath") == "true",
                 base_url=item.get("dataAddress", {}).get("baseUrl"),
+                properties=item.get("properties", {}),
                 edc=edc_id
             )
             assets.append(asset)
