@@ -230,26 +230,16 @@ def _build_policy_from_catalog_offer(
     Convert the catalog offer into the negotiation policy payload expected by
     the EDC management API.
 
-    The key point is to reuse the *meaning* of the same offer returned by the
-    catalog, but reshape it into the format accepted by the management API.
-
-    Args:
-        offer (dict): odrl:hasPolicy object from the catalog.
-        asset_id (str): Asset identifier.
-        provider_participant_id (str): Provider participant id.
-        consumer_participant_id (str): Consumer participant id.
-
-    Returns:
-        dict: Policy object suitable for ContractRequest.
-
-    Raises:
-        HTTPException: If the offer has no @id.
+    The policy itself must use the ODRL context, otherwise @type=Offer,
+    assigner, target, permission, etc. are interpreted under the EDC namespace
+    instead of the ODRL namespace.
     """
     offer_id = offer.get("@id")
     if not offer_id:
         raise HTTPException(status_code=404, detail="Catalog offer has no @id")
 
     return {
+        "@context": "http://www.w3.org/ns/odrl.jsonld",
         "@type": "Offer",
         "@id": offer_id,
         "assigner": provider_participant_id,
