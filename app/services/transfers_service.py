@@ -101,29 +101,9 @@ def _get_participant_id(connector: dict) -> str:
         connector.get("participant_id")
         or connector.get("participantId")
         or connector.get("dspace_participant_id")
-        or connector.get("name")
         or connector.get("type")
         or "provider"
     )
-
-
-def _normalize_offer_collections(value):
-    """
-    Ensure ODRL sections are always lists for the negotiation payload.
-
-    Args:
-        value: ODRL section value.
-
-    Returns:
-        list: Normalized list representation.
-    """
-    if value in (None, "", {}):
-        return []
-    if isinstance(value, list):
-        return value
-    if isinstance(value, dict):
-        return [value]
-    return []
 
 
 def _find_catalog_offer(catalog: dict, asset_id: str) -> dict:
@@ -156,6 +136,90 @@ def _find_catalog_offer(catalog: dict, asset_id: str) -> dict:
     return {}
 
 
+def _normalize_catalog_permission(permission_value):
+    """
+    Convert catalog ODRL permissions into the shape expected by
+    /v3/contractnegotiations on the EDC management API.
+
+    Example conversion:
+        odrl:permission -> permission
+        odrl:action.@id=odrl:use -> action=use
+        odrl:constraint.odrl:leftOperand.@id=edc:MembershipCredential
+            -> leftOperand=MembershipCredential
+        odrl:operator.@id=odrl:eq -> operator=eq
+    """
+    if permission_value in (None, "", {}):
+        return []
+
+    permissions = permission_value if isinstance(permission_value, list) else [permission_value]
+    result = []
+
+    for perm in permissions:
+        if not isinstance(perm, dict):
+            continue
+
+        action_raw = perm.get("odrl:action")
+        action = None
+        if isinstance(action_raw, dict):
+            action = action_raw.get("@id", "")
+            if isinstance(action, str) and ":" in action:
+                action = action.split(":")[-1]
+        elif isinstance(action_raw, str):
+            action = action_raw.split(":")[-1]
+
+        constraint_raw = perm.get("odrl:constraint")
+        constraint = None
+        if isinstance(constraint_raw, dict):
+            left = constraint_raw.get("odrl:leftOperand")
+            if isinstance(left, dict):
+                left = left.get("@id", "")
+                if isinstance(left, str) and ":" in left:
+                    left = left.split(":")[-1]
+            elif isinstance(left, str) and ":" in left:
+                left = left.split(":")[-1]
+
+            operator = constraint_raw.get("odrl:operator")
+            if isinstance(operator, dict):
+                operator = operator.get("@id", "")
+                if isinstance(operator, str) and ":" in operator:
+                    operator = operator.split(":")[-1]
+            elif isinstance(operator, str) and ":" in operator:
+                operator = operator.split(":")[-1]
+
+            right = constraint_raw.get("odrl:rightOperand")
+
+            constraint = {
+                "leftOperand": left,
+                "operator": operator,
+                "rightOperand": right,
+            }
+
+        item = {
+            "action": action or "use",
+        }
+        if constraint:
+            item["constraint"] = constraint
+
+        result.append(item)
+
+    return result
+
+
+def _normalize_catalog_rule_collection(value):
+    """
+    Normalize prohibition/obligation collections coming from the catalog.
+
+    For now we keep their structure as-is, just ensuring they are lists.
+    """
+    if value in (None, "", {}):
+        return []
+    if isinstance(value, list):
+        return value
+    if isinstance(value, dict):
+        return [value]
+    return []
+
+
 def _build_policy_from_catalog_offer(
     offer: dict,
     asset_id: str,
@@ -166,9 +230,8 @@ def _build_policy_from_catalog_offer(
     Convert the catalog offer into the negotiation policy payload expected by
     the EDC management API.
 
-    The key point is to preserve the same permission/prohibition/obligation
-    structure returned by the catalog, instead of rebuilding a minimal policy
-    with only @id and target.
+    The key point is to reuse the *meaning* of the same offer returned by the
+    catalog, but reshape it into the format accepted by the management API.
 
     Args:
         offer (dict): odrl:hasPolicy object from the catalog.
@@ -187,13 +250,13 @@ def _build_policy_from_catalog_offer(
         raise HTTPException(status_code=404, detail="Catalog offer has no @id")
 
     return {
-        "@type": offer.get("@type", "Offer"),
+        "@type": "Offer",
         "@id": offer_id,
         "assigner": provider_participant_id,
         "assignee": consumer_participant_id,
-        "permission": _normalize_offer_collections(offer.get("odrl:permission")),
-        "prohibition": _normalize_offer_collections(offer.get("odrl:prohibition")),
-        "obligation": _normalize_offer_collections(offer.get("odrl:obligation")),
+        "permission": _normalize_catalog_permission(offer.get("odrl:permission")),
+        "prohibition": _normalize_catalog_rule_collection(offer.get("odrl:prohibition")),
+        "obligation": _normalize_catalog_rule_collection(offer.get("odrl:obligation")),
         "target": asset_id,
     }
 
@@ -335,19 +398,16 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
             detail=f"Catalog offer for asset '{asset}' has no @id"
         )
 
-    # 3. Ignore the caller-provided offer id if it differs; catalog ids may rotate.
-    #    We always negotiate using the current offer returned by the catalog.
+    # Catalog ids may rotate, so always negotiate with the current catalog value.
     effective_offer_id = real_offer_id
 
-    # 4. Build a negotiation policy from the full current catalog offer
+    # 3. Build a management-API-compatible policy from the catalog offer
     policy = _build_policy_from_catalog_offer(
         offer=catalog_offer,
         asset_id=asset,
         provider_participant_id=provider_participant_id,
         consumer_participant_id=consumer_participant_id,
     )
-
-    # Ensure the policy uses the current offer id from the catalog
     policy["@id"] = effective_offer_id
 
     payload = {
@@ -523,14 +583,15 @@ async def start_transfer_curl(consumer: dict, provider: dict, contract_agreement
 
     management_url = _get_management_url(consumer, "/v3/transferprocesses")
     protocol_url = _get_protocol_url(provider)
+    provider_participant_id = _get_participant_id(provider)
 
     payload = {
         "@context": {
             "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
         },
         "@type": "TransferRequestDto",
-        "connectorId": _get_participant_id(provider),
-        "counterPartyId": _get_participant_id(provider),
+        "connectorId": provider_participant_id,
+        "counterPartyId": provider_participant_id,
         "counterPartyAddress": protocol_url,
         "contractId": contract_agreement_id,
         "protocol": "dataspace-protocol-http",
@@ -758,14 +819,15 @@ async def start_transfer_curl_pull(consumer: dict, provider: dict, contract_agre
 
     management_url = _get_management_url(consumer, "/v3/transferprocesses")
     protocol_url = _get_protocol_url(provider)
+    provider_participant_id = _get_participant_id(provider)
 
     payload = {
         "@context": {
             "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
         },
         "@type": "TransferRequestDto",
-        "connectorId": _get_participant_id(provider),
-        "counterPartyId": _get_participant_id(provider),
+        "connectorId": provider_participant_id,
+        "counterPartyId": provider_participant_id,
         "counterPartyAddress": protocol_url,
         "contractId": contract_agreement_id,
         "protocol": "dataspace-protocol-http",
