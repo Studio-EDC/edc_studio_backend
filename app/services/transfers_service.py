@@ -305,19 +305,10 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
     """
     Performs an HTTP request to the EDC Management API to initiate contract negotiation.
 
-    This implementation first reuses the catalog flow to fetch the real
-    odrl:hasPolicy published by the provider for the asset. The policy sent
-    to /v3/contractnegotiations is then built from that real catalog offer,
-    instead of sending a minimal offer with only @id/assigner/target.
-
-    Args:
-        consumer (dict): Consumer connector data.
-        provider (dict): Provider connector data.
-        contract_offer_id (str): Contract offer identifier.
-        asset (str): Asset identifier.
-
-    Returns:
-        dict: JSON response from the EDC Management API.
+    This implementation first requests the catalog through the consumer, locates
+    the real current offer for the requested asset, and builds the negotiation
+    policy from that offer. The provided contract_offer_id is treated as optional
+    and informative only, because catalog offer ids may rotate between calls.
     """
 
     management_url = _get_management_url(consumer, "/v3/contractnegotiations")
@@ -326,10 +317,10 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
     provider_participant_id = _get_participant_id(provider)
     consumer_participant_id = _get_participant_id(consumer)
 
-    # 1. Request the provider catalog through the consumer
+    # 1. Request the current provider catalog through the consumer
     catalog = await catalog_request_curl(consumer, provider)
 
-    # 2. Locate the real catalog offer for the requested asset
+    # 2. Locate the current real catalog offer for the requested asset
     catalog_offer = _find_catalog_offer(catalog, asset)
     if not catalog_offer:
         raise HTTPException(
@@ -344,23 +335,20 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
             detail=f"Catalog offer for asset '{asset}' has no @id"
         )
 
-    # 3. If the caller provided an offer id, ensure it matches the catalog one
-    if contract_offer_id and contract_offer_id != real_offer_id:
-        raise HTTPException(
-            status_code=400,
-            detail=(
-                f"contract_offer_id does not match catalog offer for asset '{asset}'. "
-                f"Provided='{contract_offer_id}', catalog='{real_offer_id}'"
-            )
-        )
+    # 3. Ignore the caller-provided offer id if it differs; catalog ids may rotate.
+    #    We always negotiate using the current offer returned by the catalog.
+    effective_offer_id = real_offer_id
 
-    # 4. Build a negotiation policy from the full catalog offer
+    # 4. Build a negotiation policy from the full current catalog offer
     policy = _build_policy_from_catalog_offer(
         offer=catalog_offer,
         asset_id=asset,
         provider_participant_id=provider_participant_id,
         consumer_participant_id=consumer_participant_id,
     )
+
+    # Ensure the policy uses the current offer id from the catalog
+    policy["@id"] = effective_offer_id
 
     payload = {
         "@context": {
