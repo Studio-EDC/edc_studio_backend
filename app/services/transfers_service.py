@@ -30,6 +30,174 @@ from pathlib import Path
 from app.models.transfer import Transfer
 from app.util.edc_helpers import get_base_url
 
+
+def _get_management_url(connector: dict, suffix: str) -> str:
+    """
+    Build the management API URL for a connector.
+
+    Args:
+        connector (dict): Connector configuration document.
+        suffix (str): Management API suffix, e.g. '/v3/catalog/request'.
+
+    Returns:
+        str: Full management URL.
+
+    Raises:
+        ValueError: If connector mode is invalid or endpoints are missing.
+    """
+    if connector["mode"] == "managed":
+        return get_base_url(connector, suffix)
+    elif connector["mode"] == "remote":
+        endpoints = connector.get("endpoints_url") or {}
+        management = endpoints.get("management")
+        if not management:
+            raise ValueError("Remote connector management endpoint not configured")
+        return f"{management.rstrip('/')}{suffix}"
+    else:
+        raise ValueError("Invalid connector mode")
+
+
+def _get_protocol_url(connector: dict) -> str:
+    """
+    Build the protocol API URL for a connector.
+
+    Args:
+        connector (dict): Connector configuration document.
+
+    Returns:
+        str: Full protocol URL.
+
+    Raises:
+        ValueError: If connector mode is invalid or endpoints are missing.
+    """
+    if connector["mode"] == "managed":
+        protocol_port = connector["ports"]["protocol"]
+        connector_type = connector.get("type", "provider")
+        return f"http://edc-{connector_type}-{connector['_id']}:{protocol_port}/protocol"
+    elif connector["mode"] == "remote":
+        endpoints = connector.get("endpoints_url") or {}
+        protocol = endpoints.get("protocol")
+        if not protocol:
+            raise ValueError("Remote connector protocol endpoint not configured")
+        return protocol
+    else:
+        raise ValueError("Invalid connector mode")
+
+
+def _get_participant_id(connector: dict) -> str:
+    """
+    Return the participant id to use in DSP messages.
+
+    If a connector-specific participant id is not stored in Mongo, fall back
+    to the connector type, which matches the current deployment ('consumer'/'provider').
+
+    Args:
+        connector (dict): Connector configuration document.
+
+    Returns:
+        str: Participant identifier.
+    """
+    return (
+        connector.get("participant_id")
+        or connector.get("participantId")
+        or connector.get("dspace_participant_id")
+        or connector.get("name")
+        or connector.get("type")
+        or "provider"
+    )
+
+
+def _normalize_offer_collections(value):
+    """
+    Ensure ODRL sections are always lists for the negotiation payload.
+
+    Args:
+        value: ODRL section value.
+
+    Returns:
+        list: Normalized list representation.
+    """
+    if value in (None, "", {}):
+        return []
+    if isinstance(value, list):
+        return value
+    if isinstance(value, dict):
+        return [value]
+    return []
+
+
+def _find_catalog_offer(catalog: dict, asset_id: str) -> dict:
+    """
+    Find the odrl:hasPolicy offer for a given asset in a catalog response.
+
+    Args:
+        catalog (dict): Catalog JSON returned by EDC.
+        asset_id (str): Asset identifier to search.
+
+    Returns:
+        dict: odrl:hasPolicy object for the asset, or {} if not found.
+    """
+    datasets = (catalog or {}).get("dcat:dataset") or []
+    if isinstance(datasets, dict):
+        datasets = [datasets]
+
+    for dataset in datasets:
+        if not isinstance(dataset, dict):
+            continue
+
+        dataset_id = (dataset.get("@id") or dataset.get("id") or "").strip()
+        if dataset_id != asset_id:
+            continue
+
+        offer = dataset.get("odrl:hasPolicy") or {}
+        if isinstance(offer, dict):
+            return offer
+
+    return {}
+
+
+def _build_policy_from_catalog_offer(
+    offer: dict,
+    asset_id: str,
+    provider_participant_id: str,
+    consumer_participant_id: str,
+) -> dict:
+    """
+    Convert the catalog offer into the negotiation policy payload expected by
+    the EDC management API.
+
+    The key point is to preserve the same permission/prohibition/obligation
+    structure returned by the catalog, instead of rebuilding a minimal policy
+    with only @id and target.
+
+    Args:
+        offer (dict): odrl:hasPolicy object from the catalog.
+        asset_id (str): Asset identifier.
+        provider_participant_id (str): Provider participant id.
+        consumer_participant_id (str): Consumer participant id.
+
+    Returns:
+        dict: Policy object suitable for ContractRequest.
+
+    Raises:
+        HTTPException: If the offer has no @id.
+    """
+    offer_id = offer.get("@id")
+    if not offer_id:
+        raise HTTPException(status_code=404, detail="Catalog offer has no @id")
+
+    return {
+        "@type": offer.get("@type", "Offer"),
+        "@id": offer_id,
+        "assigner": provider_participant_id,
+        "assignee": consumer_participant_id,
+        "permission": _normalize_offer_collections(offer.get("odrl:permission")),
+        "prohibition": _normalize_offer_collections(offer.get("odrl:prohibition")),
+        "obligation": _normalize_offer_collections(offer.get("odrl:obligation")),
+        "target": asset_id,
+    }
+
+
 async def catalog_request_service(consumer_id: str, provider_id: str) -> dict:
     """
     Requests the asset catalog from a provider connector through an EDC consumer.
@@ -54,7 +222,7 @@ async def catalog_request_service(consumer_id: str, provider_id: str) -> dict:
         raise ValueError("Consumer or provider connector not found")
 
     return await catalog_request_curl(consumer, provider)
-    
+
 
 async def catalog_request_curl(consumer: dict, provider: dict):
     """
@@ -74,33 +242,16 @@ async def catalog_request_curl(consumer: dict, provider: dict):
         dict: JSON response containing the provider's catalog.
     """
 
-    print(consumer)
-    print(provider)
+    management_url = _get_management_url(consumer, "/v3/catalog/request")
+    protocol_url = _get_protocol_url(provider)
 
-    if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/v3/catalog/request")
-    elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/catalog/request"
-    else:
-        raise ValueError("Invalid connector mode")
-    
-    if provider["mode"] == "managed":
-        protocol_port = provider["ports"]["protocol"]
-        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
-    elif provider["mode"] == "remote":
-        protocol_url = f"{provider['endpoints_url']['protocol']}"
-    else:
-        raise ValueError("Invalid connector mode")
-        
     payload = {
         "@context": {
             "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
         },
-        "counterPartyAddress": protocol_url,  
+        "counterPartyAddress": protocol_url,
         "protocol": "dataspace-protocol-http"
     }
-
-    print(management_url)
 
     api_key = consumer["api_key"]
     if not api_key:
@@ -116,11 +267,11 @@ async def catalog_request_curl(consumer: dict, provider: dict):
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as exc:
-            print(exc.response.text)
             raise HTTPException(
                 status_code=exc.response.status_code,
                 detail=f"EDC error: {exc.response.text}"
             )
+
 
 async def negotiate_contract_service(consumer_id: str, provider_id: str, contract_offer_id: str, asset: str) -> dict:
     """
@@ -149,9 +300,15 @@ async def negotiate_contract_service(consumer_id: str, provider_id: str, contrac
 
     return await negotiate_contract_curl(consumer, provider, contract_offer_id, asset)
 
+
 async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer_id: str, asset: str):
     """
     Performs an HTTP request to the EDC Management API to initiate contract negotiation.
+
+    This implementation first reuses the catalog flow to fetch the real
+    odrl:hasPolicy published by the provider for the asset. The policy sent
+    to /v3/contractnegotiations is then built from that real catalog offer,
+    instead of sending a minimal offer with only @id/assigner/target.
 
     Args:
         consumer (dict): Consumer connector data.
@@ -163,42 +320,59 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
         dict: JSON response from the EDC Management API.
     """
 
-    print(consumer)
-    print(provider)
+    management_url = _get_management_url(consumer, "/v3/contractnegotiations")
+    protocol_url = _get_protocol_url(provider)
 
-    if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/v3/contractnegotiations")
-    elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/contractnegotiations"
-    else:
-        raise ValueError("Invalid connector mode")
-    
-    if provider["mode"] == "managed":
-        protocol_port = provider["ports"]["protocol"]
-        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
-    elif provider["mode"] == "remote":
-        protocol_url = f"{provider['endpoints_url']['protocol']}"
-    else:
-        raise ValueError("Invalid connector mode")
-    
+    provider_participant_id = _get_participant_id(provider)
+    consumer_participant_id = _get_participant_id(consumer)
+
+    # 1. Request the provider catalog through the consumer
+    catalog = await catalog_request_curl(consumer, provider)
+
+    # 2. Locate the real catalog offer for the requested asset
+    catalog_offer = _find_catalog_offer(catalog, asset)
+    if not catalog_offer:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Catalog offer not found for asset '{asset}'"
+        )
+
+    real_offer_id = catalog_offer.get("@id")
+    if not real_offer_id:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Catalog offer for asset '{asset}' has no @id"
+        )
+
+    # 3. If the caller provided an offer id, ensure it matches the catalog one
+    if contract_offer_id and contract_offer_id != real_offer_id:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"contract_offer_id does not match catalog offer for asset '{asset}'. "
+                f"Provided='{contract_offer_id}', catalog='{real_offer_id}'"
+            )
+        )
+
+    # 4. Build a negotiation policy from the full catalog offer
+    policy = _build_policy_from_catalog_offer(
+        offer=catalog_offer,
+        asset_id=asset,
+        provider_participant_id=provider_participant_id,
+        consumer_participant_id=consumer_participant_id,
+    )
+
     payload = {
         "@context": {
             "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
         },
         "@type": "ContractRequest",
         "counterPartyAddress": protocol_url,
+        "counterPartyId": provider_participant_id,
         "protocol": "dataspace-protocol-http",
-        "policy": {
-            "@context": "http://www.w3.org/ns/odrl.jsonld",
-            "@id": contract_offer_id,
-            "@type": "Offer",
-            "assigner": "provider",
-            "target": asset
-        }
+        "policy": policy,
+        "callbackAddresses": []
     }
-
-    print(management_url)
-    print(protocol_url)
 
     api_key = consumer["api_key"]
     if not api_key:
@@ -218,6 +392,7 @@ async def negotiate_contract_curl(consumer: dict, provider: dict, contract_offer
                 status_code=exc.response.status_code,
                 detail=f"EDC error: {exc.response.text}"
             )
+
 
 async def get_contract_agreement_service(consumer_id: str, id_contract_negotiation: str) -> dict:
     """
@@ -240,6 +415,7 @@ async def get_contract_agreement_service(consumer_id: str, id_contract_negotiati
 
     return await get_contract_agreement_curl(consumer, id_contract_negotiation)
 
+
 async def get_contract_agreement_curl(consumer: dict, id_contract_negotiation: str):
     """
     Performs a GET request to the EDC API to retrieve contract agreement details.
@@ -252,12 +428,7 @@ async def get_contract_agreement_curl(consumer: dict, id_contract_negotiation: s
         dict: Agreement data from EDC.
     """
 
-    if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/v3/contractnegotiations/{id_contract_negotiation}")
-    elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/contractnegotiations/{id_contract_negotiation}"
-    else:
-        raise ValueError("Invalid connector mode")
+    management_url = _get_management_url(consumer, f"/v3/contractnegotiations/{id_contract_negotiation}")
 
     api_key = consumer["api_key"]
     if not api_key:
@@ -266,8 +437,6 @@ async def get_contract_agreement_curl(consumer: dict, id_contract_negotiation: s
     headers = {
         "x-api-key": api_key
     }
-
-    print(management_url)
 
     async with httpx.AsyncClient() as client:
         try:
@@ -279,6 +448,7 @@ async def get_contract_agreement_curl(consumer: dict, id_contract_negotiation: s
                 status_code=exc.response.status_code,
                 detail=f"EDC error: {exc.response.text}"
             )
+
 
 def start_http_server_service():
     """
@@ -298,7 +468,7 @@ def start_http_server_service():
             print("El contenedor 'http-logger' ya está corriendo.")
             return
     except subprocess.CalledProcessError:
-        pass  
+        pass
 
     try:
         result = subprocess.check_output(["docker", "ps", "-a", "--filter", "name=http-logger", "--filter", "status=exited", "-q"])
@@ -317,12 +487,14 @@ def start_http_server_service():
     ], check=True)
     print("Contenedor 'http-logger' creado y ejecutado.")
 
+
 def stop_http_server_service():
     """
     Stops and removes the HTTP logger Docker container if running.
     """
 
     subprocess.run(["docker", "rm", "-f", "http-logger"], check=True)
+
 
 async def start_transfer_service(consumer_id: str, provider_id: str, contract_agreement_id: str) -> dict:
     """
@@ -347,6 +519,7 @@ async def start_transfer_service(consumer_id: str, provider_id: str, contract_ag
 
     return await start_transfer_curl(consumer, provider, contract_agreement_id)
 
+
 async def start_transfer_curl(consumer: dict, provider: dict, contract_agreement_id: str):
     """
     Executes the HTTP POST to the EDC API to start a PUSH transfer process.
@@ -360,27 +533,16 @@ async def start_transfer_curl(consumer: dict, provider: dict, contract_agreement
         dict: Transfer initiation response.
     """
 
-    if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/v3/transferprocesses")
-    elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/transferprocesses"
-    else:
-        raise ValueError("Invalid connector mode")
-    
-    if provider["mode"] == "managed":
-        protocol_port = provider["ports"]["protocol"]
-        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
-    elif provider["mode"] == "remote":
-        protocol_url = f"{provider['endpoints_url']['protocol']}"
-    else:
-        raise ValueError("Invalid connector mode")
-    
+    management_url = _get_management_url(consumer, "/v3/transferprocesses")
+    protocol_url = _get_protocol_url(provider)
+
     payload = {
         "@context": {
             "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
         },
         "@type": "TransferRequestDto",
-        "connectorId": "provider",
+        "connectorId": _get_participant_id(provider),
+        "counterPartyId": _get_participant_id(provider),
         "counterPartyAddress": protocol_url,
         "contractId": contract_agreement_id,
         "protocol": "dataspace-protocol-http",
@@ -410,6 +572,7 @@ async def start_transfer_curl(consumer: dict, provider: dict, contract_agreement
                 detail=f"EDC error: {exc.response.text}"
             )
 
+
 async def check_transfer_service(consumer_id: str, transfer_process_id: str) -> dict:
     """
     Retrieves the current status of a transfer process from the consumer connector.
@@ -434,6 +597,7 @@ async def check_transfer_service(consumer_id: str, transfer_process_id: str) -> 
 
     return await check_transfer_curl(consumer, transfer_process_id)
 
+
 async def check_transfer_curl(consumer: dict, transfer_process_id: str):
     """
     Sends an HTTP GET request to the EDC Management API to obtain the
@@ -450,12 +614,7 @@ async def check_transfer_curl(consumer: dict, transfer_process_id: str):
         dict: JSON response describing the current transfer state.
     """
 
-    if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/v3/transferprocesses/{transfer_process_id}")
-    elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/transferprocesses/{transfer_process_id}"
-    else:
-        raise ValueError("Invalid connector mode")
+    management_url = _get_management_url(consumer, f"/v3/transferprocesses/{transfer_process_id}")
 
     api_key = consumer["api_key"]
     if not api_key:
@@ -475,6 +634,7 @@ async def check_transfer_curl(consumer: dict, transfer_process_id: str):
                 status_code=exc.response.status_code,
                 detail=f"EDC error: {exc.response.text}"
             )
+
 
 async def create_transfer_service(data: Transfer) -> str:
     """
@@ -496,7 +656,7 @@ async def create_transfer_service(data: Transfer) -> str:
     consumer = await db["connectors"].find_one({"_id": ObjectId(data.consumer)})
     if not consumer:
         raise HTTPException(status_code=404, detail="Consumer not found")
-    
+
     provider = await db["connectors"].find_one({"_id": ObjectId(data.provider)})
     if not provider:
         raise HTTPException(status_code=404, detail="Provider not found")
@@ -507,6 +667,7 @@ async def create_transfer_service(data: Transfer) -> str:
 
     result = await db["transfers"].insert_one(transfer_dict)
     return str(result.inserted_id)
+
 
 async def get_all_transfers_service():
     """
@@ -544,6 +705,7 @@ async def get_all_transfers_service():
 
     return transfers
 
+
 def convert_objectids(doc: dict) -> dict:
     """
     Converts MongoDB ObjectId fields into string identifiers.
@@ -564,6 +726,7 @@ def convert_objectids(doc: dict) -> dict:
     if "_id" in doc:
         result["id"] = str(doc["_id"])
     return result
+
 
 async def start_transfer_service_pull(consumer_id: str, provider_id: str, contract_agreement_id: str) -> dict:
     """
@@ -591,6 +754,7 @@ async def start_transfer_service_pull(consumer_id: str, provider_id: str, contra
 
     return await start_transfer_curl_pull(consumer, provider, contract_agreement_id)
 
+
 async def start_transfer_curl_pull(consumer: dict, provider: dict, contract_agreement_id: str):
     """
     Executes a PULL data transfer request via the EDC Management API.
@@ -604,27 +768,16 @@ async def start_transfer_curl_pull(consumer: dict, provider: dict, contract_agre
         dict: JSON response from the EDC API confirming transfer initiation.
     """
 
-    if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/v3/transferprocesses")
-    elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/transferprocesses"
-    else:
-        raise ValueError("Invalid connector mode")
-    
-    if provider["mode"] == "managed":
-        protocol_port = provider["ports"]["protocol"]
-        protocol_url = f"http://edc-provider-{provider['_id']}:{protocol_port}/protocol"
-    elif provider["mode"] == "remote":
-        protocol_url = f"{provider['endpoints_url']['protocol']}"
-    else:
-        raise ValueError("Invalid connector mode")
-    
+    management_url = _get_management_url(consumer, "/v3/transferprocesses")
+    protocol_url = _get_protocol_url(provider)
+
     payload = {
         "@context": {
             "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
         },
         "@type": "TransferRequestDto",
-        "connectorId": "provider",
+        "connectorId": _get_participant_id(provider),
+        "counterPartyId": _get_participant_id(provider),
         "counterPartyAddress": protocol_url,
         "contractId": contract_agreement_id,
         "protocol": "dataspace-protocol-http",
@@ -650,6 +803,7 @@ async def start_transfer_curl_pull(consumer: dict, provider: dict, contract_agre
                 detail=f"EDC error: {exc.response.text}"
             )
 
+
 async def check_transfer_data_pull_service(consumer_id: str, transfer_process_id: str) -> dict:
     """
     Retrieves the endpoint (data address) of a PULL transfer once created.
@@ -674,6 +828,7 @@ async def check_transfer_data_pull_service(consumer_id: str, transfer_process_id
 
     return await check_transfer_data_curl_pull(consumer, transfer_process_id)
 
+
 async def check_transfer_data_curl_pull(consumer: dict, transfer_process_id: str):
     """
     Sends a GET request to fetch the data address (EDR) for a PULL transfer.
@@ -685,14 +840,9 @@ async def check_transfer_data_curl_pull(consumer: dict, transfer_process_id: str
     Returns:
         dict: JSON data address from EDC if available.
     """
-    
-    if consumer["mode"] == "managed":
-        management_url = get_base_url(consumer, f"/v3/edrs/{transfer_process_id}/dataaddress")
-    elif consumer["mode"] == "remote":
-        management_url = f"{consumer['endpoints_url']['management'].rstrip('/')}/v3/edrs/{transfer_process_id}/dataaddress"
-    else:
-        raise ValueError("Invalid connector mode")
-    
+
+    management_url = _get_management_url(consumer, f"/v3/edrs/{transfer_process_id}/dataaddress")
+
     api_key = consumer["api_key"]
     if not api_key:
         raise HTTPException(status_code=500, detail="Connector API key not configured")
@@ -705,7 +855,6 @@ async def check_transfer_data_curl_pull(consumer: dict, transfer_process_id: str
         try:
             response = await client.get(management_url, headers=headers)
             response.raise_for_status()
-            print(response.json())
             return response.json()
         except httpx.HTTPStatusError as exc:
             raise HTTPException(
