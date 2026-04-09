@@ -336,3 +336,61 @@ def proxy_pull(
 
     content_type = r.headers.get("Content-Type", "application/octet-stream")
     return Response(content=r.content, media_type=content_type)
+
+
+@router.get("/download_pull")
+async def download_pull(
+    consumer: str,
+    transfer_process_id: str,
+):
+    """
+    Resolve the current EDR for a pull transfer and stream the data through the backend.
+
+    This avoids exposing internal connector hostnames to external clients such as Odoo.
+    """
+    try:
+        data = await check_transfer_data_pull_service(consumer, transfer_process_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to resolve pull transfer data: {str(e)}")
+
+    if not isinstance(data, dict):
+        raise HTTPException(status_code=502, detail="Invalid pull transfer response")
+
+    endpoint = (
+        data.get("endpoint")
+        or data.get("baseUrl")
+        or data.get("endpointUrl")
+        or data.get("uri")
+        or ""
+    ).strip()
+    authorization = (
+        data.get("authorization")
+        or data.get("Authorization")
+        or data.get("token")
+        or ""
+    ).strip()
+
+    if not endpoint or not authorization:
+        raise HTTPException(status_code=502, detail="EDR endpoint/token not available")
+
+    headers = {"Authorization": authorization}
+
+    try:
+        r = requests.get(endpoint, headers=headers, stream=True, timeout=(10, 600))
+        r.raise_for_status()
+    except requests.HTTPError as exc:
+        detail = exc.response.text if exc.response is not None else str(exc)
+        raise HTTPException(status_code=exc.response.status_code if exc.response is not None else 502, detail=detail)
+    except requests.RequestException as exc:
+        raise HTTPException(status_code=502, detail=f"Error fetching pull endpoint: {exc}")
+
+    media_type = r.headers.get("Content-Type", "application/octet-stream")
+    filename = transfer_process_id
+    return StreamingResponse(
+        r.iter_content(32 * 1024),
+        media_type=media_type,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        background=BackgroundTask(r.close),
+    )
