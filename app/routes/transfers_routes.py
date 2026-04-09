@@ -33,14 +33,25 @@ def _authorization_candidates(value: str, auth_type: str = ""):
     auth_type = (auth_type or "").strip().lower()
     if not raw:
         return []
-    if auth_type == "bearer":
-        if raw.lower().startswith("bearer "):
-            return [raw]
-        return [f"Bearer {raw}"]
+    candidates = []
     if raw.lower().startswith("bearer "):
+        candidates.append(raw)
         bare = raw[7:].strip()
-        return [raw, bare] if bare else [raw]
-    return [f"Bearer {raw}", raw]
+        if bare:
+            candidates.append(bare)
+    else:
+        if auth_type == "bearer":
+            candidates.extend([f"Bearer {raw}", raw])
+        else:
+            candidates.extend([f"Bearer {raw}", raw])
+
+    seen = set()
+    deduped = []
+    for candidate in candidates:
+        if candidate not in seen:
+            deduped.append(candidate)
+            seen.add(candidate)
+    return deduped
 
 
 def _request_with_redirects(url: str, headers: dict, *, stream: bool, timeout, max_redirects: int = 5):
@@ -427,18 +438,27 @@ async def download_pull(
     last_request_error = None
     r = None
     for auth_value in _authorization_candidates(authorization, auth_type=auth_type):
+        auth_mode = "bearer" if auth_value.lower().startswith("bearer ") else "raw"
         headers = {"Authorization": auth_value}
         try:
+            logger.info(
+                "download_pull attempting EDR fetch consumer=%s transfer_process_id=%s endpoint=%s auth_mode=%s",
+                consumer,
+                transfer_process_id,
+                endpoint,
+                auth_mode,
+            )
             candidate = _request_with_redirects(endpoint, headers, stream=True, timeout=(10, 600))
             if 300 <= candidate.status_code < 400:
                 location = (candidate.headers.get("Location") or "").strip()
                 logger.warning(
-                    "download_pull unresolved redirect for consumer=%s transfer_process_id=%s endpoint=%s status=%s location=%s",
+                    "download_pull unresolved redirect for consumer=%s transfer_process_id=%s endpoint=%s status=%s location=%s auth_mode=%s",
                     consumer,
                     transfer_process_id,
                     endpoint,
                     candidate.status_code,
                     location,
+                    auth_mode,
                 )
                 raise HTTPException(
                     status_code=502,
@@ -452,11 +472,12 @@ async def download_pull(
             status = response.status_code if response is not None else None
             detail = response.text if response is not None else str(exc)
             logger.warning(
-                "download_pull HTTP error for consumer=%s transfer_process_id=%s endpoint=%s status=%s detail=%s",
+                "download_pull HTTP error for consumer=%s transfer_process_id=%s endpoint=%s status=%s auth_mode=%s detail=%s",
                 consumer,
                 transfer_process_id,
                 endpoint,
                 status,
+                auth_mode,
                 detail[:400] if isinstance(detail, str) else detail,
             )
             last_http_error = exc
