@@ -35,15 +35,16 @@ def _authorization_candidates(value: str, auth_type: str = ""):
         return []
     candidates = []
     if raw.lower().startswith("bearer "):
-        candidates.append(raw)
         bare = raw[7:].strip()
         if bare:
             candidates.append(bare)
+        candidates.append(raw)
     else:
-        if auth_type == "bearer":
-            candidates.extend([f"Bearer {raw}", raw])
-        else:
-            candidates.extend([f"Bearer {raw}", raw])
+        # The connector's custom ProxyController passes the header value
+        # verbatim to DataPlaneAuthorizationService.authorize(...).
+        # For its EDR tokens, the accepted form is the raw JWT, not
+        # "Bearer <jwt>", even when authType is reported as "bearer".
+        candidates.extend([raw, f"Bearer {raw}"])
 
     seen = set()
     deduped = []
