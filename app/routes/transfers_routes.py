@@ -13,6 +13,7 @@ data exchange orchestration.
 """
 
 import os
+from urllib.parse import urljoin
 from dotenv import load_dotenv
 import logging
 from fastapi import APIRouter, HTTPException, Header, Response
@@ -35,6 +36,24 @@ def _authorization_candidates(value: str):
         bare = raw[7:].strip()
         return [raw, bare] if bare else [raw]
     return [f"Bearer {raw}", raw]
+
+
+def _request_with_redirects(url: str, headers: dict, *, stream: bool, timeout, max_redirects: int = 5):
+    current_url = url
+    for _ in range(max_redirects + 1):
+        response = requests.get(current_url, headers=headers, stream=stream, timeout=timeout, allow_redirects=False)
+        if response.status_code not in (301, 302, 303, 307, 308):
+            return response
+        location = (response.headers.get("Location") or "").strip()
+        if not location:
+            return response
+        next_url = urljoin(current_url, location)
+        try:
+            response.close()
+        except Exception:
+            pass
+        current_url = next_url
+    return requests.get(current_url, headers=headers, stream=stream, timeout=timeout, allow_redirects=False)
 
 @router.post("/catalog_request", status_code=200)
 async def catalog_request(data: RequestCatalog):
@@ -341,7 +360,7 @@ def proxy_pull(
     last_response = None
     for auth_value in _authorization_candidates(authorization):
         headers = {"Authorization": auth_value}
-        r = requests.get(uri, headers=headers)
+        r = _request_with_redirects(uri, headers, stream=False, timeout=(10, 600))
         if r.status_code == 200:
             content_type = r.headers.get("Content-Type", "application/octet-stream")
             return Response(content=r.content, media_type=content_type)
@@ -404,7 +423,7 @@ async def download_pull(
     for auth_value in _authorization_candidates(authorization):
         headers = {"Authorization": auth_value}
         try:
-            candidate = requests.get(endpoint, headers=headers, stream=True, timeout=(10, 600))
+            candidate = _request_with_redirects(endpoint, headers, stream=True, timeout=(10, 600))
             candidate.raise_for_status()
             r = candidate
             break
@@ -449,10 +468,13 @@ async def download_pull(
         raise HTTPException(status_code=502, detail="Error fetching pull endpoint")
 
     media_type = r.headers.get("Content-Type", "application/octet-stream")
-    filename = transfer_process_id
+    response_headers = {}
+    content_disposition = (r.headers.get("Content-Disposition") or "").strip()
+    if content_disposition:
+        response_headers["Content-Disposition"] = content_disposition
     return StreamingResponse(
         r.iter_content(32 * 1024),
         media_type=media_type,
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers=response_headers,
         background=BackgroundTask(r.close),
     )
