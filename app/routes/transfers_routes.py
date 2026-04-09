@@ -26,6 +26,16 @@ import requests
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+
+def _authorization_candidates(value: str):
+    raw = (value or "").strip()
+    if not raw:
+        return []
+    if raw.lower().startswith("bearer "):
+        bare = raw[7:].strip()
+        return [raw, bare] if bare else [raw]
+    return [f"Bearer {raw}", raw]
+
 @router.post("/catalog_request", status_code=200)
 async def catalog_request(data: RequestCatalog):
     """
@@ -328,21 +338,20 @@ def proxy_pull(
         HTTPException: If the provider returns an error.
     """
     
-    auth_value = authorization.strip()
-    if auth_value and not auth_value.lower().startswith("bearer "):
-        auth_value = f"Bearer {auth_value}"
+    last_response = None
+    for auth_value in _authorization_candidates(authorization):
+        headers = {"Authorization": auth_value}
+        r = requests.get(uri, headers=headers)
+        if r.status_code == 200:
+            content_type = r.headers.get("Content-Type", "application/octet-stream")
+            return Response(content=r.content, media_type=content_type)
+        last_response = r
+        if r.status_code not in (401, 403):
+            break
 
-    headers = {
-        "Authorization": auth_value
-    }
-
-    r = requests.get(uri, headers=headers)
-
-    if r.status_code != 200:
-        raise HTTPException(status_code=r.status_code, detail=f"Error from pull endpoint: {r.text}")
-
-    content_type = r.headers.get("Content-Type", "application/octet-stream")
-    return Response(content=r.content, media_type=content_type)
+    detail = last_response.text if last_response is not None else "Unknown pull endpoint error"
+    status_code = last_response.status_code if last_response is not None else 502
+    raise HTTPException(status_code=status_code, detail=f"Error from pull endpoint: {detail}")
 
 
 @router.get("/download_pull")
@@ -382,12 +391,6 @@ async def download_pull(
     if not endpoint or not authorization:
         raise HTTPException(status_code=502, detail="EDR endpoint/token not available")
 
-    auth_value = authorization
-    if auth_value and not auth_value.lower().startswith("bearer "):
-        auth_value = f"Bearer {auth_value}"
-
-    headers = {"Authorization": auth_value}
-
     logger.info(
         "download_pull resolved EDR for consumer=%s transfer_process_id=%s endpoint=%s",
         consumer,
@@ -395,26 +398,55 @@ async def download_pull(
         endpoint,
     )
 
-    try:
-        r = requests.get(endpoint, headers=headers, stream=True, timeout=(10, 600))
-        r.raise_for_status()
-    except requests.HTTPError as exc:
-        logger.exception(
-            "download_pull HTTP error for consumer=%s transfer_process_id=%s endpoint=%s",
-            consumer,
-            transfer_process_id,
-            endpoint,
-        )
-        detail = exc.response.text if exc.response is not None else str(exc)
-        raise HTTPException(status_code=exc.response.status_code if exc.response is not None else 502, detail=detail)
-    except requests.RequestException as exc:
-        logger.exception(
-            "download_pull request error for consumer=%s transfer_process_id=%s endpoint=%s",
-            consumer,
-            transfer_process_id,
-            endpoint,
-        )
-        raise HTTPException(status_code=502, detail=f"Error fetching pull endpoint: {exc}")
+    last_http_error = None
+    last_request_error = None
+    r = None
+    for auth_value in _authorization_candidates(authorization):
+        headers = {"Authorization": auth_value}
+        try:
+            candidate = requests.get(endpoint, headers=headers, stream=True, timeout=(10, 600))
+            candidate.raise_for_status()
+            r = candidate
+            break
+        except requests.HTTPError as exc:
+            response = exc.response
+            status = response.status_code if response is not None else None
+            detail = response.text if response is not None else str(exc)
+            logger.warning(
+                "download_pull HTTP error for consumer=%s transfer_process_id=%s endpoint=%s status=%s detail=%s",
+                consumer,
+                transfer_process_id,
+                endpoint,
+                status,
+                detail[:400] if isinstance(detail, str) else detail,
+            )
+            last_http_error = exc
+            try:
+                candidate.close()
+            except Exception:
+                pass
+            if status not in (401, 403):
+                break
+        except requests.RequestException as exc:
+            logger.exception(
+                "download_pull request error for consumer=%s transfer_process_id=%s endpoint=%s",
+                consumer,
+                transfer_process_id,
+                endpoint,
+            )
+            last_request_error = exc
+            break
+
+    if r is None:
+        if last_http_error is not None:
+            detail = last_http_error.response.text if last_http_error.response is not None else str(last_http_error)
+            raise HTTPException(
+                status_code=last_http_error.response.status_code if last_http_error.response is not None else 502,
+                detail=detail,
+            )
+        if last_request_error is not None:
+            raise HTTPException(status_code=502, detail=f"Error fetching pull endpoint: {last_request_error}")
+        raise HTTPException(status_code=502, detail="Error fetching pull endpoint")
 
     media_type = r.headers.get("Content-Type", "application/octet-stream")
     filename = transfer_process_id
