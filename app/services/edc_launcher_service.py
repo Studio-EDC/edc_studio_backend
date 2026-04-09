@@ -43,7 +43,7 @@ web.http.management.path=/management
 web.http.protocol.port={protocol}
 web.http.protocol.path=/protocol
 edc.transfer.proxy.token.signer.privatekey.alias=private-key
-edc.transfer.proxy.token.verifier.publickey.alias=public-key
+edc.transfer.proxy.token.verifier.publickey.alias=private-key
 web.http.public.port={public}
 web.http.public.path=/public
 web.http.control.port={control}
@@ -203,7 +203,7 @@ def _generate_files(connector: dict, base_path: Path):
 
     proxy_public_line = ""
     if ctype == "provider":
-        proxy_public_line = f"\nedc.dataplane.proxy.public.endpoint=http://edc-{ctype}-{id}:{ports['public']}/public\n"
+        proxy_public_line = f"\nedc.dataplane.proxy.public.endpoint=http://edc-{ctype}-{id}:{ports['public']}/public/\n"
 
     # Create folders
     config_path = base_path / "resources" / "configuration"

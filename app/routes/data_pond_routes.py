@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional
 from fastapi import APIRouter, UploadFile, File
 from fastapi import Depends, Request
@@ -21,6 +22,23 @@ router = APIRouter()
 class PublishedFileRegisterRequest(BaseModel):
     filename: str
     display_name: Optional[str] = None
+
+
+def _public_base_url(request: Request) -> str:
+    configured = (
+        os.getenv("EDC_STUDIO_PUBLIC_BASE_URL")
+        or os.getenv("API_PUBLIC_BASE_URL")
+        or ""
+    ).strip()
+    if configured:
+        return configured.rstrip("/")
+
+    forwarded_proto = (request.headers.get("x-forwarded-proto") or "").split(",")[0].strip()
+    forwarded_host = (request.headers.get("x-forwarded-host") or "").split(",")[0].strip()
+    if forwarded_proto and forwarded_host:
+        return f"{forwarded_proto}://{forwarded_host}".rstrip("/")
+
+    return str(request.base_url).rstrip("/")
 
 @router.post("/files/upload")
 async def upload_file(
@@ -69,14 +87,16 @@ async def register_file_for_publication(
         payload.filename,
         display_name=payload.display_name,
     )
-    base_url = str(request.base_url).rstrip("/")
+    base_url = _public_base_url(request)
     data["url"] = f"{base_url}/published-files/{data['id']}"
     return data
 
 
 @router.get("/published-files/{published_id}")
+@router.get("/published-files/{published_id}/{_proxy_path:path}")
 async def download_registered_published_file(
     published_id: str,
+    _proxy_path: str = "",
 ):
     data = await download_published_file(published_id)
     response = data["response"]
