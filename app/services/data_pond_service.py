@@ -2,15 +2,18 @@ from __future__ import annotations
 
 import io
 import os
+import uuid
 from pathlib import PurePosixPath
 from typing import Optional
 from urllib.parse import urlsplit
+from datetime import datetime, timezone
 
 from bson import ObjectId
 from fastapi import HTTPException, UploadFile
 from minio import Minio
 from minio.error import S3Error
 
+from app.db.client import get_db
 from app.services.user_service import get_user_by_username
 
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
@@ -225,3 +228,101 @@ def delete_user_file(user: dict, filename: str) -> dict:
         raise HTTPException(status_code=502, detail=f"MinIO delete error: {exc}") from exc
 
     return {"ok": True}
+
+
+async def register_published_file(user: dict, filename: str, display_name: Optional[str] = None) -> dict:
+    bucket_name = ensure_user_bucket(user)
+    object_name = _normalize_filename(filename)
+    client = _get_minio_client()
+
+    try:
+        client.stat_object(bucket_name, object_name)
+    except S3Error as exc:
+        if exc.code in {"NoSuchKey", "NoSuchObject"}:
+            raise HTTPException(status_code=404, detail="File not found") from exc
+        raise HTTPException(status_code=502, detail=f"MinIO stat error: {exc}") from exc
+
+    db = get_db()
+    collection = db["published_files"]
+    owner_username = _get_username(user)
+    now = datetime.now(timezone.utc)
+
+    existing = await collection.find_one({
+        "owner_username": owner_username,
+        "bucket": bucket_name,
+        "object_name": object_name,
+    })
+
+    clean_display_name = _normalize_filename(display_name or object_name)
+    if existing:
+        await collection.update_one(
+            {"_id": existing["_id"]},
+            {
+                "$set": {
+                    "display_name": clean_display_name,
+                    "updated_at": now,
+                    "active": True,
+                }
+            },
+        )
+        existing["display_name"] = clean_display_name
+        existing["active"] = True
+        existing["updated_at"] = now
+        return {
+            "id": existing["published_id"],
+            "bucket": bucket_name,
+            "filename": object_name,
+            "display_name": clean_display_name,
+        }
+
+    published_id = uuid.uuid4().hex
+    await collection.insert_one({
+        "published_id": published_id,
+        "owner_user_id": _serialize_user_id(user),
+        "owner_username": owner_username,
+        "bucket": bucket_name,
+        "object_name": object_name,
+        "display_name": clean_display_name,
+        "active": True,
+        "created_at": now,
+        "updated_at": now,
+    })
+    return {
+        "id": published_id,
+        "bucket": bucket_name,
+        "filename": object_name,
+        "display_name": clean_display_name,
+    }
+
+
+async def download_published_file(published_id: str) -> dict:
+    published_id = (published_id or "").strip()
+    if not published_id:
+        raise HTTPException(status_code=400, detail="Invalid published file id")
+
+    db = get_db()
+    record = await db["published_files"].find_one({
+        "published_id": published_id,
+        "active": True,
+    })
+    if not record:
+        raise HTTPException(status_code=404, detail="Published file not found")
+
+    bucket_name = record.get("bucket")
+    object_name = _normalize_filename(record.get("object_name") or "")
+    client = _get_minio_client()
+
+    try:
+        stat = client.stat_object(bucket_name, object_name)
+        response = client.get_object(bucket_name, object_name)
+    except S3Error as exc:
+        if exc.code in {"NoSuchKey", "NoSuchObject"}:
+            raise HTTPException(status_code=404, detail="File not found") from exc
+        raise HTTPException(status_code=502, detail=f"MinIO download error: {exc}") from exc
+
+    return {
+        "response": response,
+        "content_type": getattr(stat, "content_type", None) or "application/octet-stream",
+        "filename": _normalize_filename(record.get("display_name") or object_name),
+        "object_name": object_name,
+    }
