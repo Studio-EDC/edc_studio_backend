@@ -14,14 +14,17 @@ data exchange orchestration.
 
 import os
 from dotenv import load_dotenv
+import logging
 from fastapi import APIRouter, HTTPException, Header, Response
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
+from starlette.background import BackgroundTask
 from app.models.transfer import Transfer
 from app.schemas.transfer import RequestCatalog, NegotitateContract, ContractAgreement, StartTransfer, CheckTransfer
 from app.services.transfers_service import catalog_request_service, check_transfer_data_pull_service, get_all_transfers_service, negotiate_contract_service, get_contract_agreement_service, start_http_server_service, start_transfer_service_pull, stop_http_server_service, start_transfer_service, check_transfer_service, create_transfer_service
 import requests
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 @router.post("/catalog_request", status_code=200)
 async def catalog_request(data: RequestCatalog):
@@ -325,8 +328,12 @@ def proxy_pull(
         HTTPException: If the provider returns an error.
     """
     
+    auth_value = authorization.strip()
+    if auth_value and not auth_value.lower().startswith("bearer "):
+        auth_value = f"Bearer {auth_value}"
+
     headers = {
-        "Authorization": authorization
+        "Authorization": auth_value
     }
 
     r = requests.get(uri, headers=headers)
@@ -375,15 +382,38 @@ async def download_pull(
     if not endpoint or not authorization:
         raise HTTPException(status_code=502, detail="EDR endpoint/token not available")
 
-    headers = {"Authorization": authorization}
+    auth_value = authorization
+    if auth_value and not auth_value.lower().startswith("bearer "):
+        auth_value = f"Bearer {auth_value}"
+
+    headers = {"Authorization": auth_value}
+
+    logger.info(
+        "download_pull resolved EDR for consumer=%s transfer_process_id=%s endpoint=%s",
+        consumer,
+        transfer_process_id,
+        endpoint,
+    )
 
     try:
         r = requests.get(endpoint, headers=headers, stream=True, timeout=(10, 600))
         r.raise_for_status()
     except requests.HTTPError as exc:
+        logger.exception(
+            "download_pull HTTP error for consumer=%s transfer_process_id=%s endpoint=%s",
+            consumer,
+            transfer_process_id,
+            endpoint,
+        )
         detail = exc.response.text if exc.response is not None else str(exc)
         raise HTTPException(status_code=exc.response.status_code if exc.response is not None else 502, detail=detail)
     except requests.RequestException as exc:
+        logger.exception(
+            "download_pull request error for consumer=%s transfer_process_id=%s endpoint=%s",
+            consumer,
+            transfer_process_id,
+            endpoint,
+        )
         raise HTTPException(status_code=502, detail=f"Error fetching pull endpoint: {exc}")
 
     media_type = r.headers.get("Content-Type", "application/octet-stream")
