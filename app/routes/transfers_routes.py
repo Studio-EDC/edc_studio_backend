@@ -28,10 +28,15 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-def _authorization_candidates(value: str):
+def _authorization_candidates(value: str, auth_type: str = ""):
     raw = (value or "").strip()
+    auth_type = (auth_type or "").strip().lower()
     if not raw:
         return []
+    if auth_type == "bearer":
+        if raw.lower().startswith("bearer "):
+            return [raw]
+        return [f"Bearer {raw}"]
     if raw.lower().startswith("bearer "):
         bare = raw[7:].strip()
         return [raw, bare] if bare else [raw]
@@ -406,6 +411,7 @@ async def download_pull(
         or data.get("token")
         or ""
     ).strip()
+    auth_type = (data.get("authType") or "").strip()
 
     if not endpoint or not authorization:
         raise HTTPException(status_code=502, detail="EDR endpoint/token not available")
@@ -420,10 +426,24 @@ async def download_pull(
     last_http_error = None
     last_request_error = None
     r = None
-    for auth_value in _authorization_candidates(authorization):
+    for auth_value in _authorization_candidates(authorization, auth_type=auth_type):
         headers = {"Authorization": auth_value}
         try:
             candidate = _request_with_redirects(endpoint, headers, stream=True, timeout=(10, 600))
+            if 300 <= candidate.status_code < 400:
+                location = (candidate.headers.get("Location") or "").strip()
+                logger.warning(
+                    "download_pull unresolved redirect for consumer=%s transfer_process_id=%s endpoint=%s status=%s location=%s",
+                    consumer,
+                    transfer_process_id,
+                    endpoint,
+                    candidate.status_code,
+                    location,
+                )
+                raise HTTPException(
+                    status_code=502,
+                    detail=f"Unresolved redirect from pull endpoint: status={candidate.status_code} location={location or 'n/a'}",
+                )
             candidate.raise_for_status()
             r = candidate
             break
@@ -446,6 +466,12 @@ async def download_pull(
                 pass
             if status not in (401, 403):
                 break
+        except HTTPException:
+            try:
+                candidate.close()
+            except Exception:
+                pass
+            raise
         except requests.RequestException as exc:
             logger.exception(
                 "download_pull request error for consumer=%s transfer_process_id=%s endpoint=%s",
