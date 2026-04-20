@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional
+from typing import Any, List, Optional
 from fastapi import APIRouter, UploadFile, File
 from fastapi import Depends, Request
 from fastapi.responses import StreamingResponse
@@ -11,8 +11,11 @@ from app.services.data_pond_service import (
     delete_user_file,
     download_user_file,
     list_user_files,
+    list_user_datasets,
     download_published_file,
     register_published_file,
+    soft_delete_user_dataset,
+    upsert_user_dataset,
     upload_user_file,
 )
 
@@ -22,6 +25,30 @@ router = APIRouter()
 class PublishedFileRegisterRequest(BaseModel):
     filename: str
     display_name: Optional[str] = None
+
+
+class DatasetMetadataRequest(BaseModel):
+    uid: Optional[str] = None
+    dataset_uid: Optional[str] = None
+    upcxels_dataset_id: Optional[str] = None
+    file_id: Optional[str] = None
+    filename: Optional[str] = None
+    file_name: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    visible: Optional[bool] = True
+    in_datapond: Optional[bool] = True
+    published: Optional[bool] = False
+    dcat_distribution_json: Optional[Any] = None
+    datalake_metadata_json: Optional[Any] = None
+    metadata: Optional[dict] = None
+    source: Optional[str] = "odoo"
+
+
+def _payload_dict(payload: BaseModel) -> dict:
+    if hasattr(payload, "model_dump"):
+        return payload.model_dump(exclude_none=True)
+    return payload.dict(exclude_none=True)
 
 
 def _public_base_url(request: Request) -> str:
@@ -74,6 +101,40 @@ def delete_file(
     current_user: dict = Depends(get_current_user),
 ):
     return delete_user_file(current_user, filename)
+
+
+@router.get("/datasets/", response_model=List[dict])
+async def list_datasets(
+    username: Optional[str] = None,
+    include_deleted: bool = False,
+    current_user: dict = Depends(get_current_user),
+):
+    return await list_user_datasets(username, current_user, include_deleted=include_deleted)
+
+
+@router.post("/datasets/")
+async def create_or_update_dataset(
+    payload: DatasetMetadataRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    return await upsert_user_dataset(current_user, _payload_dict(payload))
+
+
+@router.put("/datasets/{uid}")
+async def update_dataset(
+    uid: str,
+    payload: DatasetMetadataRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    return await upsert_user_dataset(current_user, _payload_dict(payload), uid=uid)
+
+
+@router.delete("/datasets/{uid}")
+async def delete_dataset(
+    uid: str,
+    current_user: dict = Depends(get_current_user),
+):
+    return await soft_delete_user_dataset(current_user, uid)
 
 
 @router.post("/published-files/register")

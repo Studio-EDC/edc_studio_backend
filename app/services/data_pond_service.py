@@ -4,7 +4,7 @@ import io
 import os
 import uuid
 from pathlib import PurePosixPath
-from typing import Optional
+from typing import Any, Optional
 from urllib.parse import urlsplit
 from datetime import datetime, timezone
 
@@ -83,6 +83,27 @@ def _normalize_filename(filename: str) -> str:
     if not normalized or normalized in {".", ".."}:
         raise HTTPException(status_code=400, detail="Invalid filename")
     return normalized
+
+
+def _normalize_dataset_uid(uid: Optional[str]) -> str:
+    value = str(uid or "").strip()
+    if not value:
+        return uuid.uuid4().hex
+    cleaned = []
+    for char in value:
+        if char.isalnum() or char in {"-", "_", "."}:
+            cleaned.append(char)
+        else:
+            cleaned.append("-")
+    normalized = "".join(cleaned).strip("-._")
+    if not normalized:
+        return uuid.uuid4().hex
+    return normalized[:128]
+
+
+def _dataset_payload_value(payload: dict[str, Any], key: str, default: Any = None) -> Any:
+    value = payload.get(key, default)
+    return default if value is None else value
 
 
 def _bucket_name_from_username(username: str) -> str:
@@ -198,6 +219,110 @@ async def list_user_files(username: Optional[str], current_user: dict) -> list[d
         )
 
     return files
+
+
+async def upsert_user_dataset(user: dict, payload: dict[str, Any], uid: Optional[str] = None) -> dict:
+    owner_username = _get_username(user)
+    bucket_name = ensure_user_bucket(user)
+    now = datetime.now(timezone.utc)
+    dataset_uid = _normalize_dataset_uid(uid or payload.get("uid") or payload.get("dataset_uid"))
+    filename = str(
+        _dataset_payload_value(payload, "file_id")
+        or _dataset_payload_value(payload, "filename")
+        or ""
+    ).strip()
+
+    if filename:
+        filename = _normalize_filename(filename)
+
+    record = {
+        "uid": dataset_uid,
+        "owner_username": owner_username,
+        "owner_user_id": _serialize_user_id(user),
+        "bucket": bucket_name,
+        "file_id": filename or None,
+        "filename": filename or None,
+        "file_name": str(_dataset_payload_value(payload, "file_name", filename) or filename or "").strip() or None,
+        "name": str(_dataset_payload_value(payload, "name", filename) or filename or "").strip() or None,
+        "description": _dataset_payload_value(payload, "description"),
+        "visible": bool(_dataset_payload_value(payload, "visible", True)),
+        "in_datapond": bool(_dataset_payload_value(payload, "in_datapond", bool(filename))),
+        "published": bool(_dataset_payload_value(payload, "published", False)),
+        "upcxels_dataset_id": _dataset_payload_value(payload, "upcxels_dataset_id", dataset_uid),
+        "dcat_distribution_json": _dataset_payload_value(payload, "dcat_distribution_json"),
+        "datalake_metadata_json": _dataset_payload_value(payload, "datalake_metadata_json"),
+        "metadata": _dataset_payload_value(payload, "metadata", {}) or {},
+        "source": _dataset_payload_value(payload, "source", "odoo"),
+        "active": True,
+        "deleted_at": None,
+        "updated_at": now,
+    }
+
+    db = get_db()
+    collection = db["datasets"]
+    existing = await collection.find_one({
+        "uid": dataset_uid,
+        "owner_username": owner_username,
+    })
+
+    if existing:
+        created_at = existing.get("created_at")
+    else:
+        created_at = now
+    record["created_at"] = created_at
+
+    await collection.update_one(
+        {"uid": dataset_uid, "owner_username": owner_username},
+        {"$set": record},
+        upsert=True,
+    )
+    return record
+
+
+async def list_user_datasets(
+    username: Optional[str],
+    current_user: dict,
+    include_deleted: bool = False,
+) -> list[dict]:
+    target_user = await resolve_target_user(username, current_user)
+    owner_username = _get_username(target_user)
+    query: dict[str, Any] = {"owner_username": owner_username}
+    if not include_deleted:
+        query["active"] = {"$ne": False}
+        query["deleted_at"] = None
+
+    db = get_db()
+    rows = await db["datasets"].find(query).sort("updated_at", -1).to_list(1000)
+    for row in rows:
+        row.pop("_id", None)
+        for key in ("created_at", "updated_at", "deleted_at"):
+            if isinstance(row.get(key), datetime):
+                row[key] = row[key].isoformat()
+    return rows
+
+
+async def soft_delete_user_dataset(user: dict, uid: str) -> dict:
+    owner_username = _get_username(user)
+    dataset_uid = _normalize_dataset_uid(uid)
+    now = datetime.now(timezone.utc)
+    db = get_db()
+    result = await db["datasets"].update_one(
+        {
+            "uid": dataset_uid,
+            "owner_username": owner_username,
+            "active": {"$ne": False},
+        },
+        {
+            "$set": {
+                "active": False,
+                "deleted_at": now,
+                "updated_at": now,
+            }
+        },
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    return {"ok": True, "uid": dataset_uid}
 
 
 def download_user_file(user: dict, filename: str):
