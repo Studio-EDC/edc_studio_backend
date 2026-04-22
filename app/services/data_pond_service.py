@@ -101,6 +101,22 @@ def _normalize_dataset_uid(uid: Optional[str]) -> str:
     return normalized[:128]
 
 
+def _normalize_state_key(key: Optional[str]) -> str:
+    value = str(key or "").strip()
+    if not value:
+        raise HTTPException(status_code=400, detail="Invalid state key")
+    cleaned = []
+    for char in value:
+        if char.isalnum() or char in {"-", "_", "."}:
+            cleaned.append(char)
+        else:
+            cleaned.append("-")
+    normalized = "".join(cleaned).strip("-._")
+    if not normalized:
+        raise HTTPException(status_code=400, detail="Invalid state key")
+    return normalized[:128]
+
+
 def _dataset_payload_value(payload: dict[str, Any], key: str, default: Any = None) -> Any:
     value = payload.get(key, default)
     return default if value is None else value
@@ -252,6 +268,7 @@ async def upsert_user_dataset(user: dict, payload: dict[str, Any], uid: Optional
         "dcat_distribution_json": _dataset_payload_value(payload, "dcat_distribution_json"),
         "datalake_metadata_json": _dataset_payload_value(payload, "datalake_metadata_json"),
         "metadata": _dataset_payload_value(payload, "metadata", {}) or {},
+        "publication": _dataset_payload_value(payload, "publication", {}) or {},
         "source": _dataset_payload_value(payload, "source", "odoo"),
         "active": True,
         "deleted_at": None,
@@ -323,6 +340,49 @@ async def soft_delete_user_dataset(user: dict, uid: str) -> dict:
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Dataset not found")
     return {"ok": True, "uid": dataset_uid}
+
+
+async def get_user_state(user: dict, key: str) -> dict:
+    owner_username = _get_username(user)
+    state_key = _normalize_state_key(key)
+    row = await get_db()["user_states"].find_one({
+        "owner_username": owner_username,
+        "key": state_key,
+    })
+    if not row:
+        return {"key": state_key, "payload": {}}
+
+    row.pop("_id", None)
+    for date_key in ("created_at", "updated_at"):
+        if isinstance(row.get(date_key), datetime):
+            row[date_key] = row[date_key].isoformat()
+    return row
+
+
+async def upsert_user_state(user: dict, key: str, payload: dict[str, Any]) -> dict:
+    owner_username = _get_username(user)
+    now = datetime.now(timezone.utc)
+    state_key = _normalize_state_key(key)
+    collection = get_db()["user_states"]
+    existing = await collection.find_one({
+        "owner_username": owner_username,
+        "key": state_key,
+    })
+
+    record = {
+        "owner_username": owner_username,
+        "owner_user_id": _serialize_user_id(user),
+        "key": state_key,
+        "payload": payload or {},
+        "created_at": existing.get("created_at") if existing else now,
+        "updated_at": now,
+    }
+    await collection.update_one(
+        {"owner_username": owner_username, "key": state_key},
+        {"$set": record},
+        upsert=True,
+    )
+    return record
 
 
 def download_user_file(user: dict, filename: str):

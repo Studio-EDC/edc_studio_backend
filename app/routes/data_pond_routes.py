@@ -10,11 +10,13 @@ from app.core.security import get_current_user
 from app.services.data_pond_service import (
     delete_user_file,
     download_user_file,
+    get_user_state,
     list_user_files,
     list_user_datasets,
     download_published_file,
     register_published_file,
     soft_delete_user_dataset,
+    upsert_user_state,
     upsert_user_dataset,
     upload_user_file,
 )
@@ -42,7 +44,12 @@ class DatasetMetadataRequest(BaseModel):
     dcat_distribution_json: Optional[Any] = None
     datalake_metadata_json: Optional[Any] = None
     metadata: Optional[dict] = None
+    publication: Optional[dict] = None
     source: Optional[str] = "odoo"
+
+
+class UserStateRequest(BaseModel):
+    payload: dict = {}
 
 
 def _payload_dict(payload: BaseModel) -> dict:
@@ -135,6 +142,23 @@ async def delete_dataset(
     current_user: dict = Depends(get_current_user),
 ):
     return await soft_delete_user_dataset(current_user, uid)
+
+
+@router.get("/state/{key}")
+async def get_state(
+    key: str,
+    current_user: dict = Depends(get_current_user),
+):
+    return await get_user_state(current_user, key)
+
+
+@router.put("/state/{key}")
+async def put_state(
+    key: str,
+    payload: UserStateRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    return await upsert_user_state(current_user, key, payload.payload or {})
 
 
 @router.post("/published-files/register")
