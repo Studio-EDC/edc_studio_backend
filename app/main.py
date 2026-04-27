@@ -12,7 +12,7 @@ The API acts as a centralized controller for EDC connector management.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.security import hash_password
-from app.routes import assets_routes, auth_routes, connectors_routes, contracts_routes, data_pond_routes, policies_routes, transfers_routes, user_routes
+from app.routes import assets_routes, auth_routes, connectors_routes, contracts_routes, data_pond_routes, federated_participants_routes, policies_routes, transfers_routes, user_routes
 from app.db.client import get_db, init_mongo
 
 # ------------------------------------------------------------------------------
@@ -70,6 +70,12 @@ async def startup_db():
 # ------------------------------------------------------------------------------
 
 app.include_router(connectors_routes.router, prefix="/connectors", tags=["Connectors"])
+app.include_router(federated_participants_routes.public_router)
+app.include_router(
+    federated_participants_routes.router,
+    prefix="/federated-participants",
+    tags=["Federated Participants"],
+)
 app.include_router(assets_routes.router, prefix="/assets", tags=["Assets"])
 app.include_router(policies_routes.router, prefix="/policies", tags=["Policies"])
 app.include_router(contracts_routes.router, prefix="/contracts", tags=["Contracts"])

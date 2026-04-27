@@ -13,7 +13,7 @@ data exchange orchestration.
 """
 
 import os
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, urlunparse
 from dotenv import load_dotenv
 import logging
 from fastapi import APIRouter, HTTPException, Header, Response
@@ -26,6 +26,48 @@ import requests
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+
+def _normalize_pull_endpoint(url: str, *, reference_url: str = "") -> str:
+    raw = (url or "").strip()
+    if not raw:
+        return raw
+
+    try:
+        parsed = urlparse(raw)
+    except Exception:
+        return raw
+
+    path = parsed.path or "/"
+    if path.endswith("/public") and not path.endswith("/public/"):
+        path = f"{path}/"
+
+    scheme = parsed.scheme
+    netloc = parsed.netloc
+
+    # Some proxy layers emit redirects to the same hostname on :8080/http.
+    # For external callers we want to stay on the original public origin.
+    if reference_url:
+        try:
+            ref = urlparse(reference_url)
+            same_host = (parsed.hostname or "").strip().lower() == (ref.hostname or "").strip().lower()
+            if same_host and parsed.port == 8080:
+                scheme = ref.scheme or scheme
+                netloc = ref.netloc or netloc
+        except Exception:
+            pass
+
+    try:
+        return urlunparse((
+            scheme,
+            netloc,
+            path,
+            parsed.params,
+            parsed.query,
+            parsed.fragment,
+        ))
+    except Exception:
+        return raw
 
 
 def _authorization_candidates(value: str, auth_type: str = ""):
@@ -56,7 +98,7 @@ def _authorization_candidates(value: str, auth_type: str = ""):
 
 
 def _request_with_redirects(url: str, headers: dict, *, stream: bool, timeout, max_redirects: int = 5):
-    current_url = url
+    current_url = _normalize_pull_endpoint(url)
     for _ in range(max_redirects + 1):
         response = requests.get(current_url, headers=headers, stream=stream, timeout=timeout, allow_redirects=False)
         if response.status_code not in (301, 302, 303, 307, 308):
@@ -64,7 +106,7 @@ def _request_with_redirects(url: str, headers: dict, *, stream: bool, timeout, m
         location = (response.headers.get("Location") or "").strip()
         if not location:
             return response
-        next_url = urljoin(current_url, location)
+        next_url = _normalize_pull_endpoint(urljoin(current_url, location), reference_url=current_url)
         try:
             response.close()
         except Exception:
@@ -373,17 +415,21 @@ def proxy_pull(
     Raises:
         HTTPException: If the provider returns an error.
     """
-    
+    uri = _normalize_pull_endpoint(uri)
     last_response = None
     for auth_value in _authorization_candidates(authorization):
         headers = {"Authorization": auth_value}
-        r = _request_with_redirects(uri, headers, stream=False, timeout=(10, 600))
-        if r.status_code == 200:
-            content_type = r.headers.get("Content-Type", "application/octet-stream")
-            return Response(content=r.content, media_type=content_type)
-        last_response = r
-        if r.status_code not in (401, 403):
-            break
+        try:
+            r = _request_with_redirects(uri, headers, stream=False, timeout=(10, 600))
+            if r.status_code == 200:
+                content_type = r.headers.get("Content-Type", "application/octet-stream")
+                return Response(content=r.content, media_type=content_type)
+            last_response = r
+            if r.status_code not in (401, 403):
+                break
+        except requests.RequestException as exc:
+            logger.exception("proxy_pull request error for uri=%s", uri)
+            raise HTTPException(status_code=502, detail=f"Error from pull endpoint: {exc}")
 
     detail = last_response.text if last_response is not None else "Unknown pull endpoint error"
     status_code = last_response.status_code if last_response is not None else 502
@@ -410,13 +456,15 @@ async def download_pull(
     if not isinstance(data, dict):
         raise HTTPException(status_code=502, detail="Invalid pull transfer response")
 
-    endpoint = (
+    endpoint = _normalize_pull_endpoint(
+        (
         data.get("endpoint")
         or data.get("baseUrl")
         or data.get("endpointUrl")
         or data.get("uri")
         or ""
-    ).strip()
+        ).strip()
+    )
     authorization = (
         data.get("authorization")
         or data.get("Authorization")

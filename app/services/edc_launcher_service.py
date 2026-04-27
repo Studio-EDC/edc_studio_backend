@@ -203,7 +203,15 @@ def _generate_files(connector: dict, base_path: Path):
 
     proxy_public_line = ""
     if ctype == "provider":
-        proxy_public_line = f"\nedc.dataplane.proxy.public.endpoint=http://edc-{ctype}-{id}:{ports['public']}/public/\n"
+        public_endpoint = ""
+        if connector["domain"]:
+            public_base = connector["domain"].strip()
+            if not public_base.startswith("http://") and not public_base.startswith("https://"):
+                public_base = "https://" + public_base
+            public_endpoint = f"{public_base.rstrip('/')}/public/"
+        else:
+            public_endpoint = f"http://edc-{ctype}-{id}:{ports['public']}/public/"
+        proxy_public_line = f"\nedc.dataplane.proxy.public.endpoint={public_endpoint}\n"
 
     # Create folders
     config_path = base_path / "resources" / "configuration"
