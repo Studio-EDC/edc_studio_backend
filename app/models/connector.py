@@ -76,6 +76,36 @@ class Endpoints(BaseModel):
     public: Optional[str] = None
     """Public endpoint URL (optional)."""
 
+
+class IdentityCredentialSummary(BaseModel):
+    """
+    Summary metadata for one imported credential file.
+    """
+
+    file_name: str
+    credential_type: Optional[str] = None
+    credential_id: Optional[str] = None
+    issuer_id: Optional[str] = None
+    subject_id: Optional[str] = None
+
+
+class IdentityHubStatus(BaseModel):
+    """
+    Stored Identity Hub import and runtime preparation status for a connector.
+    """
+
+    enabled: bool = False
+    vault_enabled: bool = False
+    participant_context_did: Optional[str] = None
+    bundle_file_name: Optional[str] = None
+    imported_at: Optional[datetime] = None
+    imported_by: Optional[str] = None
+    credential_count: int = 0
+    credentials: list[IdentityCredentialSummary] = Field(default_factory=list)
+    runtime_prepared: bool = False
+    restart_required: bool = False
+    last_error: Optional[str] = None
+
 class Connector(BaseModel):
     """
     Represents an Eclipse Data Connector (EDC) instance.
@@ -130,3 +160,6 @@ class Connector(BaseModel):
 
     domain: Optional[str] = None
     """Network domain or hostname where the connector is accessible."""
+
+    identity_hub: Optional[IdentityHubStatus] = None
+    """Identity Hub import/runtime status for managed connectors."""

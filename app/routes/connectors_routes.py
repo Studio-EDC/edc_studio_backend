@@ -10,11 +10,12 @@ All routes interact with the connector service layer
 (`app.services.connectors_service`) and use Pydantic models for validation.
 """
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, File, HTTPException, UploadFile
 from app.core.security import get_current_user
 from app.models.connector import Connector
 from app.models.user import User
 from app.services.connectors_service import create_connector, delete_connector, start_edc_service, stop_edc_service, get_all_connectors, get_connector_by_id, update_connector
+from app.services.connector_credentials_service import import_connector_credentials_bundle
 from app.schemas.connector import ConnectorResponse, ConnectorUpdate
 
 router = APIRouter()
@@ -200,5 +201,24 @@ async def delete_connector_route(id: str):
     try:
         await delete_connector(id)
         return {"message": "Connector deleted successfully"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.post("/{id}/identity-hub/credentials", status_code=201)
+async def import_connector_credentials_route(
+    id: str,
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Import a credential bundle ZIP for a managed connector.
+
+    The uploaded ZIP is validated, extracted under the connector runtime path,
+    and summarized in the connector's ``identity_hub`` status field.
+    """
+
+    try:
+        return await import_connector_credentials_bundle(id, current_user, file)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

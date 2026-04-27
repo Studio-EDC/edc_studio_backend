@@ -14,7 +14,7 @@ exchanged between the frontend and the backend.
 
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
-from app.models.connector import PortConfig, Endpoints
+from app.models.connector import PortConfig, Endpoints, IdentityHubStatus
 
 class ConnectorResponse(BaseModel):
     """
@@ -75,6 +75,9 @@ class ConnectorResponse(BaseModel):
     empty or set to ``localhost``.
     """ 
 
+    identity_hub: Optional[IdentityHubStatus] = None
+    """Identity Hub import/runtime status for this connector."""
+
 class ConnectorUpdate(BaseModel):
     """
     Represents the schema used to update existing connector configurations.
@@ -111,6 +114,9 @@ class ConnectorUpdate(BaseModel):
 
     endpoints_url: Optional[Endpoints] = None
     """Updated management and protocol endpoint URLs."""
+
+    api_key: Optional[str] = None
+    """Updated management API key."""
 
     domain: Optional[str] = None
     """Public domain name of the connector.
