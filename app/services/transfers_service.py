@@ -89,7 +89,7 @@ def _get_participant_id(connector: dict) -> str:
     Return the participant id to use in DSP messages.
 
     If a connector-specific participant id is not stored in Mongo, fall back
-    to the connector type, which matches the current deployment ('consumer'/'provider').
+    to the imported Identity Hub participant DID before using the connector type.
 
     Args:
         connector (dict): Connector configuration document.
@@ -101,6 +101,7 @@ def _get_participant_id(connector: dict) -> str:
         connector.get("participant_id")
         or connector.get("participantId")
         or connector.get("dspace_participant_id")
+        or (connector.get("identity_hub") or {}).get("participant_context_did")
         or connector.get("type")
         or "provider"
     )

@@ -34,7 +34,7 @@ keystore_password = secrets.token_urlsafe(16)
 
 CONFIG_TEMPLATE = """
 edc.hostname={hostname}
-edc.participant.id={type}
+edc.participant.id={participant_id}
 edc.dsp.callback.address={callback_address}
 web.http.port={http}
 web.http.path=/api
@@ -214,6 +214,13 @@ def _generate_files(connector: dict, base_path: Path):
     ctype = connector["type"]
     secret = connector["api_key"]
     virtual_host = connector["domain"]
+    participant_id = (
+        connector.get("participant_id")
+        or connector.get("participantId")
+        or connector.get("dspace_participant_id")
+        or (connector.get("identity_hub") or {}).get("participant_context_did")
+        or ctype
+    )
 
     proxy_public_line = ""
     if ctype == "provider":
@@ -247,7 +254,17 @@ def _generate_files(connector: dict, base_path: Path):
         hostname = callback_url.split("//")[1].split("/")[0]
 
     # Write config.properties
-    config_content = CONFIG_TEMPLATE.format(name=name, type=ctype, id=id, callback_address=callback_url, hostname=hostname, **ports, secret=secret, port_postgress=port_postgress) + proxy_public_line
+    config_content = CONFIG_TEMPLATE.format(
+        name=name,
+        type=ctype,
+        id=id,
+        participant_id=participant_id,
+        callback_address=callback_url,
+        hostname=hostname,
+        **ports,
+        secret=secret,
+        port_postgress=port_postgress,
+    ) + proxy_public_line
     (config_path / "config.properties").write_text(config_content)
 
     # Generate real cert.pfx using keytool
