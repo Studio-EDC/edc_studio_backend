@@ -43,7 +43,10 @@ web.http.management.path=/management
 web.http.protocol.port={protocol}
 web.http.protocol.path=/protocol
 edc.transfer.proxy.token.signer.privatekey.alias=private-key
-edc.transfer.proxy.token.verifier.publickey.alias=private-key
+edc.transfer.proxy.token.verifier.publickey.alias=public-key
+edc.iam.sts.privatekey.alias=shared-private-key
+edc.iam.sts.publickey.id=shared-key
+edc.iam.did.web.use.https=true
 web.http.public.port={public}
 web.http.public.path=/public
 web.http.control.port={control}
@@ -66,7 +69,7 @@ web.http.management.auth.key={secret}
 DOCKER_COMPOSE_TEMPLATE = """
 services:
   {type}:
-    image: itziarmensaupc/connector:0.0.6
+    image: {connector_image}
     platform: linux/amd64
     container_name: edc-{type}-{name}
     ports:
@@ -243,6 +246,7 @@ def _generate_files(connector: dict, base_path: Path):
     load_dotenv()
     port_postgress=os.getenv("POSTGRES_PORT", 5432)
     letsencrypt_email=os.getenv("LETSENCRYPT_EMAIL", "example@gmail.com")
+    connector_image = os.getenv("EDC_CONNECTOR_IMAGE", "itziarmensaupc/connector:0.0.6")
 
     callback_url = f"http://edc-{ctype}-{id}:{ports['protocol']}/protocol"
     hostname="localhost"
@@ -292,7 +296,8 @@ def _generate_files(connector: dict, base_path: Path):
     # Write docker-compose.yml
     compose_file = base_path / "docker-compose.yml"
     compose_file.write_text(DOCKER_COMPOSE_TEMPLATE.format(
-        type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password, 
+        type=ctype, name=id, **ports, runtime_path=os.getenv("RUNTIME_PATH", "/Volumes/DISK/Projects/Work/EDC/edc_studio_backend/runtime"), keystore_password=keystore_password,
+        connector_image=connector_image,
         virtual_host=virtual_host, virtual_port=ports['management'], letsencrypt_email=letsencrypt_email,
         network_name=os.getenv("NETWORK_NAME", "edc-network")
     ))
