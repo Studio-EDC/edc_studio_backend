@@ -121,7 +121,14 @@ server {{
     }}
 
     # Ruta pública (public)
-    location /public {{
+    location = /public {{
+        proxy_pass http://edc-{type}-{id}:{public}/public;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }}
+
+    location /public/ {{
         proxy_pass http://edc-{type}-{id}:{public}/public/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -129,7 +136,14 @@ server {{
     }}
 
     # Ruta pública (protocol)
-    location /protocol {{
+    location = /protocol {{
+        proxy_pass http://edc-{type}-{id}:{protocol}/protocol;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }}
+
+    location /protocol/ {{
         proxy_pass http://edc-{type}-{id}:{protocol}/protocol/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
