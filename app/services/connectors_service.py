@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 from fastapi import HTTPException
 import subprocess
 import traceback
+from datetime import datetime, timezone
 from app.models.connector import Connector
 from app.db.client import get_db
 from pathlib import Path
@@ -107,6 +108,83 @@ def is_port_in_use(port: int) -> bool:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         result = s.connect_ex(('127.0.0.1', port))
         return result == 0
+
+
+def _parse_runtime_datetime(value):
+    """
+    Parse persisted runtime timestamps coming either from Mongo or Docker.
+    """
+
+    if isinstance(value, datetime):
+        return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
+    if not isinstance(value, str):
+        return None
+
+    cleaned = value.strip()
+    if not cleaned:
+        return None
+
+    if cleaned.endswith("Z"):
+        cleaned = cleaned[:-1] + "+00:00"
+
+    # Docker can emit nanosecond precision timestamps, trim to microseconds.
+    if "." in cleaned:
+        head, tail = cleaned.split(".", 1)
+        tz_marker = "+"
+        if "+" in tail:
+            frac, tz = tail.split("+", 1)
+            cleaned = f"{head}.{frac[:6].ljust(6, '0')}+{tz}"
+        elif "-" in tail:
+            frac, tz = tail.split("-", 1)
+            cleaned = f"{head}.{frac[:6].ljust(6, '0')}-{tz}"
+        else:
+            cleaned = f"{head}.{tail[:6].ljust(6, '0')}"
+
+    try:
+        parsed = datetime.fromisoformat(cleaned)
+    except ValueError:
+        return None
+
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+
+
+def _get_identity_hub_started_at() -> tuple[bool, datetime | None]:
+    """
+    Return whether the shared Identity Hub container is running and its start time.
+    """
+
+    try:
+        output = subprocess.check_output(
+            ["docker", "inspect", "-f", "{{.State.Running}}|{{.State.StartedAt}}", "edc_identity_hub"],
+            text=True,
+        ).strip()
+    except Exception:
+        return False, None
+
+    running_raw, _, started_raw = output.partition("|")
+    is_running = running_raw.strip().lower() == "true"
+    started_at = _parse_runtime_datetime(started_raw)
+    return is_running, started_at
+
+
+def _refresh_identity_hub_status(connector: dict) -> None:
+    """
+    Recompute the shared Identity Hub restart hint from the actual container boot time.
+    """
+
+    identity_hub = connector.get("identity_hub")
+    if not isinstance(identity_hub, dict):
+        return
+
+    imported_at = _parse_runtime_datetime(identity_hub.get("imported_at"))
+    if imported_at is None:
+        identity_hub["restart_required"] = False
+        return
+
+    is_running, started_at = _get_identity_hub_started_at()
+    identity_hub["restart_required"] = bool(
+        is_running and started_at is not None and started_at <= imported_at
+    )
 
 async def start_edc_service(connector_id: str):
     """
@@ -203,6 +281,8 @@ async def get_all_connectors(current_user: User) -> list[dict]:
             # Actualiza en la BBDD
             await update_connector(c['_id'], {"state": c['state']})
 
+        _refresh_identity_hub_status(c)
+
         c["id"] = str(c["_id"]) 
         del c["_id"]
 
@@ -227,6 +307,8 @@ async def get_connector_by_id(id: str) -> dict:
 
     if not connector:
         raise ValueError("Connector not found")
+
+    _refresh_identity_hub_status(connector)
 
     connector["id"] = str(connector["_id"])
     del connector["_id"]
