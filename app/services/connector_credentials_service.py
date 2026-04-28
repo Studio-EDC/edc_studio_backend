@@ -48,7 +48,35 @@ def _extract_string(value: Any) -> str | None:
     return None
 
 
+def _resolve_credential_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """
+    Normalize common VC wrapper shapes into the underlying credential object.
+    """
+
+    current: Any = payload
+
+    # IdentityHub resources commonly store the VC under
+    # `verifiableCredential.credential`.
+    if isinstance(current, dict):
+        wrapped = current.get("verifiableCredential")
+        if isinstance(wrapped, dict):
+            nested = wrapped.get("credential")
+            if isinstance(nested, dict):
+                current = nested
+            else:
+                current = wrapped
+
+    # Some issuers may wrap again under `credential`.
+    if isinstance(current, dict):
+        nested = current.get("credential")
+        if isinstance(nested, dict):
+            current = nested
+
+    return current if isinstance(current, dict) else payload
+
+
 def _extract_issuer_id(payload: dict[str, Any]) -> str | None:
+    payload = _resolve_credential_payload(payload)
     issuer = payload.get("issuer")
     if isinstance(issuer, dict):
         return _extract_string(issuer.get("id") or issuer.get("@id"))
@@ -56,6 +84,7 @@ def _extract_issuer_id(payload: dict[str, Any]) -> str | None:
 
 
 def _extract_subject_id(payload: dict[str, Any]) -> str | None:
+    payload = _resolve_credential_payload(payload)
     subject = payload.get("credentialSubject")
     if isinstance(subject, dict):
         return _extract_string(subject.get("id") or subject.get("@id"))
@@ -69,6 +98,7 @@ def _extract_subject_id(payload: dict[str, Any]) -> str | None:
 
 
 def _extract_credential_type(payload: dict[str, Any]) -> str | None:
+    payload = _resolve_credential_payload(payload)
     raw_type = payload.get("type")
     if isinstance(raw_type, str):
         return raw_type.strip() or None
@@ -157,12 +187,13 @@ async def import_connector_credentials_bundle(
                         ) from exc
 
                 canonical_name = REQUIRED_CREDENTIAL_FILES[normalized]
+                credential_payload = _resolve_credential_payload(payload)
                 files_by_name[canonical_name] = {
                     "payload": payload,
                     "summary": {
                         "file_name": canonical_name,
-                        "credential_type": _extract_credential_type(payload),
-                        "credential_id": _extract_string(payload.get("id")),
+                        "credential_type": _extract_credential_type(credential_payload),
+                        "credential_id": _extract_string(credential_payload.get("id")),
                         "issuer_id": _extract_issuer_id(payload),
                         "subject_id": _extract_subject_id(payload),
                     },
